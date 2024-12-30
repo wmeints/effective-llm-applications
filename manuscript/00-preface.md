@@ -5,14 +5,14 @@
 This book came about because I needed a way to copy my knowledge to my colleagues.
 
 I've been using Large Language Models (LLMs) for quite a while now and discovered how to
-use them in building applications by failing a lot. I don't think I can protect anyone
-from making their own mistakes, but I can show what I learned and explain what worked
-for me.
+use them to build intelligent applications by failing a lot. I don't think I can protect
+anyone from making their own mistakes, but I can show what I learned and explain what
+worked for me.
 
 ## Who this book is for
 
 I wrote this book for developers who want to use an LLM in their application to solve
-specific issues that can't be solved with normal program logic. All examples in the
+specific challenges that can't be solved with normal program logic. All examples in the
 book are in C# because I think you can find plenty of Python examples online but not
 enough in a more enterprise-oriented language like C#.
 
@@ -23,7 +23,7 @@ enough in a more enterprise-oriented language like C#.
   are, their capabilities, and why they're transforming how we build applications. This
   foundational chapter is essential for understanding the core concepts, terminology, and
   practical considerations that will help you make informed decisions about using LLMs in
-  your projects, even if you\'re completely new to working with these models.  
+  your projects, even if you're completely new to working with these models.  
 
 - Chapter 2, "Getting Started with Semantic Kernel," covers Semantic Kernel, a framework
   from Microsoft that simplifies building applications with LLMs by providing tools,
