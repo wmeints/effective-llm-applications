@@ -110,9 +110,9 @@ or point out potential issues.
 So even if you're not building AI applications yourself, it will change how your tools work
 and how quickly and effectively you can write code.
 
-Second, they're enabling new types of applications. Think about all the tasks that were
-too complex or expensive to automate before because they required understanding natural
-language. Now we can build applications that can:
+Second, and this is what this book is about, they're enabling new types of applications.
+Think about all the tasks that were too complex or expensive to automate before because
+they required understanding natural language. Now we can build applications that can:
 
 - Generate human-like responses to customer inquiries
 - Upgrade code bases from deprecated frameworks or old languages to more modern equivalents
@@ -123,9 +123,10 @@ And we're just getting started!
 
 ### The Current Reality
 
-Let's be clear though – LLMs aren't magic. They have real limitations and can make
-mistakes. They can provide you with some pretty surprising responses, they can be
-confidently wrong, and they need careful engineering to be useful in production systems.
+Let's be clear though – LLMs aren't magic. They have real limitations. They can provide
+you with some pretty surprising responses, the response can look right but contain
+the wrong information, and you need to apply careful engineering to use LLMs in
+production systems.
 
 That's exactly why understanding how they work is so crucial. When you know what's
 happening under the hood, you can:
@@ -153,9 +154,9 @@ template filling – it was something qualitatively different.
 
 Of course, once I saw what LLMs could do I went a little overboard with ChatGPT. I tried
 to use it for everything text related. I even messed up two blog posts on my website
-with the negative feedback to show for it. It turns out, LLMs are pretty mediocre at
-writing blog posts. They represent the average language. And that's, well, pretty
-average.
+with the negative feedback to show for it. It turns out, LLMs produce flavorless and
+pretty mediocre content. They were trained to represent the average of what language
+has to offer. And that's, well, pretty average and flavourless.
 
 I tried using LLMs for coding too, as I am a developer. I wrote a full application using
 only AI. And it's used in production today. But it was quite hard to get there. The LLM
@@ -164,34 +165,252 @@ haven't bothered measuring how quickly I built the application. But I have a fee
 that I was quicker, but I was also less satisfied with the result, because I feel that
 writing code is a skill I'm proud of.
 
+After learning about open source models I figured I should give that a try too. It
+turned out to be very slow even on a beefy Intel Core i9 machine with a huge graphics
+card. I quickly found out that you need an aweful lot of power to run an LLM on our
+own machine and in the cloud.
+
+There are plenty more experiences where I found the boundaries of what LLMs can do, but
+let me finish with one final example. I tried using an LLM to upgrade program code from
+a low-code solution to Typescript without human supervision. We quickly had to put in
+human supervision, because the results were horrible!
+
 ### Key lessons learned
 
-You might wonder, why am I telling you my experiences? It turns out that while LLMs are
-powerful, they are limited as well, and you may not want to use an LLM at all in your
-project.
+You might wonder, why am I telling you my experiences? There are three key lessons that
+I want you to keep in mind while reading this book:
 
+1. Be specific in what you ask from the LLM. Don't just ask for an article about LLMs,
+   provide specific instructions.
 
+2. Always review and understand the output of the LLM. Don't let your users use the output
+   of the LLM unseen. The output will be wrong in all the weird ways you've never thought of.
 
+3. Break big problems down into small problems. Instead of asking the LLM to perform
+   10 steps, ask it for just one step. It will be easier for the LLM to perform and
+   easier for you to debug.
 
-## My journey with LLMs
+4. Keep track of the context yourself and provide it in focused chunks. LLMs have
+   limited input and output space, so they can't keep track of a complete book or
+   even a blog post.
 
-- First encounters with language models
-- Early experiments and failures
-- Key lessons learned
-- Evolution of my understanding
-- How I integrated LLMs into real projects
-- Common misconceptions I had to overcome
+### Evolution of my understanding
+
+After the initial rollercoaster ride with LLMs my understanding of them evolved. I stopped
+seeing them as a silver bullet that can solve all my language related problems and started
+seeing them as a powerful pattern-matching engine capable of transforming text.
+
+One breakthrough moment was realizing that LLMs excel at clearly defined tasks that involve
+matching a pattern in source text and transforming it into other text. If you can find a clear
+pattern in the input yourself, and you can clearly define the target structure, it's
+likely that an LLM is a good solution to your problem. The less clear the problem statement
+is, the more issues you'll experience.
+
+If you want to build an effective LLM application you'll want to provide a good balance
+between human and machine. Human oversight is essential when using an LLM. Throughout
+the rest of the book you will find that I'm using interaction patterns that promote
+human oversight, because it's necessary and improves the experience by a lot.
+
+### How I integrated LLMs into real projects
+
+Clearly defined problems and human oversight are important when you view an LLM-based
+application from a functional perspective. From a technical perspective, it's important
+that you think about applying LLMs as a software engineering problem with an AI aspect
+rather than a pure AI project.
+
+Here are three reasons why you should use a software engineering approach:
+
+- LLMs will behave better when you follow a structured approach. The more structure, the better.
+- LLM behavior changes when providers push new versions of the models, automated testing is your friend.
+- LLMs are slow, you will need to find ways to provide delayed responses to the user.
+- The API endpoints of LLM providers often break, so you'll need to have solid error handling.
+
+Throughout the rest of the book, I will share the strategies that I applied to help me get
+the most out of my LLM-based applications.
+
+### Moving forward
+
+These experiences shaped how I approach LLM integration today. Instead of asking
+"Can an LLM do this?", I ask "How can an LLM help with this specific aspect of the
+problem?" This shift in perspective has been crucial for building practical,
+reliable systems.
+
+In the next section, we'll look at the current LLM landscape and how you can choose the
+right models for your projects. We'll build on these lessons learned to help you make
+informed decisions about which LLMs to use and how to use them effectively.
 
 ## The current LLM landscape
 
-- Overview of major LLM providers
-- Comparison of popular models
-  - GPT series
-  - Claude
-  - LLaMA and open-source alternatives
-- Pricing and accessibility
-- Latest developments and trends
-- Future directions
+After sharing my journey, let's look at the tools available to you right now. The LLM
+landscape is incredibly dynamic, with new models and capabilities being developed
+frequently. I'll focus on what's practically useful for building applications.
+
+### Overview of major LLM providers
+
+It's good to know that the most powerful models right now are made available by a few
+major LLM providers. There are open source options too, but these are generally less
+powerful and require more engineering effort to use. Having said that, I highly recommend
+you give them a try, because they offer other benefits you can't get from major LLM providers.
+
+#### OpenAI
+
+They've been at the forefront with their GPT series. What I love about OpenAI is their
+API's reliability. The downside? They can be expensive for large-scale applications,
+and their terms of service are quite restrictive. Also, it takes a while before newer
+models become available through the API. And if they become available, it takes a while
+before you can push a decent amount of tokens through the API, because the rate limits
+are pretty low.
+
+#### Anthropic
+
+Their Claude model has impressed me with its ability to handle complex instructions and
+longer context windows. I've found it particularly good at tasks requiring careful
+reasoning, like code review and technical writing. The pricing is competitive
+with OpenAI, and their terms of service are generally more business-friendly.
+
+Anthropic is notorious for their rate limits. They often cap out and you'll end up with
+random overload errors. It's important to have a good contract with them or plan for
+a backup.
+
+Sadly though, you can't use Anthropic directly with Semantic Kernel at this time, so
+you'll not find much about the models from Anthropic in this book.
+
+#### Meta
+
+With LLaMA and its variants, Meta has shaken up the field by releasing powerful
+open-source models. While you'll need more technical expertise to use these effectively,
+they offer flexibility that proprietary models can't match.
+
+LLaMA models are available through the major cloud providers, but you can also run them
+on your own machine if you have a good enough GPU, for example a RTX4080 has no problem
+running these models. If you want to give this a try, I recommend taking a look at
+[Ollama](https://ollama.com/).
+
+#### Google
+
+Their PaLM API and Gemini models are interesting contenders that I personally haven't
+had much experience with. However, if you're in the Google space, then they are a great
+option and relatively easy to configure these days. I've found their documentation
+particularly developer-friendly.
+
+### Model comparison
+
+Let's break down the model types that I've worked with to give you an understanding
+of what to expect from each model type.
+
+#### GPT series by OpenAI
+
+- **GPT-4o:** The king of the hill when it comes to the GPT models. This model is powerful
+  enough for most complex tasks. It's a general purpose model, useful for code as well
+  as more generic text based tasks. This model supports generating images too.
+
+- **GPT-4o mini:** The smaller brother of the GPT-4o model is a lot faster while still
+  providing plenty of capabilities. I generally try this model first and only switch
+  to the bigger and slower GPT-4o model when tests fail too frequently.
+
+Recently, OpenAI started work on a new series of models called the Orion models. These
+models focus on reasoning capabilties, and generally lack the general purpose features
+that the GPT series has. Currently, there are two Orion-type models:
+
+- **o1:** This is the biggest model so far from OpenAI. It's at the top of the
+  benchmarks right now for biology, physics, and chemistry tasks. However, you're paying
+  a premium for something that you can solve using the patterns in this book in combination
+  with a less expensive model. Proceed with caution.
+
+- **o1-mini:** Is the smaller version with capabilities somewhere between GPT-4o and o1.
+  This model lacks a lot of the general knowledge included in GTP-4o and o1, so it will
+  be useful for specific reasoning tasks but not much else.
+
+You can find a full listing of the OpenAI models on [their website][OPENAI_MODELS].
+
+#### Claude models by Anthropic
+
+Claude models come in three varieties, just as with the GPT series, you can choose a smaller,
+less capable, but faster and cheaper model depending on what your use-case is.
+
+- **Haiku:** The fastest model from Anthropic. It lacks the capability to process
+  images, but otherwise this model provides a very fast response with good quality
+  reasoning capabilities.
+
+- **Sonnet:** This is the GPT-4o equivalent from Anthropic. It's most useful for writing
+  code and long form content. My personal experience with it that it is quite good at
+  following more complex instructions, and it will stick to your style instructions
+  quite well.
+
+- **Opus:** This is the bigger brother of the Sonnet model. At the time of writing it
+  hasn't been updated since 2023, and I expect it will be a while before they update it.
+  It is slightly stronger than Sonnet at complex reasoning tasks.
+
+As with the OpenAI models, I recommend testing your prompts and going with the cheaper
+model first before attempting the same task with a bigger model. I've found that the
+Sonnet model is overall your best option right now.
+
+#### LLaMA and open-source alternatives
+
+There are many open-source options available at the moment, and it is hard to keep up
+with all the development progress. I've found that overall the commercial offerings
+provide a great all round experience. I generally start with the commercial models when
+I'm exploring a use case. When I understand a use case well enough, I will give an
+open-source model a try to see whether we can lower the price point of our solution.
+
+Having said that, I've had great experiences with these models:
+
+- **LLaMA 3.3:** A general purpose model offered by Meta through [Hugging
+  Face][HUGGINGFACE_LLAMA]. This model comes in two types, a pretrained variant that you
+  can fine-tune yourself to perform specific tasks, and an instruction tuned model that
+  Meta recommend to use for chat applications. But don't let yourself be limited by what
+  Meta says, because the instruction tuned version is quite useful for non-chat purposes
+  as well, as long as you have an instruction based use case.
+
+- **Mistral:** The Mistral model by the identically named company is a very fast
+  open-source LLM that is mostly used for chat purposes. This model is generally less
+  capable than the LLaMA model variants, but its speed makes up for that. This model is
+  also hosted on [HuggingFace][HUGGINGFACE_MISTRAL] and comes in many fine-tuned
+  variants.
+
+- **Gemma2:** was published by Google in February 2024 and is trained using a
+  [teacher/student technique][HUGGINGFACE_GEMMA2]. The training
+  technique itself looks very interesting, but I've found that Gemma2 isn't quite as
+  good for many of the tasks that I worked on as the other models in the open-source
+  space.
+
+- **Phi 4:** Is a new model that was [introduced by Microsoft in december
+  2024][PHI4_ANNOUNCEMENT]. It has a similar size compared to the Mistral and Gemma2
+  models, 14 billion parameters but shows higher performance in [the
+  benchmarks][PHI4_BENCHMARKS]. While this doesn't tell the whole story, I think it's
+  worth trying this model when you are looking for a smaller open-source model.
+
+### Making practical choices
+
+It's important to remember that the most powerful model isn't always the best option. I
+follow this general workflow when developing an LLM-based application that can be quite
+helpful if you're just starting out:
+
+1. First, I choose a general purpose model based on the cloud provider I'm working with.
+   Most of the time my clients already have a contract with either Microsoft Azure or
+   AWS to host their solutions. I use the existing environment to prototype the
+   solution.
+
+2. After the initial prototype, I'll look at data privacy requirements and intellectual
+   property issues that the solution may have. Depending on these requirements I will
+   determine the engineering effort and contractual effort we need to undertake to make
+   the solution production viable. Usually, I'm the person who talks about the technical
+   requirements while one of our legal people looks into contracts.
+
+3. After the initial prototype and requirements gathering, we'll deploy the solution to
+   production for a smaller group of people to gather initial user feedback and monitor
+   for performance and costs. Based on this information I decide whether we should go
+   back and optimize the solution or replace the model with something else.
+
+4. Once the solution is optimized and running in production for the general population
+   of an organization, I'll keep monitoring in production for sudden changes in quality
+   of the responses or performance. We regularly test and update the models to improve
+   the overall performance of the solution.
+
+This general workflow has helped me quite well over the past few years to deploy
+solutions in production. In the next section we'll dive into key concepts and
+terminology to use LLMs effectively. Understanding these fundamentals will help you make
+better decisions during the development process of your LLM-based applications.
 
 ## Key concepts and terminology
 
@@ -210,7 +429,27 @@ project.
 
 ## Practical considerations for working with LLMs
 
-- Cost management strategies
+### Cost management strategies
+
+One of the key factors that influences LLM-based application is the cost management aspect of these solutions.
+The world of LLM providers is constantly shifting. But there are two major directions right now for running an LLM:
+
+- You can use a cloud based LLM through OpenAI, Microsoft, Google, or AWS with token-based pricing.
+- Or you can host an open-source model yourself.
+
+If you're looking for powerful general purpose models you'll have to talk to one of the big tech companies.
+They offer token-based pricing which generally makes development quite cheap. The costs can stack up pretty high depending
+on how your solution is used. Cloud has the advantage here because operational costs are lower, you don't have to maintain
+the infrastructure as much as you do with an on-premises solution.
+
+I've found that running open-source models on-premises has a higher upfront cost because of the hardware that you need
+to purchase. And the write-off on the hardware is generally pretty high, because of the speed of innovation that happens
+in the GPU space. The operational costs are also higher because you now need to maintain your own infrastructure.
+
+I can only recommend running on-premises if you can host the model on end-user machines like Copilot+ laptops and Macbooks.
+Lucky for us, there's the option to run many of the open-source models in the cloud. This offers the best of both worlds.
+You can pay per token, and you have lower maintenance costs.
+
 - Rate limiting and quotas
 - API reliability and fallbacks
 - Security considerations
@@ -261,3 +500,10 @@ project.
 - Prompt engineering exercises
 - Cost calculation scenarios
 - Security analysis practice
+
+[OPENAI_MODELS]: https://platform.openai.com/docs/models#models-overview
+[HUGGINGFACE_LLAMA]: https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
+[HUGGINGFACE_MISTRAL]: https://huggingface.co/mistralai/Mistral-Nemo-Instruct-2407
+[HUGGINGFACE_GEMMA2]: https://huggingface.co/blog/gemma2
+[PHI4_ANNOUNCEMENT]: https://techcommunity.microsoft.com/blog/aiplatformblog/introducing-phi-4-microsoft%E2%80%99s-newest-small-language-model-specializing-in-comple/4357090
+[PHI4_BENCHMARKS]: https://www.microsoft.com/en-us/research/uploads/prod/2024/12/P4TechReport.pdf

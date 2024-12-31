@@ -26,3 +26,16 @@ Follow the instructions provided with each example to run the example.
 I am writing this in my spare time to help people gain practical knowledge about
 working with large language models. The book is free, but I take donations as a token
 of gratitude.
+
+## Documentation
+
+This section is here for my personal use, I use some tools to help me write. Sometimes
+I forget what I'm supposed to do, so here are the instructions ;-)
+
+### Spellchecker
+
+Run the following command for languagetool:
+
+```bash
+docker run --rm -p 8081:8010 silviof/docker-languagetool
+```
