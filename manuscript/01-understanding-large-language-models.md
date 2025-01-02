@@ -196,15 +196,16 @@ I want you to keep in mind while reading this book:
 
 ### Evolution of my understanding
 
-After the initial rollercoaster ride with LLMs my understanding of them evolved. I stopped
-seeing them as a silver bullet that can solve all my language related problems and started
-seeing them as a powerful pattern-matching engine capable of transforming text.
+After the initial rollercoaster ride with LLMs my understanding of them evolved. I
+stopped seeing them as a silver bullet that can solve all my language related problems
+and started seeing them as a powerful pattern-matching engine capable of transforming
+text.
 
-One breakthrough moment was realizing that LLMs excel at clearly defined tasks that involve
-matching a pattern in source text and transforming it into other text. If you can find a clear
-pattern in the input yourself, and you can clearly define the target structure, it's
-likely that an LLM is a good solution to your problem. The less clear the problem statement
-is, the more issues you'll experience.
+One breakthrough moment was realizing that LLMs excel at clearly defined tasks that
+involve matching a pattern in source text and transforming it into other text. If you
+can find a clear pattern in the input yourself, and you can clearly define the target
+structure, it's likely that an LLM is a good solution to your problem. The less clear
+the problem statement is, the more issues you'll experience.
 
 If you want to build an effective LLM application you'll want to provide a good balance
 between human and machine. Human oversight is essential when using an LLM. Throughout
@@ -220,13 +221,16 @@ rather than a pure AI project.
 
 Here are three reasons why you should use a software engineering approach:
 
-- LLMs will behave better when you follow a structured approach. The more structure, the better.
-- LLM behavior changes when providers push new versions of the models, automated testing is your friend.
+- LLMs will behave better when you follow a structured approach. The more structure, the
+  better.
+- LLM behavior changes when providers push new versions of the models, automated testing
+  is your friend.
 - LLMs are slow, you will need to find ways to provide delayed responses to the user.
-- The API endpoints of LLM providers often break, so you'll need to have solid error handling.
+- The API endpoints of LLM providers often break, so you'll need to have solid error
+  handling.
 
-Throughout the rest of the book, I will share the strategies that I applied to help me get
-the most out of my LLM-based applications.
+Throughout the rest of the book, I will share the strategies that I applied to help me
+get the most out of my LLM-based applications.
 
 ### Moving forward
 
@@ -249,8 +253,9 @@ frequently. I'll focus on what's practically useful for building applications.
 
 It's good to know that the most powerful models right now are made available by a few
 major LLM providers. There are open source options too, but these are generally less
-powerful and require more engineering effort to use. Having said that, I highly recommend
-you give them a try, because they offer other benefits you can't get from major LLM providers.
+powerful and require more engineering effort to use. Having said that, I highly
+recommend you give them a try, because they offer other benefits you can't get from
+major LLM providers.
 
 #### OpenAI
 
@@ -300,13 +305,13 @@ of what to expect from each model type.
 
 #### GPT series by OpenAI
 
-- **GPT-4o:** The king of the hill when it comes to the GPT models. This model is powerful
-  enough for most complex tasks. It's a general purpose model, useful for code as well
-  as more generic text based tasks. This model supports generating images too.
+- **GPT-4o:** The king of the hill when it comes to the GPT models. This model is
+  powerful enough for most complex tasks. It's a general purpose model, useful for code
+  as well as more generic text based tasks. This model supports generating images too.
 
 - **GPT-4o mini:** The smaller brother of the GPT-4o model is a lot faster while still
-  providing plenty of capabilities. I generally try this model first and only switch
-  to the bigger and slower GPT-4o model when tests fail too frequently.
+  providing plenty of capabilities. I generally try this model first and only switch to
+  the bigger and slower GPT-4o model when tests fail too frequently.
 
 Recently, OpenAI started work on a new series of models called the Orion models. These
 models focus on reasoning capabilties, and generally lack the general purpose features
@@ -314,8 +319,8 @@ that the GPT series has. Currently, there are two Orion-type models:
 
 - **o1:** This is the biggest model so far from OpenAI. It's at the top of the
   benchmarks right now for biology, physics, and chemistry tasks. However, you're paying
-  a premium for something that you can solve using the patterns in this book in combination
-  with a less expensive model. Proceed with caution.
+  a premium for something that you can solve using the patterns in this book in
+  combination with a less expensive model. Proceed with caution.
 
 - **o1-mini:** Is the smaller version with capabilities somewhere between GPT-4o and o1.
   This model lacks a lot of the general knowledge included in GTP-4o and o1, so it will
@@ -325,8 +330,8 @@ You can find a full listing of the OpenAI models on [their website][OPENAI_MODEL
 
 #### Claude models by Anthropic
 
-Claude models come in three varieties, just as with the GPT series, you can choose a smaller,
-less capable, but faster and cheaper model depending on what your use-case is.
+Claude models come in three varieties, just as with the GPT series, you can choose a
+smaller, less capable, but faster and cheaper model depending on what your use-case is.
 
 - **Haiku:** The fastest model from Anthropic. It lacks the capability to process
   images, but otherwise this model provides a very fast response with good quality
@@ -641,215 +646,142 @@ models, building on these fundamental concepts to create reliable applications.
 
 ## Practical Considerations for Working with LLMs
 
-Now that we understand the key concepts, let's talk about the practical aspects of
-working with LLMs. These are lessons I've learned the hard way, and they'll help you
-avoid some common pitfalls.
+Now that you understand the core concepts, let's look at practical considerations for
+working with LLMs. These are the lessons I've learned while building applications in
+production, and they'll help you avoid some of the problems that I ran into.
 
-### Cost Management Strategies
+I think about these things as the downsides to building an LLM-based application. It's
+inspiring to work with language models, but they come with a cost.
 
-Cost management is crucial when building LLM-based applications. I've seen costs grow
-exponentially in complex applications, so here's what I've learned:
+### Cost management
 
-When starting with LLMs, I strongly recommend beginning with cloud solutions rather than
-setting up your own infrastructure. Cloud providers offer a much lower initial cost
-compared to purchasing on-premises hardware, and they give you the flexibility to scale
-up or down as needed. This approach also makes it easier to experiment with different
-models and configurations without making major infrastructure commitments.
+LLMs are resource-intensive, both in terms of computing power and API costs. If you
+don't need an LLM or can achieve the same result with a smaller model, I recommend doing
+so. And if you still decide to build an LLM-based application I highly recommend
+monitoring API usage and costs closely.
 
-Monitoring is a must for managing costs effectively. You'll want to get familiar with
-your provider's monitoring dashboards and set up cost alerts before you start any
-serious development. I recommend tracking usage patterns closely from day one – this
-data will be invaluable when you need to optimize your application later.
+### Security
 
-When rolling out LLM-based applications I follow this approach:
+Using an LLM opens up new security risks. For example, people will try to steal your
+application's internal instructions. They will also try to abuse your application
+through prompt injection. I've seen this happen in the wild, and it's not pretty. Make
+sure you're aware of these risks and have safeguards in place.
 
-1. Start with a limited user group
-2. Monitor costs and usage patterns
-3. Apply initial optimizations
-4. Test with the small group again
-5. Only then scale to full deployment
+### Performance
 
-Always use the smallest model that can handle your task effectively. Anything you don't
-need is just burning money.
+LLM-based applications can be slow, especially if you're going to build more complicated
+interactions with LLMs. Throughout the rest of the book you'll find strategies and
+patterns to help work around the performance issues that you'll encounter. Consider this
+your first warning that you'll need to think about how to compensate for slow responses.
 
-### Rate Limiting and Quotas
-
-When building an LLM-based application you'll quickly learn about rate limites. Every
-cloud provider has them, and they each handle them a bit differently. Some, like Azure,
-give you the flexibility to adjust your quotas, while others have fixed limits or offer
-different tiers of access. Think of it as a traffic control system that helps ensure
-fair resource distribution among all users.
-
-When you first start hitting these limits, you might be tempted to request the highest
-possible quotas for your applications. I've been there! If you're running multiple LLM
-applications, maxing out quotas can lead to what we call "noisy neighbor" problems.
-Imagine one hungry application consuming all your available quota, leaving your other
-applications gasping for air. Pretty soon people will start calling you about their
-failing application.
-
-I recommend implementing a circuit breaker pattern in your production applications
-whenever you call the LLM. It's like having a smart traffic controller that helps your
-application gracefully handle situations when you're approaching or hitting these
-limits. This pattern prevents cascading failures, manages quota exhaustion smoothly, and
-keeps your application running even if at a reduced capacity. If you're interested in
-implementing this pattern (which I highly recommend), check out this excellent guide
-from Microsoft.
-
-You can find a good implementation guide
-[here](https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker).
-
-### API Reliability and Fallbacks
-
-I've found significant differences in stability between providers. For example, Azure
-has proven more stable than Anthropic in my experience. While many current LLM
-applications don't have high availability requirements, I expect this to change soon.
-
-Before you start building with LLMs, take some time to think about your availability
-needs. In my experience, it's much easier to plan for these requirements upfront than to
-retrofit them later. I recommend sitting down with your stakeholders to understand
-exactly how critical the LLM functionality is to your application.
-
-Having a fallback plan is also crucial. This might mean having arrangements with
-multiple providers or maintaining simpler rule-based systems as backups. I've found that
-even basic fallbacks can help maintain user trust when primary systems are unavailable.
-
-When it comes to handling temporary hiccups, automatic retry logic is your friend. I
-always implement exponential backoff in my applications when calling the LLM – it's like
-having a polite conversation with an API. If it's busy, you wait a bit longer before
-trying again, rather than constantly running down the door. This approach has saved many
-of my applications from completely falling over during API instability.
-
-Don't forget to keep an eye on your application's vital signs. Setting up monitoring for
-response times and error rates will help you spot problems before they become critical.
-I can't tell you how many times good monitoring has helped me identify issues before
-users even noticed them.
-
-### Security Considerations
-
-While entire books could be written about LLM security, here are the essential aspects
-you need to consider.
-
-#### Data Privacy
-
-This is often the first concern for my clients. Here's what you need to know:
-
-- Provider policies vary and were often a little unclear about data privacy in the past
-- Some providers may use conversations for model training
-
-[The Samsung incident][SAMSUNG_INCIDENT] is a perfect example - their internal data was
-exposed through ChatGPT when employees used it for work tasks. While providers now offer
-better privacy controls, you should:
-
-- Read provider agreements carefully
-- Understand data usage policies
-- Consider data residency requirements
-
-Data privacy is, within reasonably limits, just another trade-off for you to consider.
-It may be tempting to reach for on-premises right away, but they have their own problems
-that are often worse than choosing the right LLM provider and setting up a good
-agreement with them.
-
-#### Prompt Injection
-
-While LLMs' pattern-matching capabilities are impressive, they can also be a
-double-edged sword. [This case study][PROMPT_INJECTION_CASE] shows how attackers can
-manipulate LLMs to produce unintended responses.
-
-From my experience building LLM-based applications, several strategies have proven
-effective in protecting against these kinds of attacks. First, always start by clearly
-defining and limiting what your LLM-based application can do. Think of it like the
-principle of least privilege – give it access only to what it absolutely needs. Most
-providers offer content filters out of the box, and I strongly recommend using them as
-your first line of defense.
-
-Input sanitization is also crucial. Just like you wouldn't trust user input in a
-traditional web application, you need to be careful about what you feed into your LLM.
-It's always a good option to add PII (Personal Identifiable Information) detection and
-removal if you don't want your LLM to have access to personal data. There are many
-ready-made solutions that can help.
-
-I've found that implementing monitoring for suspicious patterns can help you catch
-potential attacks early. This is especially critical when your LLM has connections to
-internal systems – I've seen seemingly innocent prompts crafted to trick models into
-revealing or doing things they shouldn't.
-
-Remember that security is a continuous process, not a one-time setup. I regularly review
-and update these protections as new attack patterns become popular.
-
-#### Output Validation
-
-Never trust raw LLM output, especially in web applications. Remember:
-
-- LLMs can generate HTML and JavaScript
-- Output needs sanitization before rendering
-- Warn users about potential risks
-- Implement content filtering
-- Validate structured output against schemas
-
-### Best Practices Summary
-
-1. Start small and scale gradually
-2. Monitor everything
-3. Implement proper error handling
-4. Use the minimum necessary model capabilities
-5. Plan for failures
-6. Take security seriously from day one
-
-In the next chapters, we'll explore specific patterns and implementations that help
-address these considerations. But keeping these practical aspects in mind will help you
-build more reliable and cost-effective LLM applications from the start.
-
-### Performance optimization
-
-#### Caching strategies
-
-#### Batch processing
-
-#### Response streaming
-
-### Testing strategies
-
-#### Unit testing with LLMs
-
-#### Integration testing
-
-#### Prompt testing
+We'll dive deeper into these topics in chapter two when we explore LLMOps essentials.
+For now, let's look at some real-world applications and use cases to inspire you with
+what's possible.
 
 ## Real-world applications and use cases
 
-- Content generation
-  - Documentation
-  - Marketing copy
-  - Code generation
-- Text analysis
-  - Sentiment analysis
-  - Entity extraction
-  - Classification
-- Conversational AI
-  - Customer support
-  - Virtual assistants
-  - Knowledge base integration
-- Code assistance
-  - Code completion
-  - Code review
-  - Documentation generation
-- Business process automation
-  - Email processing
-  - Document analysis
-  - Report generation
+Social media is full of interesting posts about possible use cases that involve LLMs.
+Most of them involve generating content for marketing purposes or automating personal
+tasks. Both are great starting points for using LLMs, but there are a lot more
+possibilities out there.
+
+I've personally worked on a wide range of applications that go beyond personal task
+automation. Here are some examples from what I've come across.
+
+## Real-world Applications and Use Cases
+
+While social media is full of posts about using LLMs for marketing content or personal
+task automation, I've found the real potential goes far beyond these common examples.
+Let me share some real-world cases I've worked on that showcase what's possible when you
+think bigger.
+
+### Generating Targeted Reports from Technical Information
+
+One organization I worked with was running charity projects with donor support. They had
+a challenge: their field reports were too technical and detailed for donors to digest
+easily. Here's how we solved it:
+
+The situation: Field reports contained crucial project information, but they were
+written in technical language that donors struggled to understand. The organization
+needed donor-friendly summaries but couldn't afford the time to manually rewrite each
+report.
+
+We built a solution combining two key patterns: Retrieval Augmented Generation (RAG) and
+prompt chaining. The RAG pattern helped us find relevant information matching donor
+questions, while the prompt chain helped us rewrite the technical content in a
+donor-friendly style that matched the organization's voice.
+
+A key learning here was the importance of human review. We had to build features showing
+where information came from because reviewers wouldn't trust the system without this
+transparency. It's a great example of how LLMs work best when they augment human
+capabilities rather than trying to replace them entirely.
+
+### AI-Powered Knowledge Sharing Through Interviews
+
+Another interesting case involved an organization struggling with knowledge sharing.
+They had a common problem: experts who were too busy to write articles about their
+innovations, leading to repeated problem-solving across projects.
+
+Instead of asking people to write articles, we flipped the script. We built a chat-based
+system where the LLM interviewed people about their work, asking progressively deeper
+questions to understand the topic fully. The system then transformed these conversations
+into structured articles.
+
+One interesting discovery was how well users responded to being interviewed by an AI.
+The interaction felt natural without falling into the [uncanny
+valley](https://en.wikipedia.org/wiki/Uncanny_valley). However, we learned that letting
+the LLM fully control the interview flow was tricky. We eventually replaced our complex
+prompt-based decision making with a simpler function that tracked question count to
+manage interview length.
+
+### Modernizing Legacy Code Bases
+
+One of my favorite projects involved upgrading legacy web forms from XML to TypeScript.
+The organization had so many forms that manual conversion would have taken years.
+
+We approached this by building a batch pipeline that combined traditional XML parsing
+with LLM-powered code generation. Rather than asking the LLM to handle everything, we
+broke the problem into manageable chunks, using multiple refinement prompts to improve
+the generated code quality.
+
+This project taught us a crucial lesson: LLMs work best when combined with traditional
+programming logic. While they're great at understanding and translating code patterns,
+they struggle with handling large amounts of complex code all at once. Breaking the
+problem down into smaller pieces and using traditional parsing where appropriate gave us
+much better results.
+
+### We're Only Just Starting
+
+These cases represent just the beginning of what's possible with LLMs. While many people
+start their LLM journey with personal automation through tools like ChatGPT, these
+examples show how we can scale up to automate more complex team-based workflows.
+
+It's important to remember that we're in the early days of this technology. The patterns
+I share in this book work well today, but I expect them to evolve significantly over the
+next few years. What excites me most is that we're just starting to understand what's
+possible.
+
+As we move forward in this book, we'll explore these patterns in detail, showing you how
+to implement them in your own projects. But first, let's make sure you have a solid
+foundation by discussing operating LLMs in production in the next chapter.
 
 ## Summary
 
-- Recap of key points
-- Preview of next chapter
-- Action items for readers
+In this chapter, we've learned a brief history of Large Language Models and how they
+work from a conceptual level. We've explored the key concepts and terminology to help
+you understand and work with LLMs in the next chapters. Finally, I've shared with you my
+personal journey to help you understand the practical considerations and real-world
+applications of LLMs.
 
-## Exercises
+In the next chapter we'll talk about more practical considerations that you need to keep
+in mind when building LLM-based applications when we discuss the essentials of LLMOps.
 
-- Hands-on experiments with different LLMs
-- Prompt engineering exercises
-- Cost calculation scenarios
-- Security analysis practice
+## Further reading
+
+Here are some resources if you want to learn more about the inner workings of LLMs:
+
+- [How LLMs think](https://towardsdatascience.com/how-llms-think-d8754a79017d) - An interesting article exploring some of the math behind LLMs in an attempt to understand how and why they work.
+- [Attention is all you need](https://arxiv.org/abs/1706.03762) - The original paper that sparked the transformer revolution.
 
 [OPENAI_MODELS]: https://platform.openai.com/docs/models#models-overview
 [HUGGINGFACE_LLAMA]: https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
@@ -858,5 +790,3 @@ build more reliable and cost-effective LLM applications from the start.
 [PHI4_ANNOUNCEMENT]: https://techcommunity.microsoft.com/blog/aiplatformblog/introducing-phi-4-microsoft%E2%80%99s-newest-small-language-model-specializing-in-comple/4357090
 [PHI4_BENCHMARKS]: https://www.microsoft.com/en-us/research/uploads/prod/2024/12/P4TechReport.pdf
 [PARAMETER_EXPLANATION]: https://medium.com/@albert_88839/large-language-model-settings-temperature-top-p-and-max-tokens-1a0b54dcb25e
-[SAMSUNG_INCIDENT]: https://cybernews.com/news/chatgpt-samsung-data-leak/
-[PROMPT_INJECTION_CASE]: https://secops.group/prompt-injection-a-case-study/
