@@ -797,8 +797,11 @@ in mind when building LLM-based applications when we discuss the essentials of L
 
 Here are some resources if you want to learn more about the inner workings of LLMs:
 
-- [How LLMs think](https://towardsdatascience.com/how-llms-think-d8754a79017d) - An interesting article exploring some of the math behind LLMs in an attempt to understand how and why they work.
-- [Attention is all you need](https://arxiv.org/abs/1706.03762) - The original paper that sparked the transformer revolution.
+- [How LLMs think](https://towardsdatascience.com/how-llms-think-d8754a79017d) - An
+  interesting article exploring some of the math behind LLMs in an attempt to understand
+  how and why they work.
+- [Attention is all you need](https://arxiv.org/abs/1706.03762) - The original paper
+  that sparked the transformer revolution.
 
 [OPENAI_MODELS]: https://platform.openai.com/docs/models#models-overview
 [HUGGINGFACE_LLAMA]: https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
