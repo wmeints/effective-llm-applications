@@ -9,10 +9,10 @@ minor tweaks. The overall structure was spot-on, and it saved me 30 minutes of w
 While 30 minutes doesn't sound like a lot of time saved, it does add up and this is
 the worst-case scenario at a time when I didn't quite understand how an LLM worked.
 
-Here's the thing – that interaction looked like magic, but really wasn't. It was the
-result of careful engineering, good quality prompt design, and an understanding of what
-LLMs can (and can't) do well. That's what this chapter is all about: demystifying these
-powerful tools so you can put them to work in your own applications.
+That interaction looked like magic, but really wasn't. It was the result of careful
+engineering, good quality prompt design, and an understanding of what LLMs can (and
+can't) do well. That's what this chapter is all about: demystifying these powerful tools
+so you can put them to work in your own applications.
 
 You've probably heard the buzz around LLMs. Maybe you've played with ChatGPT, Claude,
 or other AI assistants. Maybe you're skeptical about the hype, or maybe you're excited
@@ -28,20 +28,15 @@ taught me the most.
 
 By the end of this chapter, you'll understand:
 
+- What LLMs are and why they're changing the way we solve problems
 - The key concepts and terminology you need to work effectively with LLMs
-- How to evaluate different models and choose the right one for your needs
+- The current LLM landscape from a commercial and open-source perspective
 - Practical considerations for building production applications
 - Real-world use cases and applications that go beyond the obvious
 
-Let's dive in and explore the fascinating world of large language models – not as
-magical black boxes, but as practical tools we can understand, control, and use to
-solve real problems.
-
-One quick note before we begin: throughout this chapter, I'll be sharing code examples
-and practical tips based on my experience. While the specific models and APIs might
-evolve, the underlying principles and patterns will remain relevant. I encourage you to
-run the examples yourself and experiment with different approaches. That's how you'll
-truly internalize these concepts and make them your own.
+Let's dive in and explore the world of large language models – not as magical black
+boxes, but as practical tools we can understand, control, and use to solve real
+problems.
 
 ## What are LLMs and why they matter
 
@@ -81,7 +76,7 @@ scale.
 ### How LLMs Work
 
 At their core, LLMs predict what comes next based on what they've seen before. When you
-give an LLM a prompt, it's not searching through a database for answers. Instead, it's
+give an LLM input text, it's not searching through a database for answers. Instead, it's
 using its understanding of patterns to generate responses word by word.
 
 Here's a simplified view of what happens:
@@ -104,19 +99,21 @@ Here's why:
 
 First, LLMs are changing how we write code. They're not just glorified autocomplete –
 they can understand intent. When I'm working on a new feature, I can describe what I
-want in plain English, and an LLM can help me scaffold the code, suggest test cases,
-or point out potential issues.
+want in plain English, and an LLM can help me scaffold the code, suggest test cases, or
+point out potential issues.
 
-So even if you're not building AI applications yourself, it will change how your tools work
-and how quickly and effectively you can write code.
+So even if you're not building AI applications yourself, it will change how your tools
+work and how quickly and effectively you can write code.
 
 Second, and this is what this book is about, they're enabling new types of applications.
 Think about all the tasks that were too complex or expensive to automate before because
 they required understanding natural language. Now we can build applications that can:
 
 - Generate human-like responses to customer inquiries
-- Upgrade code bases from deprecated frameworks or old languages to more modern equivalents
-- Translate raw input from field reports into a coherent and actionable management summary
+- Upgrade code bases from deprecated frameworks or old languages to more modern
+  equivalents
+- Translate raw input from field reports into a coherent and actionable management
+  summary
 - Help review a document that you wrote by providing useful suggestions to improve it
 
 And we're just getting started!
@@ -143,12 +140,12 @@ so you don't have to repeat them.
 ## My journey with LLMs
 
 My journey with LLMs started with a healthy dose of "this isn't going to work". Like
-many of you didn't quite understand the impact of this new technology.
+many of you I didn't quite understand the impact of this new technology.
 
-That unit testing experiment changed everything. Not because the code was perfect
-(it wasn't), but because it showed me that LLMs could understand context and generate
-meaningful output that was actually useful. This wasn't just pattern matching or
-template filling – it was something qualitatively different.
+The unit testing experiment changed everything for me. Not because it solved all my
+unit-testing needs, but because it showed me that LLMs could understand context and
+generate meaningful output that was actually useful. This wasn't just pattern matching
+or template filling – it was something completely different.
 
 ### Early experiments
 
@@ -162,18 +159,19 @@ I tried using LLMs for coding too, as I am a developer. I wrote a full applicati
 only AI. And it's used in production today. But it was quite hard to get there. The LLM
 quite frequently steered into the wall with weird layouts and useless unit-tests. I
 haven't bothered measuring how quickly I built the application. But I have a feeling
-that I was quicker, but I was also less satisfied with the result, because I feel that
-writing code is a skill I'm proud of.
+that I was quicker, but I was also less satisfied with the result, because writing great
+code is a skill I'm proud of.
 
-After learning about open source models I figured I should give that a try too. It
+After learning about open source LLMs I figured I should give that a try too. It
 turned out to be very slow even on a beefy Intel Core i9 machine with a huge graphics
 card. I quickly found out that you need an aweful lot of power to run an LLM on our
-own machine and in the cloud.
+own machine and in the cloud. And with a price tag of 3500 euros for a decent machine
+it's not something you want to do for a hobby project.
 
 There are plenty more experiences where I found the boundaries of what LLMs can do, but
 let me finish with one final example. I tried using an LLM to upgrade program code from
 a low-code solution to Typescript without human supervision. We quickly had to put in
-human supervision, because the results were horrible!
+human supervision, because without that it wasn't going to help us.
 
 ### Key lessons learned
 
@@ -183,16 +181,17 @@ I want you to keep in mind while reading this book:
 1. Be specific in what you ask from the LLM. Don't just ask for an article about LLMs,
    provide specific instructions.
 
-2. Always review and understand the output of the LLM. Don't let your users use the output
-   of the LLM unseen. The output will be wrong in all the weird ways you've never thought of.
+2. Always review and understand the output of the LLM. Don't let your users use the
+   output of the LLM unseen. The output will be wrong in all the weird ways you've never
+   thought of.
 
-3. Break big problems down into small problems. Instead of asking the LLM to perform
-   10 steps, ask it for just one step. It will be easier for the LLM to perform and
-   easier for you to debug.
+3. Break big problems down into small problems. Instead of asking the LLM to perform 10
+   steps, ask it for just one step. It will be easier for the LLM to perform and easier
+   for you to debug.
 
 4. Keep track of the context yourself and provide it in focused chunks. LLMs have
-   limited input and output space, so they can't keep track of a complete book or
-   even a blog post.
+   limited input and output space, so they can't keep track of a complete book or even a
+   blog post.
 
 ### Evolution of my understanding
 
@@ -201,7 +200,7 @@ stopped seeing them as a silver bullet that can solve all my language related pr
 and started seeing them as a powerful pattern-matching engine capable of transforming
 text.
 
-One breakthrough moment was realizing that LLMs excel at clearly defined tasks that
+One important moment was realizing that LLMs excel at clearly defined tasks that
 involve matching a pattern in source text and transforming it into other text. If you
 can find a clear pattern in the input yourself, and you can clearly define the target
 structure, it's likely that an LLM is a good solution to your problem. The less clear
@@ -252,33 +251,36 @@ frequently. I'll focus on what's practically useful for building applications.
 ### Overview of major LLM providers
 
 It's good to know that the most powerful models right now are made available by a few
-major LLM providers. There are open source options too, but these are generally less
+major LLM providers. There are open-source options too, but these are generally less
 powerful and require more engineering effort to use. Having said that, I highly
 recommend you give them a try, because they offer other benefits you can't get from
-major LLM providers.
+major LLM providers, especially the smaller models.
 
 #### OpenAI
 
-They've been at the forefront with their GPT series. What I love about OpenAI is their
-API's reliability. The downside? They can be expensive for large-scale applications,
-and their terms of service are quite restrictive. Also, it takes a while before newer
-models become available through the API. And if they become available, it takes a while
-before you can push a decent amount of tokens through the API, because the rate limits
-are pretty low.
+OpenAI has been at the forefront with their GPT series. What I love about OpenAI is
+their API's reliability. The downside? They can be expensive for large-scale
+applications, and their terms of service are quite restrictive. Also, it takes a while
+before newer models become available through the API. And if they become available, it
+takes a while before you can push a decent amount of input through the API, because the
+rate limits are pretty low.
 
 #### Anthropic
 
-Their Claude model has impressed me with its ability to handle complex instructions and
-longer context windows. I've found it particularly good at tasks requiring careful
-reasoning, like code review and technical writing. The pricing is competitive
-with OpenAI, and their terms of service are generally more business-friendly.
+Anthropic's Claude model has impressed me with its ability to handle complex
+instructions and longer context windows. I've found it particularly good at tasks
+requiring careful reasoning, like code review and technical writing. The pricing is
+competitive with OpenAI, and their terms of service are generally more
+business-friendly.
 
-Anthropic is notorious for their rate limits. They often cap out and you'll end up with
-random overload errors. It's important to have a good contract with them or plan for
-a backup.
+Anthropic is notorious for their rate limits. They often cap out when people in the
+United States are online and working, and you'll end up with random overload errors.
+It's important to have a good contract with them or plan for a backup.
 
 Sadly though, you can't use Anthropic directly with Semantic Kernel at this time, so
-you'll not find much about the models from Anthropic in this book.
+you'll not find much about the models from Anthropic in this book. I recommend keeping
+an eye out fore updates from Microsoft on this, because I noticed that they have
+a few issues open on their GitHub repository that they're working on.
 
 #### Meta
 
@@ -293,15 +295,16 @@ running these models. If you want to give this a try, I recommend taking a look 
 
 #### Google
 
-Their PaLM API and Gemini models are interesting contenders that I personally haven't
+Google's PaLM API and Gemini models are interesting contenders that I personally haven't
 had much experience with. However, if you're in the Google space, then they are a great
-option and relatively easy to configure these days. I've found their documentation
-particularly developer-friendly.
+option and relatively easy to configure these days through their portal. I've found
+their documentation particularly developer-friendly.
 
 ### Model comparison
 
-Let's break down the model types that I've worked with to give you an understanding
-of what to expect from each model type.
+With the major providers covered, let's break down the model the important model types
+that I've worked with to give you an understanding of what to expect from each model
+type.
 
 #### GPT series by OpenAI
 
@@ -350,8 +353,29 @@ As with the OpenAI models, I recommend testing your prompts and going with the c
 model first before attempting the same task with a bigger model. I've found that the
 Sonnet model is overall your best option right now.
 
+#### Gemini models by Google
+
+Google was a little late to the game, and is often considered the underdog in the LLM
+landscape. They too offer various models that work well for different types of tasks.
+Here are the two most recent models offered by them.
+
+- **Gemini 1.5 Pro:** This model is the most powerful model from Google. It's a general
+  purpose model focusing on reasoning tasks. It works quite well if you have a task
+  that requires the model to generate output that has to meet specific constraints. I've
+  found that this model works less for generating content like blog posts or marketing
+  materials.
+
+- **Gemini 2.0 Flash:** Is the fastest model offered by Google. It's much faster than
+  the pro model, but offers less reasoning capabilities. It's a great model for
+  chat applications that need to be fast, and only need to answer questions.
+
+Looking at various tests and benchmarks, I've found that the Gemini models are trained
+mostly on instruction and constraint solving tasks. They score lower on creative writing
+tasks and coding tasks.
+
 #### LLaMA and open-source alternatives
 
+While the commercial models are powerful, the open-source models are catching up fast.
 There are many open-source options available at the moment, and it is hard to keep up
 with all the development progress. I've found that overall the commercial offerings
 provide a great all round experience. I generally start with the commercial models when
@@ -387,7 +411,7 @@ Having said that, I've had great experiences with these models:
 
 ### Making practical choices
 
-It's important to remember that the most powerful model isn't always the best option. I
+It's important to remember that the most powerful model aren't always the best option. I
 follow this general workflow when developing an LLM-based application that can be quite
 helpful if you're just starting out:
 
@@ -396,13 +420,13 @@ helpful if you're just starting out:
    AWS to host their solutions. I use the existing environment to prototype the
    solution.
 
-2. After the initial prototype, I'll look at data privacy requirements and intellectual
-   property issues that the solution may have. Depending on these requirements I will
-   determine the engineering effort and contractual effort we need to undertake to make
-   the solution production viable. Usually, I'm the person who talks about the technical
-   requirements while one of our legal people looks into contracts.
+2. After the initial prototype, I'll look at data privacy requirements that the solution
+   may have. Depending on these requirements I will determine the engineering effort and
+   contractual effort we need to undertake to make the solution production viable.
+   Usually, I'm the person who talks about the technical requirements while one of our
+   legal people looks into contracts.
 
-3. After the initial prototype and requirements gathering, we'll deploy the solution to
+3. After the initial prototype and requirements gathering, I'll deploy the solution to
    production for a smaller group of people to gather initial user feedback and monitor
    for performance and costs. Based on this information I decide whether we should go
    back and optimize the solution or replace the model with something else.
@@ -451,16 +475,16 @@ When the model generates a response, the process happens in reverse – tokens a
 converted back into text. This is why sometimes you might see slightly odd word splits
 in responses, especially with technical terms or rare words.
 
-#### Embedding Models
+#### Embeddings
 
 At the input side of almost all LLMs is something called an embedding layer. This
 component turns tokens into dense vectors that capture the semantic meaning of the text.
-It's interesting because it can represent the relationships between words in a
-mathematical space.
+These are called embeddings or embedding vectors. Embedding vectors are interesting
+because they can represent the relationships between words in a mathematical space.
 
 The embedding layer isn't just a random part of the model – it's trained on vast amounts
-of text to understand how words relate to each other based on their context. Think of it
-as a map where similar words or concepts are located close to each other.
+of text to understand how words relate to each other based on how they are used. Think
+of it as a map where similar words or concepts are located close to each other.
 
 You'll work directly with embeddings later when we implement the Retrieval Augmented
 Generation (RAG) pattern in Chapter 5. For now, just know that they're important for how
@@ -536,7 +560,7 @@ Often, one good example is enough, but complex tasks might need more.
 #### Zero-shot Capabilities
 
 Modern LLMs are so well-trained that they can often perform tasks without any examples.
-This is called zero-shot learning. You just describe what you want:
+This is called the zero-shot capability of a model. You just describe what you want:
 
 ```plaintext
 Classify the sentiment of this review: "The service was excellent"
@@ -598,7 +622,7 @@ are several reasons I rarely recommend it:
 
 **Why People Consider Fine-tuning:**
 
-- Make the model more specialized for specific tasks
+- Make the model more specialized for specific tasks and domains
 - Improve performance for domain-specific language
 - Ensure consistent outputs
 
@@ -619,7 +643,7 @@ are several reasons I rarely recommend it:
    - Limited flexibility
    - Can be overkill for most use cases
 
-Instead of fine-tuning, I typically recommend alternatives like Retrieval Augmented
+Instead of fine-tuning, I recommend looking at alternatives like Retrieval Augmented
 Generation (RAG). Here's a practical example:
 
 Let's say you're building a chatbot to answer questions about your company's products.
@@ -646,9 +670,11 @@ models, building on these fundamental concepts to create reliable applications.
 
 ## Practical Considerations for Working with LLMs
 
-Now that you understand the core concepts, let's look at practical considerations for
-working with LLMs. These are the lessons I've learned while building applications in
-production, and they'll help you avoid some of the problems that I ran into.
+There are quite a few things that you need to account for when building LLM-based
+applications. This book is full of those things, but I've found there are three
+cross-cutting concepts that I always keep in mind when building LLM-based applications.
+These are the lessons I've learned while building applications in production, and
+they'll help you avoid some of the nastier problems that I ran into.
 
 I think about these things as the downsides to building an LLM-based application. It's
 inspiring to work with language models, but they come with a cost.
@@ -678,17 +704,7 @@ We'll dive deeper into these topics in chapter two when we explore LLMOps essent
 For now, let's look at some real-world applications and use cases to inspire you with
 what's possible.
 
-## Real-world applications and use cases
-
-Social media is full of interesting posts about possible use cases that involve LLMs.
-Most of them involve generating content for marketing purposes or automating personal
-tasks. Both are great starting points for using LLMs, but there are a lot more
-possibilities out there.
-
-I've personally worked on a wide range of applications that go beyond personal task
-automation. Here are some examples from what I've come across.
-
-## Real-world Applications and Use Cases
+## Real-world applications and use case
 
 While social media is full of posts about using LLMs for marketing content or personal
 task automation, I've found the real potential goes far beyond these common examples.
@@ -718,9 +734,10 @@ capabilities rather than trying to replace them entirely.
 
 ### AI-Powered Knowledge Sharing Through Interviews
 
-Another interesting case involved an organization struggling with knowledge sharing.
-They had a common problem: experts who were too busy to write articles about their
-innovations, leading to repeated problem-solving across projects.
+Another interesting case involved Info Support itself, the organization I work for. We
+were struggling with knowledge sharing. We had a common problem: experts who were too
+busy to write articles about their innovations, leading to repeated problem-solving
+across projects.
 
 Instead of asking people to write articles, we flipped the script. We built a chat-based
 system where the LLM interviewed people about their work, asking progressively deeper
@@ -731,7 +748,7 @@ One interesting discovery was how well users responded to being interviewed by a
 The interaction felt natural without falling into the [uncanny
 valley](https://en.wikipedia.org/wiki/Uncanny_valley). However, we learned that letting
 the LLM fully control the interview flow was tricky. We eventually replaced our complex
-prompt-based decision making with a simpler function that tracked question count to
+prompt-based decision-making with a simpler function that tracked question count to
 manage interview length.
 
 ### Modernizing Legacy Code Bases
@@ -754,16 +771,16 @@ much better results.
 
 These cases represent just the beginning of what's possible with LLMs. While many people
 start their LLM journey with personal automation through tools like ChatGPT, these
-examples show how we can scale up to automate more complex team-based workflows.
+examples show how you can scale up to automate more complex team-based workflows.
 
 It's important to remember that we're in the early days of this technology. The patterns
 I share in this book work well today, but I expect them to evolve significantly over the
 next few years. What excites me most is that we're just starting to understand what's
 possible.
 
-As we move forward in this book, we'll explore these patterns in detail, showing you how
-to implement them in your own projects. But first, let's make sure you have a solid
-foundation by discussing operating LLMs in production in the next chapter.
+As we move forward in this book, we'll explore various design patterns in detail,
+showing you how to implement them in your own projects. But first, let's make sure you
+have a solid foundation by discussing operating LLMs in production in the next chapter.
 
 ## Summary
 
