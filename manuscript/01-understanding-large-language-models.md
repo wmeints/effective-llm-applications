@@ -418,23 +418,23 @@ helpful if you're just starting out:
 1. First, I choose a general purpose model based on the cloud provider I'm working with.
    Most of the time my clients already have a contract with either Microsoft Azure or
    AWS to host their solutions. I use the existing environment to prototype the
-   solution.
+   solution.  
 
 2. After the initial prototype, I'll look at data privacy requirements that the solution
    may have. Depending on these requirements I will determine the engineering effort and
    contractual effort we need to undertake to make the solution production viable.
    Usually, I'm the person who talks about the technical requirements while one of our
-   legal people looks into contracts.
+   legal people looks into contracts.  
 
 3. After the initial prototype and requirements gathering, I'll deploy the solution to
    production for a smaller group of people to gather initial user feedback and monitor
    for performance and costs. Based on this information I decide whether we should go
-   back and optimize the solution or replace the model with something else.
+   back and optimize the solution or replace the model with something else.  
 
 4. Once the solution is optimized and running in production for the general population
    of an organization, I'll keep monitoring in production for sudden changes in quality
    of the responses or performance. We regularly test and update the models to improve
-   the overall performance of the solution.
+   the overall performance of the solution.  
 
 This general workflow has helped me quite well over the past few years to deploy
 solutions in production. In the next section we'll dive into key concepts and
