@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookbinder.AppHost", "host\Bookbinder.AppHost.csproj", "{95A5CC42-7062-493C-8654-4CE367723ACE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apps", "apps", "{8016EEA5-972F-43BD-A749-6BE93CB702BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api", "api", "{4CA85FB3-66B3-4805-B503-8BE58269F470}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookbinder.Api", "apps\api\Bookbinder.Api\Bookbinder.Api.csproj", "{CC95F22C-287E-4AAB-A882-A7BFADC8890B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookbinder.Api.Tests", "apps\api\Bookbinder.Api.Tests\Bookbinder.Api.Tests.csproj", "{06934AAE-5C71-421C-A632-9C5BD4EA3E3C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95A5CC42-7062-493C-8654-4CE367723ACE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95A5CC42-7062-493C-8654-4CE367723ACE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95A5CC42-7062-493C-8654-4CE367723ACE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95A5CC42-7062-493C-8654-4CE367723ACE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC95F22C-287E-4AAB-A882-A7BFADC8890B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC95F22C-287E-4AAB-A882-A7BFADC8890B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC95F22C-287E-4AAB-A882-A7BFADC8890B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC95F22C-287E-4AAB-A882-A7BFADC8890B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06934AAE-5C71-421C-A632-9C5BD4EA3E3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06934AAE-5C71-421C-A632-9C5BD4EA3E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06934AAE-5C71-421C-A632-9C5BD4EA3E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06934AAE-5C71-421C-A632-9C5BD4EA3E3C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4CA85FB3-66B3-4805-B503-8BE58269F470} = {8016EEA5-972F-43BD-A749-6BE93CB702BA}
+		{CC95F22C-287E-4AAB-A882-A7BFADC8890B} = {4CA85FB3-66B3-4805-B503-8BE58269F470}
+		{06934AAE-5C71-421C-A632-9C5BD4EA3E3C} = {4CA85FB3-66B3-4805-B503-8BE58269F470}
+	EndGlobalSection
+EndGlobal

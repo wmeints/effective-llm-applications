@@ -1,9 +1,0 @@
----
-provider: anthropic
-model: claude-3-5-sonnet
-system_role: system-role.txt 
----
-Generate an outline for a book about: {{topic}}. Use the notes provided below as a guide
-to help you structure the outline.
-
-{{input}}
