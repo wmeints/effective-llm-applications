@@ -43,7 +43,7 @@ managing LLM-based projects.
 
 When I talk about LLMOps I like to take a layered approach as shown in figure 1.
 
-![Layering DevOps, MLOps, and LLMOps](./images/figure-1-llmops.png)
+![Layering DevOps, MLOps, and LLMOps](figure-1-llmops.png)
 
 LLM-Based projects are software-based projects and should follow DevOps practices. Most
 of the time the LLM only makes up a small part of the project, so most of your time will
