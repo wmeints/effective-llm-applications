@@ -31,15 +31,12 @@ the power of LLMs.
 
 ## Chapter 2: Essential LLMOps Knowledge
 
-* Infrastructure requirements and considerations 
 * Cost management and optimization
-* Security and privacy concerns
-* Model selection criteria
-* Performance monitoring and evaluation
 * Rate limiting and capacity planning
-* High availability and failover strategies
+* Performance monitoring and evaluation
+* Security and privacy concerns
+* Failover strategies
 * Best practices for production deployment
-* Common pitfalls and how to avoid them
 
 ## Chapter 3: Getting Started with Semantic Kernel
 
