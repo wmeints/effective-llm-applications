@@ -9,6 +9,10 @@ The first chapter of the book is complete. Get a copy now and start reading! Rea
 Leanpub: [Building effective LLM-based applications with Semantic
 Kernel](https://leanpub.com/effective-llm-applications-with-semantic-kernel)
 
+## Progress
+
+I'm writing this book, and I'm at **15% completion**.
+
 ## Working with the examples
 
 This book features useful examples that demonstrate how to implement various patterns
