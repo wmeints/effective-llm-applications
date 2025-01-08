@@ -1,4 +1,4 @@
-# Understanding Large Language Models
+# Chapter 1: Understanding Large Language Models
 
 I remember the first time I realized just how useful large language models could
 be. Like many developers, I initially tried ChatGPT almost as a joke – I didn't expect
@@ -486,6 +486,10 @@ The embedding layer isn't just a random part of the model – it's trained on va
 of text to understand how words relate to each other based on how they are used. Think
 of it as a map where similar words or concepts are located close to each other.
 
+The embedding concept can be quite challenging to full understand without seeing it in
+motion. [This website][UNDERSTANDING_TRANSFORMERS] does a great job making the
+concept visual.
+
 You'll work directly with embeddings later when we implement the Retrieval Augmented
 Generation (RAG) pattern in Chapter 5. For now, just know that they're important for how
 LLMs understand text.
@@ -810,3 +814,4 @@ Here are some resources if you want to learn more about the inner workings of LL
 [PHI4_ANNOUNCEMENT]: https://techcommunity.microsoft.com/blog/aiplatformblog/introducing-phi-4-microsoft%E2%80%99s-newest-small-language-model-specializing-in-comple/4357090
 [PHI4_BENCHMARKS]: https://www.microsoft.com/en-us/research/uploads/prod/2024/12/P4TechReport.pdf
 [PARAMETER_EXPLANATION]: https://medium.com/@albert_88839/large-language-model-settings-temperature-top-p-and-max-tokens-1a0b54dcb25e
+[UNDERSTANDING_TRANSFORMERS]: https://poloclub.github.io/transformer-explainer/
