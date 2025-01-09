@@ -18,7 +18,7 @@ enough in a more enterprise-oriented language like C#.
 
 ## What this book covers
 
-- Chapter 1, "Understanding Large Language Models," introduces large language models
+- Chapter 1, "Understanding Large Language Models", introduces large language models
   (LLMs) through the lens of my personal experience, explaining what they are, their
   capabilities, and why they're transforming how we build applications. This
   foundational chapter is essential for understanding the core concepts, and terminology
@@ -30,7 +30,7 @@ enough in a more enterprise-oriented language like C#.
   information you'll need to know to appreciate the design patterns that we cover in
   later chapters.
 
-- Chapter 3, "Getting Started with Semantic Kernel," covers Semantic Kernel, a framework
+- Chapter 3, "Getting Started with Semantic Kernel", covers Semantic Kernel, a framework
   from Microsoft that simplifies building applications with LLMs by providing tools,
   abstractions, and patterns for integrating AI capabilities into your projects. This
   chapter walks you through setting up your development environment and creating your
@@ -106,3 +106,24 @@ have the following tools available on your system:
 - [.NET SDK 9.0 or Higher](https://dot.net/)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) or a similar containerization tool.
 - [Visual Studio Code](https://code.visualstudio.com) or a similar code editing tool.
+
+## Running the sample code in this book
+
+This book comes with samples on GitHub. You can find the repository at
+[https://github.com/wmeints/effective-llm-applications/](https://github.com/wmeints/effective-llm-applications/).
+You'll find the samples in the `samples` folder in the repository.
+
+Each sample comes with a README.md file that explains how to run the sample and the
+requirements for the sample. I've made sure you can run the sample with either Azure
+OpenAI or the regular OpenAI service when you follow the instrucitons in the included
+README.md file.
+
+As an added bonus, I've made sure to include samples for Java and Python too. So if you
+are reading this book but don't work with C#, you can still try out the samples.
+
+## Feedback and issues
+
+If you have any feedback or issues with the book, please create an issue in the [GitHub
+repository][BOOK_REPO]. I'll do my best to address the issue as soon as possible.
+
+[BOOK_REPO]: https://github.com/wmeints/effective-llm-applications/
