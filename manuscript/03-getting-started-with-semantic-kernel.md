@@ -99,13 +99,13 @@ provided and combines it with other text to produce a full prompt. This is helpf
 because you can reuse prompts across multiple use cases in your application or across
 applications.
 
-When the prompt is rendered, the prompt is sent to the LLM provider. In section
-[#d](#llmops-rate-limits) we discussed that sometimes the LLM provider may not be
+When the prompt is rendered, the prompt is sent to the LLM provider. In 
+[#s](#llmops-rate-limits) we discussed that sometimes the LLM provider may not be
 available, or you may have run out of quota. Semantic Kernel makes sure to handle these
 failure modes for you as much as possible.
 
 When the response comes back from the LLM, we need to process it. The monitoring data we
-discussed in section [#](#llmops-monitoring) is automatically generated for you so you
+discussed in section [#s](#llmops-monitoring) is automatically generated for you so you
 can export it through tools like Application Insights or OpenTelemetry.
 
 Ultimately, the result of a prompt execution is returned to you. Depending on what you
@@ -114,8 +114,8 @@ sure that the data is deserialized as necessary so you can work with it in your
 application.
 
 The kernel allows you to inject filters at various points in the process. This is useful
-to for example filter out harmful responses (see section [#d](#llmops-user-safety)) or
-to remove PII data in the request (see section [#d](#llmops-data-privacy)).
+to for example filter out harmful responses (see [#s](#llmops-user-safety)) or
+to remove PII data in the request (see [#s](#llmops-data-privacy)).
 
 ### Enterprise Readiness
 
