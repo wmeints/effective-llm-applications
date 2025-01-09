@@ -130,7 +130,7 @@ because you can use them to:
 - Perform actions based on the prompt of the user.
 - Find relevant content to enhance the response to the prompt.
 
-We will cover functions in great depth through chapters 4 and 5, for now it's important
+We will cover functions in great depth through chapters 5 and 6, for now it's important
 to understand a trick I like to call the kernel loop in relation to function calling.
 
 Modern LLMs support function calling and can, if you design your application right,
