@@ -1,4 +1,5 @@
-# Chapter 1: Understanding Large Language Models
+{#chapter-1}
+# Understanding Large Language Models
 
 I remember the first time I realized just how useful large language models could
 be. Like many developers, I initially tried ChatGPT almost as a joke – I didn't expect
