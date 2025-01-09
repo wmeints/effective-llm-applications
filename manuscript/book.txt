@@ -1,4 +1,3 @@
-frontmatter.txt
 00-preface.md
 mainmatter.txt
 01-understanding-large-language-models.md
