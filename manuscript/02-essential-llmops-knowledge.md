@@ -41,8 +41,9 @@ for managing the lifecycle of machine learning projects. And now that we have LL
 people have started to use the term LLMOps to refer to the practices involved in
 managing LLM-based projects.
 
-When I talk about LLMOps I like to take a layered approach as shown in figure 1.
+When I talk about LLMOps I like to take a layered approach as shown in [#s](#llmops-layering).
 
+{#llmops-layering}
 ![Layering DevOps, MLOps, and LLMOps](figure-1-llmops.png)
 
 LLM-Based projects are software-based projects and should follow DevOps practices. Most
