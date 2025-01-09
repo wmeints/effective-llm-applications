@@ -70,7 +70,7 @@ affecting everything else in the application. This is important, because the
 architecture of LLM-based applications will change quickly over the next few years as we
 learn more about the capabilities and limitations of LLMs.
 
-In chapter [#d](#chapter-1), we covered how LLMs generate a response. The kernel plays
+In [#s](#understanding-llms), we covered how LLMs generate a response. The kernel plays
 an important role in this process. Let's explore what happens when you run a prompt
 through the kernel.
 
