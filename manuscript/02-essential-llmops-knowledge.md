@@ -129,6 +129,7 @@ detail:
   calls by applying integration tests.
 - In chapter 6, we dive into integration tests for a combination of search and an LLM.
 
+{#llmops-monitoring}
 ## Monitoring and evaluation of your application
 
 You can consider testing as a way to make sure you have a safety net in place to catch
@@ -204,6 +205,7 @@ control.
 Now that we have the important monitoring concepts in place, let's move on to dealing with
 failure modes in your LLM-based application.
 
+{#llmops-rate-limits}
 ## Dealing with rate limits and capacity planning
 
 All LLM providers are dealing with an enormous influx of people who want to use their
@@ -291,6 +293,7 @@ Regardless of what your client thinks, it's good to spend some time planning for
 failover scenarios as this has a big impact on the user experience and the development
 effort you need to spend.
 
+{#llmops-security}
 ## Security and privacy in an LLM-based application
 
 We've covered quite a few LLMOps essentials. And you may have noticed that not many of
@@ -316,6 +319,7 @@ There are three main topics when we talk about security in relation to LLMs:
 
 Let me go over each of these topics to give you a direction on how to think about them.
 
+{#llmops-data-privacy}
 ### Data privacy
 
 Before you start using an LLM you need to think about the data you're sending to the
@@ -394,6 +398,7 @@ topic that you can read [here][MANAGING_LLM_THREATS].
 While application security is a large portion of the security concerns you'll have to
 deal with, there's another part that's equally important. User safety.
 
+{#llmops-user-safety}
 ### User safety
 
 We've all seen the videos and articles on internet showing LLMs generating harmful or
