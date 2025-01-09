@@ -49,6 +49,7 @@ use is experimental or not.
 Let's look at the core concepts and the architecture of Semantic Kernel so you'll know
 what to expect when you start using it.
 
+{#core-concepts-and-architecture}
 ### Core concepts and architecture
 
 The architecture for Semantic Kernel is based around the concept of a Kernel that
@@ -192,7 +193,12 @@ is the furthest along. Microsoft is still working on properly supporting all fea
 Java.
 
 You can find a full list of supported features for each language in the [language
-support matrix][LANGUAGE_SUPPORT].
+support matrix][LANGUAGE_SUPPORT]. The matrix will tell you which features are supported
+in each of the languages and what connectors are available for each of the languages.
+
+While I only work with C# in this book, I've made sure there are samples available in 
+Python and Java as well where possible. I'll point you to the right resources when we
+get to those parts of the book.
 
 Now that you have a good understanding of the core components, let's put them into
 practice by setting up a development environment and building a project with Semantic
@@ -229,19 +235,268 @@ next section when we set up a project with Semantic Kernel.
 
 ## Setting up a project with Semantic Kernel
 
-- We'll use both ASP.NET Core and Console Worker applications in the book. Because LLMs are resource-intensive and you might want to run them as an online process as well as in a more batch-oriented way.
-- We'll use the `Microsoft.SemanticKernel` NuGet package to get started with Semantic Kernel. This package provides the core functionality for working with LLMs in a way that's optimized for performance and ease of use.
-- You'll need a separate package like `Microsoft.SemanticKernel.Connectors.AzureOpenAI` to connect to a specific LLM provider. If you ever want to switch, just configure another provider and you're good to go.
+It will be highly likely that you're going to build some sort of web API around your LLM use case. But Semantic Kernel can be used in more places than just web applications.
+Although to be honest, you can't use it on your mobile device right now through MAUI. To help you get started, I want to provide you with two scenarios:
 
-### Setting up an ASP.NET Core project
+- Using Semantic Kernel in a standalone console application
+- Using Semantic Kernel in an ASP.NET Core application
 
-### Setting up a worker application
+Let's start with a basic console application to get you started.
 
-## Running a basic prompt with Semantic Kernel
+### Setting up Semantic Kernel in a console application
 
-- To get used to working with Semantic Kernel, let me demonstrate how to run a basic prompt through GPT-4o using the `Microsoft.SemanticKernel.Connectors.AzureOpenAI` package.
-- We'll use the worker application we created in the previous section to run a prompt that will generate a list of 5 interesting names for a new product.
-- Don't worry about testing right now, we'll cover that in chapter 4, when we cover prompt engineering in greater depth.
+To set up a console application with Semantic Kernel, you need to create a new console application in Visual Studio Code, Rider, or Visual Studio. I prefer to use a terminal with Visual Studio Code, but you can use the IDE you like.
+Execute the following command in a terminal to start a new console application in C#:
+
+```bash
+dotnet new console -n Chapter1.ConsoleApp
+```
+
+This command will create a new console application in a folder called `Chapter1.ConsoleApp`. You can open the folder in Visual Studio Code by executing the following command:
+
+```bash
+code Chapter1.ConsoleApp
+```
+
+In Visual Studio Code, you'll see the project file for the console application called `Chapter1.Console.csproj` and a `Program.cs` file that will contain the main program code.
+
+Let's add the Semantic Kernel package to the project by executing the following commands in the project directory inside a terminal window:
+
+```bash
+dotnet add package Microsoft.SemanticKernel
+dotnet add package Azure.Identity
+```
+
+This command will install the Semantic Kernel package that has references to the following packages:
+
+- `Microsoft.SemanticKernel.Core`, containing the core components we discussed in [#s](#core-concepts-and-architecture)
+- `Microsoft.SemanticKernel.Abstractions`, containing the base layer for various types of connectors
+- `Microsoft.SemanticKernel.Connectors.AzureOpenAI`, containing the connector to Azure OpenAI
+- `Microsoft.SemanticKernel.Connectors.OpenAI`, containing the connector to OpenAI
+
+The Semantic Kernel package provides convenience if you don't want to worry about
+collecting individual packages. If you care about the size of your application, you can
+install the individual packages instead.
+
+I've included the `Azure.Identity` package because it's a good practice to use managed identities when you're working with Azure services.
+This package provides the `DefaultAzureCredential` class that you can use to authenticate with Azure services without the need to store
+secrets with your application.
+
+With the packages installed, you can configure the kernel object we discussed in
+[#s](#core-concepts-and-architecture) in the `Program.cs` file.
+
+```csharp
+using Microsoft.SemanticKernel;
+using Azure.AI.OpenAI;
+using Azure.Identity;
+using OpenAI;
+
+IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
+
+var apiClient = new AzureOpenAIClient(
+    new Uri("https://<your-endpoint>"),
+    new DefaultAzureCredential());
+
+kernelBuilder.AddAzureOpenAIChatCompletion(
+    deploymentName: "gpt-4o",
+    azureOpenAIClient: apiClient);
+
+// ALTERNATIVELY: Use the OpenAI API directly.
+
+// var apiClient = new OpenAIClient(
+//     Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+
+// kernelBuilder.AddOpenAIChatCompletion("gpt-4o", apiClient);
+
+Kernel kernel = kernelBuilder.Build();
+```
+
+Let's go over the code step by step:
+
+1. First, we import the necessary namespaces for the kernel and the connectors.
+2. Then, we create a new kernel builder that we can use to configure the functions,
+   filters, and LLM provider for the kernel.
+3. After that, we invoke the `Build` method on the kernel builder to create the kernel
+   object.
+
+Make sure to configure the necessary environment variables with the configuration for
+the application.
+
+At this point, you can use the kernel object to execute prompts. We'll cover how to do
+that in [#s](#executing-your-first-prompt). But before we do that, let's set up Semantic
+Kernel in ASP.NET Core too.
+
+### Setting up Semantic Kernel in an ASP.NET Core project
+
+To set up Semantic Kernel in an ASP.NET Core project, you need to create a new web API
+project. You can do this by executing the following command in a terminal:
+
+```bash
+dotnet new web -n Chapter1.WebApi
+```
+
+This command will create a new web API project in a folder called `Chapter1.WebApi`. You
+can open the folder in Visual Studio Code by executing the following command:
+
+```bash
+code Chapter1.WebApi
+```
+
+In Visual Studio Code, you'll see the project file for the web API called
+`Chapter1.WebApi.csproj` and a `Program.cs` file that will contain the configuration for
+the web API. For web applications you'll also find a `settings.json` file and a
+`settings.Development.json` file in the project directory.
+
+Next, we need to add the same package as we used in the console application to the web
+API project. Execute the following commands in the project directory inside a terminal
+window:
+
+```bash
+dotnet add package Microsoft.SemanticKernel
+dotnet add package Azure.Identity
+```
+
+This will install the necessary packages including the connector for Azure OpenAI and
+OpenAI.
+
+ASP.NET Core uses dependency injection to manage components in the application. Setting
+up Semantic Kernel in an ASP.NET Core application is different from using it in a
+console application. You need to use the dependency injection container to register the
+kernel object in the application.
+
+```csharp
+using Azure.AI.OpenAI;
+using Azure.Identity;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
+using OpenAI;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddTransient(sp => new AzureOpenAIClient(
+    new Uri(builder.Configuration["AzureOpenAI:Endpoint"]!),
+    new DefaultAzureCredential()));
+
+var kernelBuilder = builder.Services.AddKernel()
+    .AddAzureOpenAIChatCompletion(deploymentName: "gpt-4o");
+
+// ALTERNATIVELY: Use the OpenAI API directly.
+
+// builder.Services.AddTransient(sp => new OpenAIClient(builder.Configuration["OpenAI:ApiKey"]));
+
+// var kernelBuilder = builder.Services.AddKernel()
+//     .AddOpenAIChatCompletion("gpt-4o");
+
+var app = builder.Build();
+
+app.MapGet("/", () => "Hello World!");
+
+app.Run();
+```
+
+Let's go over the code step by step to understand the differences between this code and
+a regular console application:
+
+1. The using statements are the same as with a console application. We'll need to use
+   the Semantic Kernel namespace and the connector namespace.
+2. Next, we register a new `AzureOpenAIClient` in the service collection. We use the
+   `AzureOpenAI:Endpoint` configuration value to set the endpoint of the Azure OpenAI
+   service. We use the `DefaultAzureCredential` class to authenticate with Azure
+   services. 
+2. After that, instead of creating a `IKernelBuilder` ourselves, we call the `AddKernel`
+   method on the service collection of the application. This method returns a
+   `IKernelBuilder` that we can use to configure the kernel. It also registers the
+   kernel builder in the service collection so that a new kernel instance is created
+   when we later ask for a `Kernel` object in a controller or endpoint.
+3. Then, we use the `AddAzureOpenAIChatCompletion` method on the kernel builder to add
+   the Azure OpenAI connector to the kernel. This method takes the deployment name of
+   the model as a parameter.
+4. Finally, we run the application as normal with the `Run` method.
+
+Note that ASP.NET Core provides a nice configuration system that allows you to store
+configuration values in a `settings.json` file. You can also store configuration in
+environment variables or a key vault. This is one of the advantages of using a web
+application over a console application. Although, with a little more effort you can
+integrate the configuration system in the console application.
+
+So if you're building a web application, make sure you configure the required
+information in the settings.json file or in environment variables. You can also use
+[user-secrets][USER_SECRETS] to store sensitive information like the OpenAI API Key.
+
+Instead of providing an OpenAI client with the `AddAzureOpenAIChatCompletion` method,
+we've preregistered the OpenAI client in the service collection. If you're using a tool
+like [.NET Aspire][DOTNET_ASPIRE] you'll likely inject the OpenAI client through one of
+the Aspire integration libraries. Those libraries only support injecting a client
+through the service collection so it's a bad practice to provide the OpenAI client to
+the `AddAzureOpenAIChatCompletion` method yourself. Consider this a nice step-up to
+using .NET Aspire to manage your LLM-based application environment.
+
+Semantic Kernel works well with ASP.NET Core, but you can use it in any kind of
+environment even without dependency injection and configuration systems.
+
+The `Kernel` object that we registered can be recreated as often as you like. In ASP.NET
+Core you get a new instance of the `Kernel` every time you ask for one. They're not
+shared between requests or kept around for the duration of a request.
+
+It's important to know that the `Kernel` object is considered transient. This way
+you can have a base kernel configuration in the startup of your application and extend
+it with additional filters and functions for specific operations without affecting other
+future requests.
+
+{#executing-your-first-prompt}
+## Executing your first prompt with Semantic Kernel
+
+It's nice to have a basic kernel ready to go, but how do you use it to execute a prompt?
+Let's explore this by running a basic prompt that generates a list of 5 interesting
+names for a new line of shoes. We'll create a class called the `ProductNameGenerator`
+that will use the kernel with a prompt to generate the list of product names.
+
+```csharp
+public class ProductNameGenerator(Kernel kernel)
+{
+    public async Task<string> GenerateProductNames()
+    {
+        var productNames = await kernel.InvokePromptAsync("Generate 5 product names for a new line of shoes.");
+        return productNames.GetValue<string>()!;
+    }
+}
+```
+
+The `ProductNameGenerator` class has a method called `GenerateProductNames` that uses
+the kernel to execute a prompt. The prompt asks the LLM to generate 5 product names for
+a new line of shoes. Prompts can return text structured data or things like images. We
+need to use the `GetValue<T>` method to obtain the text from the response generated by
+the LLM.
+
+Now that we have the `ProductNameGenerator` class, we can use it in the console
+application or the web API to generate the product names. For the web application we can
+modify the `Program.cs` file to include the following code:
+
+```csharp
+builder.Services.AddTransient<ProductNameGenerator>();
+
+var app = builder.Build();
+
+app.MapGet("/", (ProductNameGenerator productNameGenerator) => productNameGenerator.GenerateProductNames());
+```
+
+When you start the application and navigate to the root URL, you should see a list of 5
+product names for a new line of shoes after a few seconds.
+
+For the console application, you can modify the `Program.cs` file to include the
+following code:
+
+```csharp
+var kernel = kernelBuilder.Build();
+var productNameGenerator = new ProductNameGenerator(kernel);
+var productNames = await productNameGenerator.GenerateProductNames();
+
+Console.WriteLine(productNames);
+```
+
+When you run the console application, you should see a list of 5 product names for a new
+line of shoes printed to the console.
 
 ## Common use cases for Semantic Kernel
 
@@ -256,3 +511,5 @@ next section when we set up a project with Semantic Kernel.
 
 [SEMANTIC_KERNEL_DOCS]: https://learn.microsoft.com/en-us/semantic-kernel/
 [LANGUAGE_SUPPORT]: https://learn.microsoft.com/en-us/semantic-kernel/get-started/supported-languages
+[DOTNET_ASPIRE]: https://learn.microsoft.com/en-us/dotnet/aspire/get-started/aspire-overview
+[USER_SECRETS]: https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-9.0&tabs=windows
