@@ -1,4 +1,5 @@
-# Chapter 2: Essential LLMOps Knowledge
+{#chapter-2}
+# Essential LLMOps Knowledge
 
 In chapter 1 we explored the basic concepts and terminology around LLMS. We briefly
 touched on the essentials for building and operating LLMs. In this chapter we'll explore
