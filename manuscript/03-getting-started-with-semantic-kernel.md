@@ -99,13 +99,13 @@ provided and combines it with other text to produce a full prompt. This is helpf
 because you can reuse prompts across multiple use cases in your application or across
 applications.
 
-When the prompt is rendered, the prompt is sent to the LLM provider. In 
+When the prompt is rendered, it is sent to the LLM provider. In
 [#s](#llmops-rate-limits) we discussed that sometimes the LLM provider may not be
 available, or you may have run out of quota. Semantic Kernel makes sure to handle these
 failure modes for you as much as possible.
 
 When the response comes back from the LLM, we need to process it. The monitoring data we
-discussed in section [#s](#llmops-monitoring) is automatically generated for you so you
+discussed in [#s](#llmops-monitoring) is automatically generated for you so you
 can export it through tools like Application Insights or OpenTelemetry.
 
 Ultimately, the result of a prompt execution is returned to you. Depending on what you
@@ -117,30 +117,113 @@ The kernel allows you to inject filters at various points in the process. This i
 to for example filter out harmful responses (see [#s](#llmops-user-safety)) or
 to remove PII data in the request (see [#s](#llmops-data-privacy)).
 
-### Enterprise Readiness
+While the kernel is the core of Semantic Kernel, the functions are the most important
+part of the framework. Functions will provide the power needed to turn the LLM from a
+simple text generator into the promised semantic intelligence of your application.
 
-- Filtering input and output in plugins and the kernel
-- Monitoring capabilities
+### Calling Functions
+
+In Semantic Kernel, you can connect functions to the kernel to provide it with
+additional functionality. Functions play an important role in LLM-based applications,
+because you can use them to:
+
+- Perform actions based on the prompt of the user.
+- Find relevant content to enhance the response to the prompt.
+
+We will cover functions in great depth through chapters 4 and 5, for now it's important
+to understand a trick I like to call the kernel loop in relation to function calling.
+
+Modern LLMs support function calling and can, if you design your application right,
+combine several calls to functions to complete a reasonably complex task.
+[#s](#function-calling-loop) demonstrates the pattern that Semantic Kernel uses to turn
+the LLM into a planner by using the LLM's function calling capabilities.
+
+{#function-calling-loop}
+![Function calling loop](function-calling-loop.png)
+
+At the end of the prompt execution flow in [#s](#kernel-interactions), when the prompt
+is submitted to the LLM it isn't just submitted. We can't just submit a piece of text,
+we need to turn it into a chat history object. While an LLM only works with an input
+sequence to produce an output sequence, all modern LLMs are trained as if they're
+chatbots. They use conversations as a concept to generate better responses.
+
+The concept of a conversation will sound familiar to you if you've ever worked with
+tools like ChatGPT. The idea is great because if you train the LLM just right, you can
+use the concept of a conversation to guide the LLM to follow a plan. Also, you can use
+the concept of a conversation to let the user refine their input in response to the
+LLM's output. At first, I thought it was silly to use the concept in a context other
+than a chatbot, but now I see the power of it. You'll see me use the concept of a
+conversation in the design patterns in the upcoming chapters a lot.
+
+Let me be clear here, before you start thinking that LLMs are chatbots, they still
+aren't. Although they're trained as if they are. The conversation you submit to the LLM
+is flattened to a text sequence with special markers to delimit the start and end of
+messages in the conversation. The LLM doesn't produce a conversation as output, it will
+only spit out tokens that you can combine to a response. Frameworks like Semantic Kernel
+will turn the response back into a response message and add it to the chat history
+object if you like.
+
+Going back to function calling, once we have a conversation history object, the kernel
+will send it to the LLM, and wait for a response.
+
+If the response is a `tool_call` response, the kernel will find the function identified
+by the `tool_call` and execute it with the parameter values provided by the LLM. The
+result of the function call is added to the conversation as a tool message and new
+history is submitted to the LLM again. This process repeats until the LLM returns a
+response that doesn't contain a `tool_call`.
+
+You can do some very powerful planning with this. If you design a prompt that tells the
+LLM to follow a plan and mention tools in your plan, it is very likely it will follow
+the plan. We'll use the fact that Semantic Kernel has this loop in the design patterns
+in upcoming chapters.
 
 ### Language support
 
+The idea of using a semantic core with an LLM, functions and filters in your application
+is universal. It works in all programming languages. Semantic Kernel is available in C#,
+Python, and Java. I chose C# for this book because I like C# as a language, but you
+shouldn't feel limited by my preference.
+
+With support for both Python and Java, Semantic Kernel covers all popular languages in
+the enterprise space right now. But you should be aware that support for Python and C#
+is the furthest along. Microsoft is still working on properly supporting all features in
+Java.
+
+You can find a full list of supported features for each language in the [language
+support matrix][LANGUAGE_SUPPORT].
+
+Now that you have a good understanding of the core components, let's put them into
+practice by setting up a development environment and building a project with Semantic
+Kernel.
+
 ## Setting up your development environment
 
-### System requirements
+Before you can start using Semantic Kernel, you need to set up your development
+environment. I recommend getting these tools set up:
 
-- .NET 9.0 or later
-- Visual Studio Code, Rider 2024.3 or Visual Studio 2022
-- Access to the OpenAI API or Azure OpenAI
+- [.NET 9.0 SDK or later](https://dotnet.microsoft.com/download/dotnet/9.0)
+- [Visual Studio Code](https://code.visualstudio.com), [Rider 2024.3](https://www.jetbrains.com/rider/) or [Visual Studio 2022](https://visualstudio.microsoft.com/)
+- Access to the [OpenAI API](https://openai.com/api/) or [Azure OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal)
 
-### Getting access to an LLM
+### Other supported LLM providers
 
-- Before you can start using Semantic Kernel, you'll need access to an LLM. You can use OpenAI's GPT-3 or GPT-4.
-- I'm not covering other LLM providers here,  but you can certainly use them with Semantic Kernel. Just make sure to use the right connector package. We'll discuss those in the next section when we set up a project with Semantic Kernel.
-- Let's get started by setting up a new Azure OpenAI resource in Azure. Make sure you have access to an Azure subscription before you start.
+Although I refer only to GPT-4 through the OpenAI API or Azure OpenAI, these are not the
+only supported LLMs for Semantic Kernel. There are numerous LLM providers that are
+supported in Semantic Kernel. They're adding more and more with each release. At the
+time of writing there's support for:
 
-#### Getting access to Azure OpenAI
+- OpenAI
+- AzureOpenAI
+- Amazon Bedrock
+- Anthropic
+- OLLama
+- Google
+- Hugging Face
+- ONNX
 
-#### Getting access to OpenAI
+I'm not covering other LLM providers here, but you can certainly use them with Semantic
+Kernel. Just make sure to use the right connector package. We'll discuss those in the
+next section when we set up a project with Semantic Kernel.
 
 ## Setting up a project with Semantic Kernel
 
@@ -170,3 +253,4 @@ to remove PII data in the request (see [#s](#llmops-data-privacy)).
 ## Summary
 
 [SEMANTIC_KERNEL_DOCS]: https://learn.microsoft.com/en-us/semantic-kernel/
+[LANGUAGE_SUPPORT]: https://learn.microsoft.com/en-us/semantic-kernel/get-started/supported-languages
