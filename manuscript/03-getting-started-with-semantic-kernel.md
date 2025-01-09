@@ -8,7 +8,6 @@ use to build LLM-based applications: Semantic Kernel. We'll cover the following 
 - Setting up your development environment
 - Setting up a project with Semantic Kernel
 - Running a basic prompt with Semantic Kernel
-- Common use cases for Semantic Kernel
 
 By the end of the chapter you'll have a solid foundation to start exploring how to write
 effective prompts and design applications using the design patterns in the upcoming
