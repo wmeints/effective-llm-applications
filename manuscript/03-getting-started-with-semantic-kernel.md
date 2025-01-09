@@ -75,7 +75,7 @@ an important role in this process. Let's explore what happens when you run a pro
 through the kernel.
 
 {#kernel-interactions}
-![Kernel interactions](semantic-kernel-architecture.png)
+![Kernel interactions](kernel-interactions.png)
 
 When you ask Semantic Kernel to execute a prompt for you, it will first determine what
 AI service to use. An AI service in Semantic Kernel can be an LLM or another AI service
@@ -136,16 +136,18 @@ to understand a trick I like to call the kernel loop in relation to function cal
 Modern LLMs support function calling and can, if you design your application right,
 combine several calls to functions to complete a reasonably complex task.
 [#s](#function-calling-loop) demonstrates the pattern that Semantic Kernel uses to turn
-the LLM into a planner by using the LLM's function calling capabilities.
+the LLM into a planner by using the LLM's function calling capabilities. The function
+calling flow takes place when the rendered prompt is submitted at the end of the prompt
+execution flow in [#s](#kernel-interactions).
 
 {#function-calling-loop}
 ![Function calling loop](function-calling-loop.png)
 
-At the end of the prompt execution flow in [#s](#kernel-interactions), when the prompt
-is submitted to the LLM it isn't just submitted. We can't just submit a piece of text,
-we need to turn it into a chat history object. While an LLM only works with an input
-sequence to produce an output sequence, all modern LLMs are trained as if they're
-chatbots. They use conversations as a concept to generate better responses.
+This may come as a bit of a surprise. We can't just submit the rendered prompt to the
+LLM, we need to turn it into a chat history object and submit that to the prompt. While
+an LLM only works with an input sequence to produce an output sequence, all modern LLMs
+are trained as if they're chatbots. They use conversations as a concept to generate
+better responses.
 
 The concept of a conversation will sound familiar to you if you've ever worked with
 tools like ChatGPT. The idea is great because if you train the LLM just right, you can
@@ -163,7 +165,7 @@ only spit out tokens that you can combine to a response. Frameworks like Semanti
 will turn the response back into a response message and add it to the chat history
 object if you like.
 
-Going back to function calling, once we have a conversation history object, the kernel
+Going back to function calling: once we have a conversation history object, the kernel
 will send it to the LLM, and wait for a response.
 
 If the response is a `tool_call` response, the kernel will find the function identified
