@@ -23,33 +23,33 @@ enough in a more enterprise-oriented language like C#.
   capabilities, and why they're transforming how we build applications. This
   foundational chapter is essential for understanding the core concepts, and terminology
   that will help you make informed decisions about using LLMs in your projects, even if
-  you're completely new to working with these models.  
+  you're completely new to working with these models.\
 
 - Chapter 2, "Essential LLMOps knowledge", explains the basic operations involved in
   building and hosting LLM-based applications. This chapter provides important
   information you'll need to know to appreciate the design patterns that we cover in
-  later chapters.
+  later chapters.\
 
 - Chapter 3, "Getting Started with Semantic Kernel", covers Semantic Kernel, a framework
   from Microsoft that simplifies building applications with LLMs by providing tools,
   abstractions, and patterns for integrating AI capabilities into your projects. This
   chapter walks you through setting up your development environment and creating your
   first Semantic Kernel project, giving you hands-on experience with the framework we'll
-  build upon throughout the rest of the book.  
+  build upon throughout the rest of the book.\
 
 - Chapter 4, "The Art of Prompt Engineering", dives into the art of prompt engineering,
   teaching you how to craft effective prompts that get reliable, high-quality responses
   from LLMs by covering key concepts like temperature, templates, and advanced techniques.
   This chapter is crucial because the ability to write good prompts is the foundation of
   working with LLMs - without this skill, you'll struggle to get consistent results no
-  matter what frameworks or patterns you use.  
+  matter what frameworks or patterns you use.\
 
 - Chapter 5, "Enhancing LLMs With Tools", explores how to enhance LLMs by giving them
   access to external tools and skills, showing you how to build custom tools, integrate
   APIs, and manage memory and context to create more capable AI systems. LLMs become
   dramatically more powerful when they can interact with external tools and data -
   understanding these patterns will let you build AI assistants that can take actual
-  actions and work with real-world data.  
+  actions and work with real-world data.\
 
 - Chapter 6, "Retrieval Augmented Generation (RAG)", shows you how to improve your LLM
   applications by grounding the responses in your own data using Retrieval Augmented
@@ -57,21 +57,21 @@ enough in a more enterprise-oriented language like C#.
   domain-specific chatbot. If you want your LLM applications to give accurate responses
   based on your company's documents, internal knowledge, or any specific dataset, this
   chapter is essential since it teaches you the complete RAG architecture from
-  preprocessing to efficient retrieval and context integration.  
+  preprocessing to efficient retrieval and context integration.\
 
 - Chapter 7, "Working with structured output", teaches you how to get structured output
   from LLMs, enabling you to reliably integrate AI responses into your applications.
   This chapter helps you bridge the gap between AI capabilities and your existing
   codebase. Mastering this skill will let you build reliable AI features that work
-  seamlessly with the other components in your applications.  
+  seamlessly with the other components in your applications.\
 
 - Chapter 8, "Prompt Chaining Workflows", delves into the essential pattern of prompt
   chaining, showing you how to break down complex tasks into manageable sequences of
-  prompts that build upon each other's outputs to refine the output.  
+  prompts that build upon each other's outputs to refine the output.\
 
 - Chapter 9, "Intelligent Request Routing Workflows", teaches you how to build systems
   that intelligently route requests through a workflow by applying a reasoning prompt
-  with logic. This chapter helps you build more flexible workflows using LLMs.  
+  with logic. This chapter helps you build more flexible workflows using LLMs.\
 
 - In Chapter 10, "LLM Orchestration Workflows", you'll learn how to design and implement
   robust LLM orchestration workflows that can handle complex document processing tasks
@@ -79,24 +79,24 @@ enough in a more enterprise-oriented language like C#.
   is essential for anyone building production-grade LLM applications that need to
   reliably process large volumes of requests while maintaining observability and
   performance - skills that become critical as your LLM applications grow beyond simple
-  single-request implementations.  
+  single-request implementations.\
 
 - Chapter 11, "Artist and Critic Workflows", explores the powerful "artist and critic"
   pattern where LLMs are used both to generate content and to critically evaluate and
   refine that content through iterative feedback loops. This chapter helps you
   understand how you can build self-improving workflows for content creation and code
-  generation or any other scenario where output quality is important.  
+  generation or any other scenario where output quality is important.\
 
 - Chapter 12, "Building Basic Agents," introduces the fundamentals of building
   autonomous agents with LLMs. It covers the core loop of observation, reasoning, and
   action along with essential patterns for managing agent memory and state. This chapter
-  helps you understand the role of agents and when the use an agent in your application.  
+  helps you understand the role of agents and when the use an agent in your application.\
 
 - Chapter 13, "Building Multi-Agent Teams", tackles the advanced topic of building
   multi-agent teams, exploring how to coordinate multiple AI agents working together
   with defined roles, communication protocols, and strategies for solving complex tasks.
   Although the multi-agent pattern is still in its infancy, reading this chapter will
-  help you understand where current generative AI research is moving towards.
+  help you understand where current generative AI research is moving towards.\
 
 ## System requirements
 
