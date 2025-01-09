@@ -153,7 +153,9 @@ The concept of a conversation will sound familiar to you if you've ever worked w
 tools like ChatGPT. The idea is great because if you train the LLM just right, you can
 use the concept of a conversation to guide the LLM to follow a plan. Also, you can use
 the concept of a conversation to let the user refine their input in response to the
-LLM's output. At first, I thought it was silly to use the concept in a context other
+LLM's output.
+
+At first, I thought it was silly to use the concept in a context other
 than a chatbot, but now I see the power of it. You'll see me use the concept of a
 conversation in the design patterns in the upcoming chapters a lot.
 
@@ -168,11 +170,11 @@ object if you like.
 Going back to function calling: once we have a conversation history object, the kernel
 will send it to the LLM, and wait for a response.
 
-If the response is a `tool_call` response, the kernel will find the function identified
-by the `tool_call` and execute it with the parameter values provided by the LLM. The
-result of the function call is added to the conversation as a tool message and new
-history is submitted to the LLM again. This process repeats until the LLM returns a
-response that doesn't contain a `tool_call`.
+If the response from the LLM is a `tool_call` response, the kernel will find the
+function identified by the `tool_call` and execute it with the parameter values provided
+by the LLM. The result of the function call is added to the history object as a tool
+message and the new history is submitted to the LLM again. This process repeats until
+the LLM returns a response that doesn't contain a `tool_call`.
 
 You can do some very powerful planning with this. If you design a prompt that tells the
 LLM to follow a plan and mention tools in your plan, it is very likely it will follow
@@ -520,9 +522,12 @@ Console.WriteLine(productNames);
 ```
 
 When you run the console application, you should see a list of 5 product names for a new
-line of shoes printed to the console. To be honest, it doesn't make a lot of sense to
-generate names for shoes, but it's a good start to understand how to use the kernel to
-execute prompts. We'll get to see a lot more prompts in the next chapter.
+line of shoes printed to the console.
+
+To be honest, it doesn't make a lot of sense to generate names for shoes, but it's a
+good start to understand how to use the kernel in your application. We'll get to see a
+lot more prompts and kernel interactions in the next chapter when we cover
+prompt engineering.
 
 ## Summary
 
