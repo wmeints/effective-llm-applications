@@ -1,3 +1,4 @@
+{#getting-started-with-semantic-kernel}
 # Getting Started with Semantic Kernel
 
 In chapter 2, we covered essential LLMOps knowledge. In this chapter, we're finally

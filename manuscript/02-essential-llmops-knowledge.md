@@ -1,4 +1,4 @@
-{#chapter-2}
+{#essential-llmops-knowledge}
 # Essential LLMOps Knowledge
 
 In chapter 1 we explored the basic concepts and terminology around LLMS. We briefly
