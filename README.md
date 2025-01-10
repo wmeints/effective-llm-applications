@@ -11,7 +11,23 @@ Kernel](https://leanpub.com/effective-llm-applications-with-semantic-kernel)
 
 ## Progress
 
-I'm writing this book, and I'm at **15% completion**.
+I'm writing this book as you read this, and I'm at **23% completion**.
+
+| Chapter                                        | Status      |
+| ---------------------------------------------- | ----------- |
+| 1. Understanding Large Language Models         | Complete    |
+| 2. Essential LLMOps Knowledge                  | Complete    |
+| 3. Getting started with Semantic Kernel        | Complete    |
+| 4. The Art and Non-sense of Prompt Engineering | In progress |
+| 5. Enhancing LLMs with Tools and Skills        | Not started |
+| 6. Retrieval Augmented Generation (RAG)        | Not started |
+| 7. Working with Structured output              | Not started |
+| 8. Prompt Chaining Workflows                   | Not started |
+| 9. Intelligent Request Routing Workflows       | Not started |
+| 10. LLM Orchestration Workflows                | Not started |
+| 11. Artist and Critic Workflows                | Not started |
+| 12. Building Basic Agents                      | Not started |
+| 13. Multi-Agent teams                          | Not started |
 
 ## Working with the examples
 
@@ -21,9 +37,13 @@ with Semantic Kernel. To use the examples you'll need:
 - [.NET 9](https://dot.net/)
 - [Visual Studio Code](https://code.visualstudio.com)
 - Access to the OpenAI API or Azure OpenAI
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 
-You can open the solution in the `examples` directory to browse through them.
+You can open the solutions in the `samples` directory to browse through them.
 Follow the instructions provided with each example to run the example.
+
+**Important:** I haven't started writing the python and Java samples yet. I'll update
+the samples directory in between writing the chapters of the book.
 
 ## Sponsor me
 
