@@ -51,35 +51,35 @@ I publish after each chapter is complete and undergone initial editing. This way
 get the content as fast as possible. After I've completed the full book, I'll go through
 the entire book again to ensure everything is consistent and correct.
 
+> **Hey, didn't you use AI to write your book?**  
+> Yes, I did! I used Claude.ai to help me generate text for the book. But I stopped. I
+> found that it gets in the way of critical thinking and creativity. It also throws so
+> much mediocre content at me it's hard to manage it. I prefer to write the content
+> myself now that I have the time for it. I love writing, and AI wasn't doing me a favor
+> in that regard.
+
 ### Research
 
 The book contains my experience with building LLM-based applications using Semantic Kernel.
 I try to pull from experience as much as possible because it gives the best results for me.
 
-However, before I write, I do my research to verify that my ideas are going to work and build
-a sample to demonstrate the principles. Working code is still the best way to demonstrate
-things. The book is the narrative to the example.
+However, before I write, I do my research to verify that my ideas are going to work and
+build a sample to demonstrate the principles. Working code is still the best way to
+demonstrate things. The book is the narrative to the example.
 
 ### Writing
 
-I write an initial set of notes in Markdown and then use Claude.ai to generate an
-outline for the chapter. This helps me to bootstrap the chapter. I then refine the
-outline as I see fit to ensure that the storyline matches with what I have in mind.
+I write an initial set of notes in Markdown and a rough outline that I refine as I go.
 
 After the initial outline, I'll start by adding detail to each of the sections in the
 outline. I still use a note writing style as I want to make sure that each section makes
 sense to you as the reader of my work. Often, I need to rework the outline as I write
 the notes because I find that the initial outline doesn't work out as I thought.
 
-Once I have the notes for the full chapter, I'll go back to Claude.ai to let it generate
-portions of text for me. I have a project in Claude with custom style instructions, the
-outline for the book, and the chapters I've already completed.
-
-I'll then go through all the generated text to fine tune it to what I want to say.
-Claude is here to speed things up, but I'm the boss. The only value I gain from Claude
-in this process is that it helps me prevent writer's block. The notes contain almost the
-full text but without looking for fancy words or making sure that everything is perfect.
-Claude helps me to get the text out of my head and into a format that I can work with.
+Once I have the notes for the full chapter, I'll go back and expand the notes into the
+full text. It's at this time I want to make sure that there are pointers and bridges
+to help you navigate the text. I also want to make sure that the text is engaging and
+that it's easy to read.
 
 ### Review and initial editing
 
