@@ -531,6 +531,12 @@ line of shoes printed to the console. We'll get to see a lot more prompts and ke
 interactions in the next chapter when we cover prompt engineering. So consider this your
 very first steps into the world of LLM-based applications.
 
+## Running the examples
+
+You can find the full source code for the console application and the web API in the
+GitHub repository:
+[https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-03/csharp][SAMPLE_CODE]
+
 ## Summary
 
 In this chapter, we covered the core concepts and architecture of Semantic Kernel. We
@@ -550,3 +556,4 @@ application.
 [USER_SECRETS]: https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-9.0&tabs=windows
 [OTHER_LLM_PROVIDER]: https://learn.microsoft.com/en-us/semantic-kernel/concepts/ai-services/chat-completion/?tabs=csharp-other%2Cpython-AzureOpenAI%2Cjava-AzureOpenAI&pivots=programming-language-csharp#adding-directly-to-the-kernel
 [AZURE_CLI]: https://learn.microsoft.com/en-us/cli/azure/install-azure-cli
+[SAMPLE_CODE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-03/csharp
