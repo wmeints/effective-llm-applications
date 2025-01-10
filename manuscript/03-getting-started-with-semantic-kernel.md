@@ -80,9 +80,7 @@ through the kernel.
 
 When you ask Semantic Kernel to execute a prompt for you, it will first determine what
 AI service to use. An AI service in Semantic Kernel can be an LLM or another AI service
-that takes a prompt to generate a response.
-
-You can use Semantic Kernel for more than just text, for example you can:
+that takes a prompt to generate a response. For example, with Semantic Kernel, you can:
 
 - Generate text and then translate it to audio (text-to-audio)
 - Generate an image from a prompt (text-to-image)
@@ -90,15 +88,14 @@ You can use Semantic Kernel for more than just text, for example you can:
 - Process audio to text (audio-to-text)
 - Generate embeddings for a document (embedding-generation)
 
-It's still early days for Semantic Kernel, so most of these uses are experimental.
-That's why we're focusing on working on text-based tasks only in this book. But it's
-good to know that you can do more than just process text.
+You should be aware that the other modalities (sound, and images) are experimental at
+the time of writing. I personally don't use them and for this book I will stick to
+text-only tasks. But it's good to know that you can do more than just process text.
 
-After selecting the ideal AI service to execute a prompt, the prompt is rendered if
-you're using a prompt template. The prompt templating engine takes the input you
-provided and combines it with other text to produce a full prompt. This is helpful,
-because you can reuse prompts across multiple use cases in your application or across
-applications.
+After selecting the best AI service to execute a prompt, the prompt is rendered. You can
+execute plain prompts with Semantic Kernel. But you'll want to use templating whenever
+you can. Templating allows you to store prompts in source control to version them and
+reuse them in multiple use cases or applications.
 
 When the prompt is rendered, it is sent to the LLM provider. In
 [#s](#llmops-rate-limits) we discussed that sometimes the LLM provider may not be
@@ -106,13 +103,15 @@ available, or you may have run out of quota. Semantic Kernel makes sure to handl
 failure modes for you as much as possible.
 
 When the response comes back from the LLM, we need to process it. The monitoring data we
-discussed in [#s](#llmops-monitoring) is automatically generated for you so you
-can export it through tools like Application Insights or OpenTelemetry.
+discussed in [#s](#llmops-monitoring) is automatically generated for you so you can
+export it through tools like Application Insights or OpenTelemetry. The generated
+telemetry contains token usage information, the input prompt, and the generated
+response.
 
-Ultimately, the result of a prompt execution is returned to you. Depending on what you
-asked for, you may need structured data or just plain text. Semantic Kernel will make
-sure that the data is deserialized as necessary so you can work with it in your
-application.
+Your code may be a simple chatbot or a complex workflow and depending on the use case
+you'll need a different response. Depending on what you asked for, you may need
+structured data or just plain text. Semantic Kernel will make sure that the data is
+deserialized as necessary so you can work with it in your application.
 
 The kernel allows you to inject filters at various points in the process. This is useful
 to for example filter out harmful responses (see [#s](#llmops-user-safety)) or
@@ -129,10 +128,10 @@ additional functionality. Functions play an important role in LLM-based applicat
 because you can use them to:
 
 - Perform actions based on the prompt of the user.
-- Find relevant content to enhance the response to the prompt.
+- Find relevant content to enhance the response to your prompt.
 
 We will cover functions in great depth through chapters 5 and 6, for now it's important
-to understand a trick I like to call the kernel loop in relation to function calling.
+to understand a trick I like to call the kernel loop.
 
 Modern LLMs support function calling and can, if you design your application right,
 combine several calls to functions to complete a reasonably complex task.
@@ -144,11 +143,8 @@ execution flow in [#s](#kernel-interactions).
 {#function-calling-loop}
 ![Function calling loop](function-calling-loop.png)
 
-This may come as a bit of a surprise. We can't just submit the rendered prompt to the
-LLM, we need to turn it into a chat history object and submit that to the prompt. While
-an LLM only works with an input sequence to produce an output sequence, all modern LLMs
-are trained as if they're chatbots. They use conversations as a concept to generate
-better responses.
+This may come as a bit of a surprise. LLMs are trained as if they're a chatbot and
+that's a good thing even if you don't use it as a chatbot. Let me explain.
 
 The concept of a conversation will sound familiar to you if you've ever worked with
 tools like ChatGPT. The idea is great because if you train the LLM just right, you can
@@ -168,14 +164,14 @@ only spit out tokens that you can combine to a response. Frameworks like Semanti
 will turn the response back into a response message and add it to the chat history
 object if you like.
 
-Going back to function calling: once we have a conversation history object, the kernel
-will send it to the LLM, and wait for a response.
+Going back to function calling: Before your prompt is submitted to the LLM, it is turned
+into a chat history object. It is then submitted to the LLM and we wait for a response.
 
 If the response from the LLM is a `tool_call` response, the kernel will find the
 function identified by the `tool_call` and execute it with the parameter values provided
 by the LLM. The result of the function call is added to the history object as a tool
 message and the new history is submitted to the LLM again. This process repeats until
-the LLM returns a response that doesn't contain a `tool_call`.
+the LLM returns a response that isn't a `tool_call`.
 
 You can do some very powerful planning with this. If you design a prompt that tells the
 LLM to follow a plan and mention tools in your plan, it is very likely it will follow
@@ -198,7 +194,7 @@ You can find a full list of supported features for each language in the [languag
 support matrix][LANGUAGE_SUPPORT]. The matrix will tell you which features are supported
 in each of the languages and what connectors are available for each of the languages.
 
-While I only work with C# in this book, I've made sure there are samples available in 
+While I only work with C# in this book, I've made sure there are samples available in
 Python and Java as well where possible. I'll point you to the right resources when we
 get to those parts of the book.
 
@@ -231,15 +227,17 @@ time of writing there's support for:
 - Hugging Face
 - ONNX
 
-I'm not covering other LLM providers here, but you can certainly use them with Semantic
-Kernel. Just make sure to use the right connector package. We'll discuss those in the
-next section when we set up a project with Semantic Kernel.
+And even if your favorite provider is not listed, it might still work with Semantic
+Kernel as long as it has an OpenAI-like API interface. [The Semantic Kernel
+Manual][OTHER_LLM_PROVIDER] provides a good explanation on how to use other LLM
+providers that support the OpenAI API interface.
+
+Let's start a new project with Semantic Kernel and do some initial exploring.
 
 ## Setting up a project with Semantic Kernel
 
 Most people will build some sort of web API around a LLM use case. But Semantic Kernel
-can be used in more places than just web applications. Although to be honest, you can't
-use it on your mobile device right now through MAUI. To help you get started, I want to
+can be used in more places than just web applications. To help you get started, I want to
 provide you with two scenarios:
 
 - Using Semantic Kernel in a standalone console application
@@ -247,7 +245,7 @@ provide you with two scenarios:
 
 Let's start with a basic console application to get you started.
 
-### Setting up Semantic Kernel in a console application
+### Using Semantic Kernel in a standalone console application
 
 To set up a console application with Semantic Kernel, you need to create a new console
 application in Visual Studio Code, Rider, or Visual Studio. I prefer to use a terminal
@@ -292,13 +290,19 @@ following packages:
 
 The Semantic Kernel package provides convenience if you don't want to worry about
 finding the individual packages. If you care about the size of your application, you can
-install the individual packages instead.
+install the individual packages instead and replace the OpenAI connector with the
+connector of your choice.
 
 I've included the `Azure.Identity` package because it's a good practice to use managed
 identities when you're working with Azure services. This package provides the
 `DefaultAzureCredential` class that you can use to authenticate with Azure services
 without the need to store secrets with your application. As an alternative you can also
 specify an API Key for the client.
+
+If you're working from your local machine, you can use [the Azure CLI][AZURE_CLI] to
+authenticate with the Azure environment by executing the command `az login` from a
+terminal window. When you run the sample application, it will use the credentials from
+the Azure CLI to gain access to your Azure OpenAI resource.
 
 With the packages installed, you can configure the kernel object we discussed in
 [#s](#core-concepts-and-architecture) in the `Program.cs` file.
@@ -344,7 +348,7 @@ At this point, you can use the kernel object to execute prompts. We'll cover how
 that in [#s](#executing-your-first-prompt). But before we do that, let's set up Semantic
 Kernel in ASP.NET Core too.
 
-### Setting up Semantic Kernel in an ASP.NET Core project
+### Using Semantic Kernel in an ASP.NET Core application
 
 To set up Semantic Kernel in an ASP.NET Core project, you need to create a new web API
 project. You can do this by executing the following command in a terminal:
@@ -415,8 +419,8 @@ app.MapGet("/", () => "Hello World!");
 app.Run();
 ```
 
-Let's go over the code step by step to understand the differences between the ASP.NET
-Core code and a regular console application:
+Let's go over the code step by step again to understand the differences between the
+ASP.NET Core code and a regular console application:
 
 1. The using statements are the same as with a console application. We'll need to use
    the Semantic Kernel namespace and the connector namespace.
@@ -438,11 +442,11 @@ Note that ASP.NET Core provides a nice configuration system that allows you to s
 configuration values in a `settings.json` file. You can also store configuration in
 environment variables or a key vault. This is one of the advantages of using a web
 application over a console application. Although, with a little more effort you can
-integrate the configuration system in the console application.
+integrate the configuration system in the console application as well.
 
-So if you're building a web application, make sure you configure the required
-information in the settings.json file or in environment variables. You can also use
-[user-secrets][USER_SECRETS] to store sensitive information like the OpenAI API Key.
+Make sure you configure the required information in the settings.json file or in
+environment variables. You can also use [user-secrets][USER_SECRETS] to store sensitive
+information like the OpenAI API Key.
 
 Instead of providing an OpenAI client with the `AddAzureOpenAIChatCompletion` method,
 we've preregistered the OpenAI client in the service collection. If you're using a tool
@@ -508,8 +512,8 @@ app.MapGet("/", (ProductNameGenerator productNameGenerator) =>
     productNameGenerator.GenerateProductNames());
 ```
 
-When you start the application and navigate to the root URL, you should see a list of 5
-product names for a new line of shoes after a few seconds.
+When you start the application and navigate to the root URL with your internet browser,
+you should see a list of 5 product names for a new line of shoes after a few seconds.
 
 For the console application, you can modify the `Program.cs` file to include the
 following code:
@@ -523,12 +527,9 @@ Console.WriteLine(productNames);
 ```
 
 When you run the console application, you should see a list of 5 product names for a new
-line of shoes printed to the console.
-
-To be honest, it doesn't make a lot of sense to generate names for shoes, but it's a
-good start to understand how to use the kernel in your application. We'll get to see a
-lot more prompts and kernel interactions in the next chapter when we cover
-prompt engineering.
+line of shoes printed to the console. We'll get to see a lot more prompts and kernel
+interactions in the next chapter when we cover prompt engineering. So consider this your
+very first steps into the world of LLM-based applications.
 
 ## Summary
 
@@ -547,3 +548,5 @@ application.
 [LANGUAGE_SUPPORT]: https://learn.microsoft.com/en-us/semantic-kernel/get-started/supported-languages
 [DOTNET_ASPIRE]: https://learn.microsoft.com/en-us/dotnet/aspire/get-started/aspire-overview
 [USER_SECRETS]: https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-9.0&tabs=windows
+[OTHER_LLM_PROVIDER]: https://learn.microsoft.com/en-us/semantic-kernel/concepts/ai-services/chat-completion/?tabs=csharp-other%2Cpython-AzureOpenAI%2Cjava-AzureOpenAI&pivots=programming-language-csharp#adding-directly-to-the-kernel
+[AZURE_CLI]: https://learn.microsoft.com/en-us/cli/azure/install-azure-cli
