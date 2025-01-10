@@ -121,6 +121,7 @@ While the kernel is the core of Semantic Kernel, the functions are the most impo
 part of the framework. Functions will provide the power needed to turn the LLM from a
 simple text generator into the promised semantic intelligence of your application.
 
+{pagebreak}
 ### Calling Functions
 
 In Semantic Kernel, you can connect functions to the kernel to provide it with
