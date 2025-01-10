@@ -210,6 +210,7 @@ environment. I recommend getting these tools set up:
 - [.NET 9.0 SDK or later](https://dotnet.microsoft.com/download/dotnet/9.0)
 - [Visual Studio Code](https://code.visualstudio.com), [Rider 2024.3](https://www.jetbrains.com/rider/) or [Visual Studio 2022](https://visualstudio.microsoft.com/)
 - Access to the [OpenAI API](https://openai.com/api/) or [Azure OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal)
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) for working with Azure OpenAI
 
 ### Other supported LLM providers
 

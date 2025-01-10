@@ -106,6 +106,7 @@ have the following tools available on your system:
 - [.NET SDK 9.0 or Higher](https://dot.net/)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) or a similar containerization tool.
 - [Visual Studio Code](https://code.visualstudio.com) or a similar code editing tool.
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) for working with Azure OpenAI.
 
 ## Running the sample code in this book
 
