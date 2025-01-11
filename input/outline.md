@@ -47,7 +47,7 @@ the power of LLMs.
 * Common pitfalls and how to avoid them
 * Best practices for project structure
 
-## Chapter 4: The Art of Prompt Engineering
+## Chapter 4: The Art and Nonsense of Prompt Engineering
 
 * Understanding prompt design
 * Crafting effective prompts
