@@ -356,6 +356,7 @@ from text. This way you can avoid sending PII to the LLM or storing it in your
 application. Consider it an extra safety measure on top of making sure people know that
 they're not supposed to send in PII.
 
+{#llmops-application-security}
 ### Application security
 
 Securing modern cloud-native applications is difficult. Adding an LLM to the mix opens
