@@ -484,9 +484,9 @@ sampling to get a better understanding of these concepts.
 #### Presence Penalty
 
 As you can probably tell by now, the sampling techniques used in LLMs are complex. And
-it gets's worse. Let me add one more variable to the mix, presence penalty. A positive
-presence penalty reduces the probability value of a token that was seen before in the
-output. This forces candidate tokens lower in the selection ranking for the Top-P
+it gets even more complex. Let me add one more variable to the mix, presence penalty. A
+positive presence penalty reduces the probability value of a token that was seen before
+in the output. This forces candidate tokens lower in the selection ranking for the Top-P
 sampling process. It is less likely that you see the same token in the output if you
 provide a positive value for the presence penalty.
 
