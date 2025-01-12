@@ -40,7 +40,7 @@ we need to use language to interact with them. But there's something positively 
 about LLMs. When you work with ChatGPT you're likely going write a prompt that looks
 like this:
 
-```plaintext
+```text
 You're a world-class chef and you're preparing a meal.
 Provide a recipe for apple pie please.
 ```
@@ -188,14 +188,14 @@ I can easily extract it later.
 
 Here's the prompt:
 
-```plaintext
+```text
 You're a world-class chef and you're preparing a meal. Provide a recipe for apple pie please.
 Put the recipe in a fenced markdown block.
 ```
 
 GPT-4o will respond with something along these lines:
 
-~~~plaintext
+~~~text
 Certainly! Here's a classic apple pie recipe in a fenced markdown block:
 
 ```markdown
@@ -308,7 +308,7 @@ following example as a guide.
 Now when we run the prompt, we'll get a completely different response from the previous
 sample. The LLM will now generate a JSON object for your recipe.
 
-~~~plaintext
+~~~text
 Certainly! Here's a recipe for a classic apple pie in JSON format:
 
 ```json
