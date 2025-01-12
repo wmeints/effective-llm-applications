@@ -3,3 +3,4 @@ mainmatter.txt
 01-understanding-large-language-models.md
 02-essential-llmops-knowledge.md
 03-getting-started-with-semantic-kernel.md
+04-the-art-and-nonsense-of-prompt-engineering.md
