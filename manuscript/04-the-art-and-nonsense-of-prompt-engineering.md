@@ -454,10 +454,10 @@ want greater variety.
 
 LLMs don't just use Top-P sampling. The people who invented these types of models found
 that Top-P sampling isn't enough to get natural text. So they decided to add temperature
-to the mix. Temperature controls the softness of the probability distribution used to
+to the mix. Temperature controls the shape of the probability distribution used to
 perform Top-P sampling.
 
-Before performing the cummulative probability based selection, the raw scores for the
+Before performing the Top-P sampling, the raw scores for the
 candidate tokens are divided by the temperature value. After that the softmax function
 is applied to determine the probabilities for the candidate tokens. In
 [#s](#temperature-effects) you can see this in action with a before and after.
@@ -474,6 +474,12 @@ Ideally you'd want to see the distribution of each of the tokens in the output t
 an informed decision about the temperature and Top-P values, but you can't do that. I'm
 not 100% sure why this information isn't available, but my guess is that it would expose
 too many details of the internal to the user of the LLM.
+
+At this point I understand that you're probably thinking that this is a lot to get
+through. And it is. I've included an interactive notebook that demonstrates Top-P
+sampling and temperature scaling in the [GitHub repository][TOP_P_SAMPLE]. You can run
+the notebook inside Visual Studio Code to explore the effects of temperature and Top-P
+sampling to get a better understanding of these concepts.
 
 #### Presence Penalty
 
@@ -564,3 +570,4 @@ to interact with them.
 
 [CONTEXT_WINDOW_PAPER]: https://arxiv.org/abs/2307.03172
 [LLM_ALIGNMENT]: https://medium.com/@madalina.lupu.d/align-llms-with-reinforcement-learning-from-human-feedback-595d61f160d5
+[TOP_P_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/main/notebooks
