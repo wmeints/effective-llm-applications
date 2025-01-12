@@ -511,6 +511,7 @@ You can find the exact size in the model's documentation (often called a model c
 Managing this context window effectively becomes crucial when building applications, as
 we'll see in later chapters.
 
+{#llm-output-sampling}
 #### Output Sampling and Temperature
 
 LLMs aim to produce human-like text, and one way they do this is through output

@@ -15,8 +15,8 @@ Prompt engineering is a very unnatural use of language. We're not writing for hu
 we're writing for a statistical model. And that provides us with all sorts of strange
 challenges.
 
-In this chapter we'll dive deeper into the art of prompt engineering and uncover
-some of the nonsensical things about writing prompts. We'll cover the following topics:
+In this chapter we'll dive deeper into the art and science of prompt engineering things
+about writing prompts. We'll cover the following topics:
 
 - Why are prompts important for effective LLM-based applications?
 - The 6 basics of a good prompt
@@ -52,6 +52,9 @@ even my grandma. I don't need to encourage their natural behavior.  The second t
 that stands out to me is this. Why am I saying please to a machine? What does that get
 me?
 
+Some people even resort to offering money to the LLM or threatening it with termination
+in hopes to get better results. But that's not how LLMs work at all.
+
 The apple pie prompt works because we establish a pattern for the model to work with so
 that it produces the best possible output tokens. Remember from
 [#s](#understanding-llms) that an LLM can only predict the next most-likely output
@@ -67,8 +70,8 @@ LLMs. And that's why the unnatural way of speaking to an LLM is so effective.
 ### Common Misconceptions About Prompts
 
 There are a few common misconceptions about prompts that I want to address before we
-dive into the art of prompt engineering. These misconceptions can be misleading and can
-harm your success when building an LLM-based application.
+dive into the rest of prompt engineering. These misconceptions can harm your success
+when building an LLM-based application.
 
 #### Prompt engineering is a job
 
@@ -106,30 +109,31 @@ adjust your application accordingly.
 
 LLMs are trained on a lot of data. As a result you can get a recipe for apple pie that
 looks very reasonable. But you can't rely on the general knowledge captured in the LLM.
-There's a high statistical chance that you get a response that looks reasonable, but it
-may lie to you very convincingly. After all, we're just matching a pattern and the LLM
-doesn't remember facts, it just predicts the next token.
+There's a high statistical chance that you get a response that looks reasonable, but the
+LLM may lie to you very convincingly. After all, we're just matching a pattern and the
+LLM doesn't remember facts, it just predicts the next token based on the pattern it saw.
 
 There's a lot that can go sideways with prompts. But if you understand how to approach
 prompt engineering it is very helpful in building effective LLM-based applications.
 
+{#prompt-principles}
 ## the 6 Basics of a Good Prompt
 
 Writing a good prompt is hard, because you have to think like the LLM you're working
 with. If you want to be close to 100% effective, you'll need to know:
 
-- What data the LLM was trained to understand which language (Dutch, English, etc.) it
-  understands best.
+- What data the LLM was trained with so you know which language (Dutch, English, etc.)
+  it understands best.
 - What tasks the LLM was trained on to write the prompt using the same structure and
   style, so the pattern is as clear as possible.
 - How the LLM was [aligned][LLM_ALIGNMENT], so you know the style of text the LLM is
   capable of producing.
 
 Sadly, you can't know any of these three things as hard facts. There are benchmarks, but
-I've found that they only provide a biased guideline. In your daily work you have to
-guess what works best, because the datasets used to train LLMs aren't open-source.
-They're a well guarded secret by the companies that build them. Because without the data
-they wouldn't make money.
+I've found that they only provide a biased guideline as many LLM providers are likely to
+game them. You'll have to guess what works best, because the datasets used to train LLMs
+aren't open-source. They're a well guarded secret by the companies that build them.
+Because without the data they wouldn't make money.
 
 That leaves us with 6 basic principles that I know from experience work well for
 prompts:
@@ -149,7 +153,7 @@ matching machine that uses embeddings (modelling relationships between words in 
 sentence) and an attention mechanism (modeling the context of the input and output
 tokens) to produce useful results. The LLM is only as good as the pattern it can match.
 
-So vague instructions aren't going to work. You may get lucky, but you're more likely to
+Vague instructions aren't going to work. You may get lucky, but you're more likely to
 get too much variation in responses as your application is used by more users. And
 that's okay for chat applications like ChatGPT, but it's not okay for business
 applications where users expect high quality results.
@@ -160,12 +164,12 @@ copywriter. Second, it's important to provide the LLM with detailed instructions
 the desired output and the style of the output.
 
 The persona helps prime the embeddings and attention mechanism of the LLM so it starts
-searching for output tokens in the right word space. For example, the persona chef will
-likely lead the LLM in the direction of food, recipes, cooking techniques, and so on. A
-copywriter persona primes the embeddings and attention mechanism in the direction of
-marketing, text writing, and publishing. In the case of the copywriter you'll probably
-also need to provide for what sort of medium the text is intended. Copywriting is
-different for a blog post than it is for a book.
+searching for output tokens in the right word space. For example, the persona of a chef
+will likely lead the LLM in the direction of food, recipes, cooking techniques, and so
+on. A copywriter persona primes the embeddings and attention mechanism in the direction
+of marketing, text writing, and publishing. In the case of the copywriter you'll
+probably also need to provide for what sort of medium the text is intended. Copywriting
+is different for a blog post than it is for a book.
 
 The detailed instructions help the LLM to follow a specific style pattern. For example,
 if you ask for short responses, it's much more likely for the LLM to produce short
@@ -174,22 +178,23 @@ outputs.
 ### Specify the Output Format for the Prompt
 
 Next, we have to think about the output format for the prompt. In chat applications it's
-often enough to not specify the output format at all. LLMs are trained as chatbots and
+often enough to not specify the output format at all. LLMs are trained as chatbots, and
 they will produce output that's conversational. But if you want to use the LLM for other
 tasks, it's important to tell the LLM specifically what output format you want.
 
 For example, you can tell the LLM to output a list of items, a table, or to put a
-specific portion of the output in a fenced markdown code block. This outputs the results
+specific portion of the output in a fenced Markdown code block. This outputs the results
 of the prompt between \`\`\` and \`\`\` so it's easily parsable by your application.
 
 Let me demonstrate by asking the LLM to give me the apple pie recipe we used at the
-start of the chapter, but to put the recipe in a code block so
-I can easily extract it later.
+start of the chapter, but to put the recipe in a code block, so I can easily extract it
+later.
 
 Here's the prompt:
 
 ```text
-You're a world-class chef and you're preparing a meal. Provide a recipe for apple pie please.
+You're a world-class chef and you're preparing a meal. 
+Provide a recipe for apple pie please.
 Put the recipe in a fenced markdown block.
 ```
 
@@ -210,7 +215,7 @@ Certainly! Here's a classic apple pie recipe in a fenced markdown block:
 - 6–8 tbsp ice water
 
 ### For the Apple Filling:
-- 6 cups (about 5 large) apples, peeled, cored, and thinly sliced (use a mix of tart and sweet apples, such as Granny Smith and Honeycrisp)
+- 6 cups (about 5 large) apples, peeled, cored, and thinly sliced
 - ¾ cup (150g) granulated sugar
 - ¼ cup (55g) brown sugar
 - 2 tbsp all-purpose flour
@@ -228,7 +233,7 @@ Certainly! Here's a classic apple pie recipe in a fenced markdown block:
 ```
 ~~~
 
-Note that the model placed the recipe in between the markdown code block delimiters. We
+Note that the response contains the recipe in between Markdown code block delimiters. We
 can now use a regular expression to extract the recipe from the response.
 
 While this looks like an excellent way of working with LLMs in use cases outside of
@@ -243,22 +248,21 @@ for what you want to achieve.
 
 ### Add Context and samples to the Prompt
 
-Speaking of patterns, the LLM is capable of reproducing patterns it learned from the
-large body of text it was trained on. But that body of text hopefully doesn't contain
-internal documents of the client or company you work for. So if you need to answer
-questions about internal information, you're going to have to tell the LLM the
-information.
+Any LLM is capable of reproducing patterns it learned from the large body of text it was
+trained on. But that body of text hopefully doesn't contain internal documents of the
+client or company you work for. So if you need to answer questions about internal
+information, you're going to have to tell the LLM about the information.
 
 We'll cover Retrieval Augmented Generation in greater depth in chapter 6. But for now,
 it's important to understand that the LLM can't remember facts. It's a talking parrot
-that reproduces patterns it has seen before. This looks like it's a limitation, but you
-can turn this into a powerful trait.
+that reproduces patterns it has seen before. This looks like a limitation, but you can
+turn this into a powerful trait.
 
-For example, if I have a question about the company's policy on remote work, I can first
-lookup documents related to the question by doing a similarity search in a search
-engine. The documents I find, I can put into the prompt as additional context, and then
-instruct the LLM to answer the question. A prompt for answering questions typically will
-look like this:
+For example, if I want to answer a question about the company's policy on remote work, I
+can first look up documents related to the question by performing a similarity search
+using a search engine. The documents I find, I can put into the prompt as additional
+context, and then instruct the LLM to answer the question. A prompt for answering
+questions typically will look like this:
 
 ```text
 You're a digital assistant for the HR department of our company. 
@@ -276,7 +280,7 @@ provided as context.
 
 It's highly likely that the LLM will reproduce the sample content you provided as
 context in the prompt. There are of course downsides to this. If your context
-information is incorrect, vague, or non-existant, then the LLM can't match the pattern
+information is incorrect, vague, or non-existent, then the LLM can't match the pattern,
 and you'll get an answer that doesn't make much sense or is plain misleading.
 
 Adding context to a prompt helps establish a good pattern for the LLM to follow. You'll
@@ -305,7 +309,7 @@ following example as a guide.
 
 ~~~
 
-Now when we run the prompt, we'll get a completely different response from the previous
+When we run the prompt, we'll get a completely different response from the previous
 sample. The LLM will now generate a JSON object for your recipe.
 
 ~~~text
@@ -338,11 +342,177 @@ Certainly! Here's a recipe for a classic apple pie in JSON format:
 
 In this case we received a good response with just one sample in the prompt. If you find
 that one sample doesn't help, don't be afraid to add more samples to help the LLM match
-your desired patern. Variety in the samples can help with the quality of the output.
+your desired patern. Providing enough variety in the samples will help with the quality
+of the output.
 
 ### Keep the Prompt Focused on One Task
 
+LLMs are good at a lot of things, but they're not good at performing multiple tasks in
+one prompt. You'll get better results if you can focus the prompt on one task.
+
+Getting a recipe for apple pie is a single task. Answering a question can still be
+considered one task. Generating an article about the powerful features of an LLM sounds
+like one task, but at the very least involves multiple steps.
+
+If you find that a prompt generates a vague answer even with the previous tips, it's
+likely you have a complex task that requires multiple steps to complete. In that case,
+you'll want to split the prompt into multiple separate prompts for each step of the
+task.
+
+While LLMs have a large context window, and they are capable of following steps, they're
+not very good at it. You can find many so-called chain-of-thought prompts on the
+internet that produce fantastic results according to the author.
+
+For example, I can improve my apple pie recipe prompt by adding one sentence:
+
+```text
+You're a world-class chef. You are preparing a meal.
+Give me a recipe for apple pie. Take it step by step.
+```
+
+The one sentence "take it step by step" turns the prompt into a chain-of-thought prompt.
+I'm asking the LLM to generate a more detailed response. And because it's generating a
+more detailed response, I'm likely to get something that resonates better with my
+expectations.
+
+Let's go back to what I wrote at the start of [#s](prompt-principles): We're dealing
+with a pattern matching machine. So, what happens here? I am providing a pattern that
+causes the LLM to follow a more detailed style. Because it's following a more detailed
+style, the attention mechanism is influenced as the response gets longer. The end result
+is that it generates a more complete description and no longer skips steps, because in a
+more detailed description of apple pie, that's what is statistically the most likely
+thing.
+
+Note, the recipe looks better, but it doesn't have to be correct. You need to verify the
+output of the LLM here. And it will be harder to validate, because you need to look at
+more text. Chain-of-thought prompts lack control. You will need to address this if you
+want to provide stable results to your users.
+
+Chain-of-thought prompts work with tools like ChatGPT, because you've got nothing better
+there. You can't program the workflow in ChatGPT.
+
+For LLM-based applications I recommend skipping chain-of-thought prompts. Instead, I
+recommend splitting the task into multiple prompts and using logic or one of the design
+patterns in the remaining chapters of this book to come to a complete result.
+
 ### Tune Your Prompt With Hyperparameters
+
+The last basic principle of a good prompt is to tune your prompt with hyperparameters.
+In the previous sections we've only looked at the text of the prompt. But that's only
+one part of the equation.
+
+Remember from [#s](#llm-output-sampling) that the LLM uses sampling to make the output
+look natural. The sampling is controlled by a number of parameters that you can set when
+you use a tool like Semantic Kernel. These parameters are called hyperparameters,
+depending on the provider you may encounter different variations on these parameters.
+Here are the most important ones:
+
+- Top-P
+- Temperature
+- Presence Penalty
+- Frequency Penalty
+
+This part is definitely a bit more advanced. But it's important to understand these
+parameters and how they interact with the LLM so you know what value to choose for
+various tasks to get good quality responses.
+
+#### Top-P
+
+The important bit to understand about an LLM in relation output sampling is this. The
+final layer of a LLM performs a softmax calculation. The neural network predicts output
+values between -1 and +1. The softmax calculation turns these values into a probability
+distribution. Each of the possible output tokens (words, numbers, etc.) is assigned a
+value adding up to a total of one. The higher the value, the more likely the token is to
+be the next token in the output.
+
+From this probability distribution we could simply select the token with the highest
+probability as the output. However, this leads to repetitive and boring output. We can
+fix this by using a smarter sampling technique.
+
+All modern LLMs use Top-P sampling. This is how that works. First, we establish a
+threshold for the cummulative probability. We then sort the tokens from highest to
+lowest probability and then start collecting tokens adding their probabilities to a
+cummulative probability. We collect tokens until the cummulative probability value
+reaches the threshold. The process is demonstrated in [#s](#top-p-sampling).
+
+{#top-p-sampling}
+![Top-P sampling](probability-visualization.png)
+
+For the samples in [#s](#top-p-sampling) we've established a threshold of 0.9. The
+tokens with the highest probability are selected until the cummulative probability
+reaches 0.9. The tokens with the lowest probability are removed from the distribution.
+
+Once we've selected the candidate tokens in the distribution we randomly select one of
+the tokens from the distribution as the output. This results in a more varied output.
+
+The key thing to remember here is that a higher Top-P results in more tokens to be
+selected as candidates. A lower value will result in a more focused by repetitive
+output. This is ideal for generating code but less so for marketing content where you
+want greater variety.
+
+#### Temperature
+
+LLMs don't just use Top-P sampling. The people who invented these types of models found
+that Top-P sampling isn't enough to get natural text. So they decided to add temperature
+to the mix. Temperature controls the softness of the probability distribution used to
+perform Top-P sampling.
+
+Before performing the cummulative probability based selection, the raw scores for the
+candidate tokens are divided by the temperature value. After that the softmax function
+is applied to determine the probabilities for the candidate tokens. In
+[#s](#temperature-effects) you can see this in action with a before and after.
+
+{#temperature-effects}
+![The effect of temperature on the probability distribution](scaled-probability-comparison.png)
+
+The higher the temperature, the softer the curve is. It takes longer for the cummulative
+probability function to reach the threshold thus more candidate tokens make it into the
+selection. Conversely, the lower the temperature, the harder the curve is. It takes less
+time to reach the threshold.
+
+Ideally you'd want to see the distribution of each of the tokens in the output to make
+an informed decision about the temperature and Top-P values, but you can't do that. I'm
+not 100% sure why this information isn't available, but my guess is that it would expose
+too many details of the internal to the user of the LLM.
+
+#### Presence Penalty
+
+As you can probably tell by now, the sampling techniques used in LLMs are complex. And
+it gets's worse. Let me add one more variable to the mix, presence penalty. A positive
+presence penalty reduces the probability value of a token that was seen before in the
+output. This forces candidate tokens lower in the selection ranking for the Top-P
+sampling process. It is less likely that you see the same token in the output if you
+provide a positive value for the presence penalty.
+
+#### Frequency Penalty
+
+The last hyperparameter we'll discuss is the frequency penalty. This penalty looks
+similar to the presence penalty parameter but uses a different approach. Instead of
+applying a flat penalty to tokens that occurred before in the output, frequency penalty
+applies a penalty to the probability of tokens that frequently appear in the output. The
+more often a token appears in the output, the higher the penalty and the less likely the
+token is to be selected during the Top-P sampling process.
+
+#### What to choose for each of the parameters
+
+I know that this is a lot to take in and apply effectively. So let me give you some
+direction on what to choose for each of the parameters.
+
+Coding requires a more repetitive and boring output to be effective. So you'd want to
+choose a lower value for Top-P and a lower value for temperature. The presence penalty
+and frequency penalty should be set to 0, because we don't want to apply any penalties.
+Coding is repetitive by nature.
+
+For general purpose tasks like generating marketing content I recommend setting the
+Top-P value higher and apply a higher temperature. The presence penalty and frequency
+penalty can be useful to make the text more varied. Don't go overboard though, a low
+value is often enough. Setting the presence penalty and frequency penalty to a high
+value leads to fascinating but often nonsensical output.
+
+It's important that you test your prompts with a variety of inputs and settings to
+establish what works for the majority of cases. Because the values for the probability
+distribution ultimately depend on the content of your prompt, and it's very likely that
+you need to adjust the hyperparameters a little bit based on that.
 
 ## Using Prompt Templates for Reusability
 
