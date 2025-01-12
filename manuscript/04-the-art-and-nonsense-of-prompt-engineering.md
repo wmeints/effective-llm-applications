@@ -144,16 +144,23 @@ Let's go through them one by one.
 
 ### Provide Clear Direction
 
-The first thing you need to do when writing a prompt is to think about the goal of the
-prompt. What's the task you want to accomplish. Then you need to write down clear and
-consise instructions for the LLM to follow.
+Take a step back and think about how the LLM works. Remember that the LLM is a pattern
+matching machine that uses embeddings (modelling relationships between words in a
+sentence) and an attention mechanism (modeling the context of the input and output
+tokens) to produce useful results. The LLM is only as good as the pattern it can match.
 
-There are two things that are important here. First, it's helpful to provide the LLM
-with a persona. For example, a chef, or a copywriter. Second, it's important to provide
-the LLM with detailed instructions about the desired output and the style of the output.
+So vague instructions aren't going to work. You may get lucky, but you're more likely to
+get too much variation in responses as your application is used by more users. And
+that's okay for chat applications like ChatGPT, but it's not okay for business
+applications where users expect high quality results.
+
+There are two things that are helpful for generating a pattern that the LLM can match.
+First, it's helpful to provide the LLM with a persona. For example, a chef, or a
+copywriter. Second, it's important to provide the LLM with detailed instructions about
+the desired output and the style of the output.
 
 The persona helps prime the embeddings and attention mechanism of the LLM so it starts
-searching for output tokens in the right space. For example, the persona chef will
+searching for output tokens in the right word space. For example, the persona chef will
 likely lead the LLM in the direction of food, recipes, cooking techniques, and so on. A
 copywriter persona primes the embeddings and attention mechanism in the direction of
 marketing, text writing, and publishing. In the case of the copywriter you'll probably
@@ -175,89 +182,163 @@ For example, you can tell the LLM to output a list of items, a table, or to put 
 specific portion of the output in a fenced markdown code block. This outputs the results
 of the prompt between \`\`\` and \`\`\` so it's easily parsable by your application.
 
-Let me demonstrate setting the output format with a basic example. The following prompt
-asks the LLM to write a unit-test in C# and output the generated test into a markdown
-code block:
+Let me demonstrate by asking the LLM to give me the apple pie recipe we used at the
+start of the chapter, but to put the recipe in a code block so
+I can easily extract it later.
+
+Here's the prompt:
 
 ```plaintext
-You're a C# developer working on an ASP.NET Core Web Application. Write a unit-test
-in XUnit for the following code. Use FluentAssertions to assert the result. Output the
-generated test in a markdown code block.
-
-public class ProductNameGenerator(Kernel kernel)
-{
-    public async Task<string> GenerateProductNames()
-    {
-        var productNames = await kernel.InvokePromptAsync(
-          "Generate 5 product names for a new line of shoes.");
-
-        return productNames.GetValue<string>()!;
-    }
-}
+You're a world-class chef and you're preparing a meal. Provide a recipe for apple pie please.
+Put the recipe in a fenced markdown block.
 ```
 
-GPT-4o will output something along the following lines:
+GPT-4o will respond with something along these lines:
 
 ~~~plaintext
-Here’s an XUnit test for the `ProductNameGenerator` class using FluentAssertions to
-assert the results. We’ll use a mocked `Kernel` instance to simulate the behavior 
-of `InvokePromptAsync`. 
+Certainly! Here's a classic apple pie recipe in a fenced markdown block:
 
-```csharp
-using System.Threading.Tasks;
-using Moq;
-using Xunit;
-using FluentAssertions;
+```markdown
+# Classic Apple Pie Recipe
 
-public class ProductNameGeneratorTests
-{
-    [Fact]
-    public async Task GenerateProductNames_ShouldReturnExpectedProductNames()
-    {
-        // Arrange
-        var expectedProductNames = \"Product1, Product2, Product3, Product4, Product5\";
+## Ingredients
+### For the Pie Crust:
+- 2 ½ cups (310g) all-purpose flour
+- 1 tsp salt
+- 1 tsp granulated sugar
+- 1 cup (230g) unsalted butter, cold and cubed
+- 6–8 tbsp ice water
 
-        var mockKernel = new Mock<Kernel>();
-        mockKernel.Setup(k => k.InvokePromptAsync(
-          \"Generate 5 product names for a new line of shoes.\"))
-            .ReturnsAsync(new MockResult(expectedProductNames));
+### For the Apple Filling:
+- 6 cups (about 5 large) apples, peeled, cored, and thinly sliced (use a mix of tart and sweet apples, such as Granny Smith and Honeycrisp)
+- ¾ cup (150g) granulated sugar
+- ¼ cup (55g) brown sugar
+- 2 tbsp all-purpose flour
+- 1 tbsp lemon juice
+- 1 tsp ground cinnamon
+- ¼ tsp ground nutmeg
+- ¼ tsp ground allspice
+- Pinch of salt
 
-        var productNameGenerator = new ProductNameGenerator(mockKernel.Object);
-
-        // Act
-        var result = await productNameGenerator.GenerateProductNames();
-
-        // Assert
-        result.Should().Be(expectedProductNames);
-        mockKernel.Verify(k => k.InvokePromptAsync(
-          \"Generate 5 product names for a new line of shoes.\"), 
-          Times.Once);
-    }
-}
-
-/// ... remainder of the code
-```
+### For Assembly:
+- 1 egg, beaten (for egg wash)
+- 1 tbsp granulated sugar (for sprinkling, optional)
 
 ... remainder of the response
+```
 ~~~
 
-Note that the model placed the code in between the markdown code block delimiters. We
-can now use a regular expression to extract the code from the response.
+Note that the model placed the recipe in between the markdown code block delimiters. We
+can now use a regular expression to extract the recipe from the response.
 
-While this sounds like an excellent way of working with LLMs in use cases outside of
-chat there are better ways to handle structured outputs. You can instruct the LLM to
+While this looks like an excellent way of working with LLMs in use cases outside of
+chat, there are better ways to handle structured outputs. You can instruct the LLM to
 generate JSON results or even call a function to output the generated code. Both of
 these options provide much more control over the output format. We'll cover structured
 output in greater detail in chapter 7.
 
+I'll keep repeating this throughout the book. We're controlling a pattern matching
+machine. Telling it what output format you want is only putting in the right pattern
+for what you want to achieve.
+
 ### Add Context and samples to the Prompt
 
-For example, it can be helpful to first establish the context of the conversation by
-setting a role for the LLM. Prompts that start with "You're a <job-title> and your task
-is to <task description>" can be very effective. Alternatively, you can provide context
-by specifying a prompt like "We're working on <project-name> that's about
-<project-description>". Both approaches to establishing context can be helpful to prime
-the attention mechanism and embeddings in the LLM.
+Speaking of patterns, the LLM is capable of reproducing patterns it learned from the
+large body of text it was trained on. But that body of text hopefully doesn't contain
+internal documents of the client or company you work for. So if you need to answer
+questions about internal information, you're going to have to tell the LLM the
+information.
+
+We'll cover Retrieval Augmented Generation in greater depth in chapter 6. But for now,
+it's important to understand that the LLM can't remember facts. It's a talking parrot
+that reproduces patterns it has seen before. This looks like it's a limitation, but you
+can turn this into a powerful trait.
+
+For example, if I have a question about the company's policy on remote work, I can first
+lookup documents related to the question by doing a similarity search in a search
+engine. The documents I find, I can put into the prompt as additional context, and then
+instruct the LLM to answer the question. A prompt for answering questions typically will
+look like this:
+
+```plaintext
+You're a digital assistant for the HR department of our company. 
+Please answer the question of the employee based on the content 
+provided as context.
+
+## Context
+
+<The found fragments about the policy on remote work>
+
+## Question
+
+<The employee question>
+```
+
+It's highly likely that the LLM will reproduce the sample content you provided as
+context in the prompt. There are of course downsides to this. If your context
+information is incorrect, vague, or non-existant, then the LLM can't match the pattern
+and you'll get an answer that doesn't make much sense or is plain misleading.
+
+Adding context to a prompt helps establish a good pattern for the LLM to follow. You'll
+see a lot of people add examples of the results they want to a prompt. Adding examples
+to your prompt is called one-shot learning or few-shot learning if you add more than one
+example of the expected output. Let's look at an example to understand what that
+looks like:
+
+~~~plaintext
+You're a world-class chef and you're preparing a meal. Provide
+a recipe for apple pie please. Output the result in JSON, use the
+following example as a guide.
+
+## Example
+
+```
+{
+  "title": "The recipe title",
+  "ingredients": [
+    { "unit": "tbsp", "amount": 1, "name": "the name of the ingredient" },
+    { "unit": "grams", "amount": 12, "name": "another ingredient" },
+  ],
+  "instructions": "The instructions to prepare the recipe"
+}
+```
+
+~~~
+
+Now when we run the prompt, we'll get a completely different response from the previous
+sample. The LLM will now generate a JSON object for your recipe.
+
+~~~plaintext
+Certainly! Here's a recipe for a classic apple pie in JSON format:
+
+```json
+{
+  \"title\": \"Classic Apple Pie\",
+  \"ingredients\": [
+    { \"unit\": \"cups\", \"amount\": 2.5, \"name\": \"all-purpose flour\" },
+    { \"unit\": \"tbsp\", \"amount\": 1, \"name\": \"granulated sugar\" },
+    { \"unit\": \"tsp\", \"amount\": 1, \"name\": \"salt\" },
+    { \"unit\": \"cups\", \"amount\": 1, \"name\": \"unsalted butter, cold and diced\" },
+    { \"unit\": \"tbsp\", \"amount\": 6, \"name\": \"ice water\" },
+    { \"unit\": \"lbs\", \"amount\": 2, \"name\": \"apples (e.g., Granny Smith, peeled, cored, and sliced)\" },
+    { \"unit\": \"cups\", \"amount\": 0.75, \"name\": \"granulated sugar\" },
+    { \"unit\": \"tbsp\", \"amount\": 2, \"name\": \"all-purpose flour\" },
+    { \"unit\": \"tsp\", \"amount\": 1, \"name\": \"ground cinnamon\" },
+    { \"unit\": \"pinch\", \"amount\": 1, \"name\": \"ground nutmeg\" },
+    { \"unit\": \"tbsp\", \"amount\": 1, \"name\": \"lemon juice\" },
+    { \"unit\": \"tsp\", \"amount\": 1, \"name\": \"vanilla extract\" },
+    { \"unit\": \"tbsp\", \"amount\": 2, \"name\": \"unsalted butter (for filling)\" },
+    { \"unit\": \"tbsp\", \"amount\": 1, \"name\": \"milk (for brushing crust)\" },
+    { \"unit\": \"tbsp\", \"amount\": 1, \"name\": \"granulated sugar (for sprinkling on crust)\" }
+  ],
+  // ... Remainder of the response
+}
+```
+~~~
+
+In this case we received a good response with just one sample in the prompt. If you find
+that one sample doesn't help, don't be afraid to add more samples to help the LLM match
+your desired patern. Variety in the samples can help with the quality of the output.
 
 ### Keep the Prompt Focused on One Task
 
