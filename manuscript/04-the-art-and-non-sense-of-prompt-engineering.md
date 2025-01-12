@@ -166,10 +166,89 @@ outputs.
 
 ### Specify the Output Format for the Prompt
 
-We haven't covered structured outputs just yet, but it's important to understand that
-you can tell the LLM what sort of output you want. This is critical if you want to use
-the LLM for use cases beyond chat interface. But it is also helpful in chat interfaces
-to provide output that's easily digestible by a user.
+Next, we have to think about the output format for the prompt. In chat applications it's
+often enough to not specify the output format at all. LLMs are trained as chatbots and
+they will produce output that's conversational. But if you want to use the LLM for other
+tasks, it's important to tell the LLM specifically what output format you want.
+
+For example, you can tell the LLM to output a list of items, a table, or to put a
+specific portion of the output in a fenced markdown code block. This outputs the results
+of the prompt between \`\`\` and \`\`\` so it's easily parsable by your application.
+
+Let me demonstrate setting the output format with a basic example. The following prompt
+asks the LLM to write a unit-test in C# and output the generated test into a markdown
+code block:
+
+```plaintext
+You're a C# developer working on an ASP.NET Core Web Application. Write a unit-test
+in XUnit for the following code. Use FluentAssertions to assert the result. Output the
+generated test in a markdown code block.
+
+public class ProductNameGenerator(Kernel kernel)
+{
+    public async Task<string> GenerateProductNames()
+    {
+        var productNames = await kernel.InvokePromptAsync(
+          "Generate 5 product names for a new line of shoes.");
+
+        return productNames.GetValue<string>()!;
+    }
+}
+```
+
+GPT-4o will output something along the following lines:
+
+~~~plaintext
+Here’s an XUnit test for the `ProductNameGenerator` class using FluentAssertions to
+assert the results. We’ll use a mocked `Kernel` instance to simulate the behavior 
+of `InvokePromptAsync`. 
+
+```csharp
+using System.Threading.Tasks;
+using Moq;
+using Xunit;
+using FluentAssertions;
+
+public class ProductNameGeneratorTests
+{
+    [Fact]
+    public async Task GenerateProductNames_ShouldReturnExpectedProductNames()
+    {
+        // Arrange
+        var expectedProductNames = \"Product1, Product2, Product3, Product4, Product5\";
+
+        var mockKernel = new Mock<Kernel>();
+        mockKernel.Setup(k => k.InvokePromptAsync(
+          \"Generate 5 product names for a new line of shoes.\"))
+            .ReturnsAsync(new MockResult(expectedProductNames));
+
+        var productNameGenerator = new ProductNameGenerator(mockKernel.Object);
+
+        // Act
+        var result = await productNameGenerator.GenerateProductNames();
+
+        // Assert
+        result.Should().Be(expectedProductNames);
+        mockKernel.Verify(k => k.InvokePromptAsync(
+          \"Generate 5 product names for a new line of shoes.\"), 
+          Times.Once);
+    }
+}
+
+/// ... remainder of the code
+```
+
+... remainder of the response
+~~~
+
+Note that the model placed the code in between the markdown code block delimiters. We
+can now use a regular expression to extract the code from the response.
+
+While this sounds like an excellent way of working with LLMs in use cases outside of
+chat there are better ways to handle structured outputs. You can instruct the LLM to
+generate JSON results or even call a function to output the generated code. Both of
+these options provide much more control over the output format. We'll cover structured
+output in greater detail in chapter 7.
 
 ### Add Context and samples to the Prompt
 
