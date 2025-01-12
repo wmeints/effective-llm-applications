@@ -260,7 +260,7 @@ engine. The documents I find, I can put into the prompt as additional context, a
 instruct the LLM to answer the question. A prompt for answering questions typically will
 look like this:
 
-```plaintext
+```text
 You're a digital assistant for the HR department of our company. 
 Please answer the question of the employee based on the content 
 provided as context.
@@ -285,7 +285,7 @@ to your prompt is called one-shot learning or few-shot learning if you add more 
 example of the expected output. Let's look at an example to understand what that
 looks like:
 
-~~~plaintext
+~~~text
 You're a world-class chef and you're preparing a meal. Provide
 a recipe for apple pie please. Output the result in JSON, use the
 following example as a guide.
@@ -320,7 +320,7 @@ Certainly! Here's a recipe for a classic apple pie in JSON format:
     { \"unit\": \"tsp\", \"amount\": 1, \"name\": \"salt\" },
     { \"unit\": \"cups\", \"amount\": 1, \"name\": \"unsalted butter, cold and diced\" },
     { \"unit\": \"tbsp\", \"amount\": 6, \"name\": \"ice water\" },
-    { \"unit\": \"lbs\", \"amount\": 2, \"name\": \"apples (e.g., Granny Smith, peeled, cored, and sliced)\" },
+    { \"unit\": \"lbs\", \"amount\": 2, \"name\": \"apples\" },
     { \"unit\": \"cups\", \"amount\": 0.75, \"name\": \"granulated sugar\" },
     { \"unit\": \"tbsp\", \"amount\": 2, \"name\": \"all-purpose flour\" },
     { \"unit\": \"tsp\", \"amount\": 1, \"name\": \"ground cinnamon\" },
@@ -329,7 +329,7 @@ Certainly! Here's a recipe for a classic apple pie in JSON format:
     { \"unit\": \"tsp\", \"amount\": 1, \"name\": \"vanilla extract\" },
     { \"unit\": \"tbsp\", \"amount\": 2, \"name\": \"unsalted butter (for filling)\" },
     { \"unit\": \"tbsp\", \"amount\": 1, \"name\": \"milk (for brushing crust)\" },
-    { \"unit\": \"tbsp\", \"amount\": 1, \"name\": \"granulated sugar (for sprinkling on crust)\" }
+    { \"unit\": \"tbsp\", \"amount\": 1, \"name\": \"granulated sugar\" }
   ],
   // ... Remainder of the response
 }
