@@ -254,19 +254,19 @@ with Visual Studio Code, but you can use the IDE you like. Execute the following
 in a terminal to start a new console application in C#:
 
 ```bash
-dotnet new console -n Chapter1.ConsoleApp
+dotnet new console -n Chapter3.ConsoleApp
 ```
 
 This command will create a new console application in a folder called
-`Chapter1.ConsoleApp`. You can open the folder in Visual Studio Code by executing the
+`Chapter3.ConsoleApp`. You can open the folder in Visual Studio Code by executing the
 following command:
 
 ```bash
-code Chapter1.ConsoleApp
+code Chapter3.ConsoleApp
 ```
 
 In Visual Studio Code, you'll see the project file for the console application called
-`Chapter1.Console.csproj` and a `Program.cs` file that will contain the main program
+`Chapter3.Console.csproj` and a `Program.cs` file that will contain the main program
 code.
 
 Let's add the Semantic Kernel package to the project by executing the following commands
@@ -355,18 +355,18 @@ To set up Semantic Kernel in an ASP.NET Core project, you need to create a new w
 project. You can do this by executing the following command in a terminal:
 
 ```bash
-dotnet new web -n Chapter1.WebApi
+dotnet new web -n Chapter3.WebApi
 ```
 
-This command will create a new web API project in a folder called `Chapter1.WebApi`. You
+This command will create a new web API project in a folder called `Chapter3.WebApi`. You
 can open the folder in Visual Studio Code by executing the following command:
 
 ```bash
-code Chapter1.WebApi
+code Chapter3.WebApi
 ```
 
 In Visual Studio Code, you'll see the project file for the web API called
-`Chapter1.WebApi.csproj` and a `Program.cs` file that will contain the configuration for
+`Chapter3.WebApi.csproj` and a `Program.cs` file that will contain the configuration for
 the web API. For web applications you'll also find a `settings.json` file and a
 `settings.Development.json` file in the project directory.
 

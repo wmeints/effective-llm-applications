@@ -13,7 +13,7 @@ Please follow the instructions below to run the example.
 ## Getting started
 
 1. Login using the Azure CLI by running `az login`
-2. [Deploy GPT-4o](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal#deploy-a-model) in your Azure OpenAI resource and name the deployment `gpt-4o`. 
+2. [Deploy GPT-4o](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal#deploy-a-model) in your Azure OpenAI resource and name the deployment `gpt-4o`.
 3. Run the application by executing `dotnet run` in the terminal.
 
 ## Need help?
