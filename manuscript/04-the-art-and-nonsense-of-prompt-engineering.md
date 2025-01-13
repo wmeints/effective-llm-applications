@@ -499,7 +499,7 @@ applies a penalty to the probability of tokens that frequently appear in the out
 more often a token appears in the output, the higher the penalty and the less likely the
 token is to be selected during the Top-P sampling process.
 
-#### What to choose for each of the parameters
+#### What to Choose for Each of the Hyper Parameters
 
 I know that this is a lot to take in and apply effectively. So let me give you some
 direction on what to choose for each of the parameters.
@@ -520,12 +520,37 @@ establish what works for the majority of cases. Because the values for the proba
 distribution ultimately depend on the content of your prompt, and it's very likely that
 you need to adjust the hyperparameters a little bit based on that.
 
+Once you've written a good quality prompt, it's important to keep it around for longer.
+For this it's nice to have some sort of templating system in place. Let's take a look at
+what Semantic Kernel has to offer.
+
 ## Using Prompt Templates for Reusability
 
 - Store your prompts in source control so you can version them.
 - Write prompts in a separate prompt file for easier editing and reviewing.
 - Use placeholders to make your prompts more flexible.
 - Options for prompt writing, semantic kernel templates, or handlebars.
+- Recommend using the Semantic Kernel Tools: https://marketplace.visualstudio.com/items?itemName=ms-semantic-kernel.semantic-kernel
+
+### Creating a prompt template in Semantic Kernel
+
+- Using YAML files to store prompt templates
+- Using variables in the prompt template
+- Executing a YAML-based prompt template
+- Limitations of the semantic kernel template language
+
+### Using handlebars as an alternative templating language
+
+- Handlebars offers extras like loops and if-statements.
+- Using variables in handlebars templates
+- Using flow control statements in handlebars templates
+- Executing a handlebars-based prompt template
+
+### Working with multiple LLM providers
+
+- Sometimes prompts just work better with a specific provider. That's not a problem because you can use multiple providers in your application.
+- You can even have different execution settings per provider and choose the correct provider in your application code.
+- Making a prompt template for multiple providers is especially useful if you need to implement fallbacks.
 
 ## Using the chat history to your advantage
 
@@ -539,6 +564,7 @@ you need to adjust the hyperparameters a little bit based on that.
 - Use a separate test suite for prompt testing.
 - Test for properties in the text instead of relying on the exact output.
 - Use multiple input samples to verify your prompt.
+- You can use the LLM against itself to provide some form of validation as well.
 
 ## Monitoring Prompt Interactions in Production
 
