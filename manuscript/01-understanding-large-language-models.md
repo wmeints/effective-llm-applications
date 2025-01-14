@@ -155,7 +155,7 @@ Of course, once I saw what LLMs could do I went a little overboard with ChatGPT.
 to use it for everything text related. I even messed up two blog posts on my website
 with the negative feedback to show for it. It turns out, LLMs produce flavorless and
 pretty mediocre content. They were trained to represent the average of what language
-has to offer. And that's, well, pretty average and flavourless.
+has to offer. And that's, well, pretty average and flavorless.
 
 I tried using LLMs for coding too, as I am a developer. I wrote a full application using
 only AI. And it's used in production today. But it was quite hard to get there. The LLM
