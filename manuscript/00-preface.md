@@ -38,7 +38,7 @@ enough in a more enterprise-oriented language like C#.
   first Semantic Kernel project, giving you hands-on experience with the framework we'll
   build upon throughout the rest of the book.
 
-- **Chapter 4, "The Art of Prompt Engineering"**, dives into the art of prompt engineering,
+- **[#f](#the-art-and-nonsense-of-prompt-engineering)**, dives into the art of prompt engineering,
   teaching you how to craft effective prompts that get reliable, high-quality responses
   from LLMs by covering key concepts like temperature, templates, and advanced techniques.
   This chapter is crucial because the ability to write good prompts is the foundation of

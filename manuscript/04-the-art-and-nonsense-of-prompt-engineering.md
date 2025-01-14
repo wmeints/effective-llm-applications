@@ -1,3 +1,4 @@
+{#the-art-and-nonsense-of-prompt-engineering}
 # the Art and Nonsense of Prompt Engineering
 
 In chapter 3 we got the first chance to work with Semantic Kernel to execute a basic
