@@ -1,9 +1,7 @@
 ﻿using Microsoft.SemanticKernel;
 using Azure.AI.OpenAI;
 using Azure.Identity;
-using OpenAI;
 using Chapter1.Console;
-using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 
 IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
 
