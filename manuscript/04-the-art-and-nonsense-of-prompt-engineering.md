@@ -639,10 +639,11 @@ Use the ingredients I have in the fridge:
 {{/each}}
 ```
 
-Since handlebars supports loops, we can use the `#each` statement to loop over the
-ingredients list. Handlebars uses helpers to implement the more advanced functionality
-like loops. You can find a full explanation of the syntax in the [Handlebars
-documentation](https://handlebarsjs.com/guide/). You can use many of the helpers
+A variable in Handlebars is identified by `{{ variable_name }}`. Since handlebars
+supports loops, we can use the `#each` statement to loop over the ingredients list.
+Handlebars uses helpers to implement the more advanced functionality like loops. You can
+find a full explanation of the syntax in the [Handlebars
+documentation][HB_MANUAL]. You can use many of the helpers
 described in the manual, except for any that need to render templates from other files.
 
 You can invoke the Handlebars template using the following code:
@@ -977,3 +978,4 @@ to interact with them.
 [HB_TEMPLATE_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.HandleBarsTemplates
 [PROMPT_TEMPLATE_INTERFACE]: https://github.com/microsoft/semantic-kernel/blob/main/dotnet/src/SemanticKernel.Abstractions/PromptTemplate/IPromptTemplateFactory.cs
 [KF_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.KernelFunctionPrompts
+[HB_MANUAL]: https://handlebarsjs.com/guide/
