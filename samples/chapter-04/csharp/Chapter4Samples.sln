@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter4.SemanticKernelTemplates", "Chapter4.SemanticKernelTemplates\Chapter4.SemanticKernelTemplates.csproj", "{37DA5D1B-4EA7-4022-853F-DB6992B8B944}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter4.HandleBarsTemplates", "Chapter4.HandleBarsTemplates\Chapter4.HandleBarsTemplates.csproj", "{921D3270-A7B7-4EBB-9E9D-36FF543C271C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter4.YamlBasedTemplates", "Chapter4.YamlBasedTemplates\Chapter4.YamlBasedTemplates.csproj", "{7F67D395-D44A-471F-B4B4-79F031865530}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter4.KernelFunctionPrompts", "Chapter4.KernelFunctionPrompts\Chapter4.KernelFunctionPrompts.csproj", "{D4A2DC29-9DA7-4BE1-B7B2-D72C065D638D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37DA5D1B-4EA7-4022-853F-DB6992B8B944}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37DA5D1B-4EA7-4022-853F-DB6992B8B944}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37DA5D1B-4EA7-4022-853F-DB6992B8B944}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37DA5D1B-4EA7-4022-853F-DB6992B8B944}.Release|Any CPU.Build.0 = Release|Any CPU
+		{921D3270-A7B7-4EBB-9E9D-36FF543C271C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{921D3270-A7B7-4EBB-9E9D-36FF543C271C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{921D3270-A7B7-4EBB-9E9D-36FF543C271C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{921D3270-A7B7-4EBB-9E9D-36FF543C271C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F67D395-D44A-471F-B4B4-79F031865530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F67D395-D44A-471F-B4B4-79F031865530}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F67D395-D44A-471F-B4B4-79F031865530}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F67D395-D44A-471F-B4B4-79F031865530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4A2DC29-9DA7-4BE1-B7B2-D72C065D638D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4A2DC29-9DA7-4BE1-B7B2-D72C065D638D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4A2DC29-9DA7-4BE1-B7B2-D72C065D638D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4A2DC29-9DA7-4BE1-B7B2-D72C065D638D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
