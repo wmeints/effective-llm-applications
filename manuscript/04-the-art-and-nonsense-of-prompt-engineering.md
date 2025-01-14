@@ -25,8 +25,9 @@ about writing prompts. We'll cover the following topics:
 - Monitoring prompt interactions in production
 - Security considerations when using prompts
 
-At the end of this chapter you'll have learned how to write effective prompt templates
-with system instructions and how to make sure your prompts still work after 6 months.
+At the end of this chapter you'll understand how to write effective prompt templates
+for your LLM-based application and how to test and monitor the performance of your
+prompts.
 
 ## Why Are Prompts Important for Effective LLM-Based Applications?
 
@@ -492,16 +493,16 @@ provide a positive value for the presence penalty.
 
 #### Frequency Penalty
 
-The last hyperparameter we'll discuss is the frequency penalty. This penalty looks
-similar to the presence penalty parameter but uses a different approach. Instead of
-applying a flat penalty to tokens that occurred before in the output, frequency penalty
-applies a penalty to the probability of tokens that frequently appear in the output. The
-more often a token appears in the output, the higher the penalty and the less likely the
-token is to be selected during the Top-P sampling process.
+Frequency penalty is the last hyperparameter we need to discuss. This hyperparameter
+looks similar to the presence penalty hyperparameter but uses a different approach.
+Instead of applying a flat penalty to tokens that occurred before in the output,
+frequency penalty applies a penalty to the probability of tokens that frequently appear
+in the output. The more often a token appears in the output, the higher the penalty and
+the less likely the token is to be selected during the Top-P sampling process.
 
 #### What to Choose for Each of the Hyper Parameters
 
-I know that this is a lot to take in and apply effectively. So let me give you some
+I know that this is a lot to take in so let me give you some
 direction on what to choose for each of the parameters.
 
 Coding requires a more repetitive and boring output to be effective. So you'd want to
@@ -520,37 +521,412 @@ establish what works for the majority of cases. Because the values for the proba
 distribution ultimately depend on the content of your prompt, and it's very likely that
 you need to adjust the hyperparameters a little bit based on that.
 
-Once you've written a good quality prompt, it's important to keep it around for longer.
+Once you've written a good quality prompt, may want to keep it around for longer.
 For this it's nice to have some sort of templating system in place. Let's take a look at
 what Semantic Kernel has to offer.
 
 ## Using Prompt Templates for Reusability
 
-- Store your prompts in source control so you can version them.
-- Write prompts in a separate prompt file for easier editing and reviewing.
-- Use placeholders to make your prompts more flexible.
-- Options for prompt writing, semantic kernel templates, or handlebars.
-- Recommend using the Semantic Kernel Tools: https://marketplace.visualstudio.com/items?itemName=ms-semantic-kernel.semantic-kernel
+Writing your prompts inline with other C# code is never a good plan. It's hard to read,
+hard to maintain, and you can't reuse it. That's why Semantic Kernel offers a way to
+write prompt templates using a variety of templating languages:
+
+- Semantic Kernel Templates: The internal format developed by Microsoft.
+- Handlebars: A popular templating language that's available for a wide range of
+  programming languages.
+- Liquid: An alternative to handlebars that's also available for a number of programming
+  languages.
+
+The prompt templating feature in Semantic Kernel is quite powerful. Let's take a look at
+the internal templating engine first.
 
 ### Creating a prompt template in Semantic Kernel
 
-- Using YAML files to store prompt templates
-- Using variables in the prompt template
-- Executing a YAML-based prompt template
-- Limitations of the semantic kernel template language
+The Semantic Kernel templating language is a text based language. You can write a basic
+prompt template like this:
+
+```text
+Help me cook something nice, give me a recipe for {{ $dish }}
+```
+
+In this template, we ask a basic recipe for a dish. Dish is a variable identified by
+`{{ \$dish }}`. We can fill this variable later when we invoke the prompt.
+
+You can invoke the prompt template using the following code:
+
+```csharp
+var promptTemplate = File.ReadAllText(
+    Path.Join(Directory.GetCurrentDirectory(), "prompt.txt")
+);
+
+var result = await kernel.InvokePromptAsync(promptTemplate,
+    arguments: new KernelArguments
+    {
+        ["dish"] = "pizza"
+    },
+    templateFormat: "semantic-kernel");
+
+Console.WriteLine(result);
+```
+
+Let's go over this code to understand what's happening:
+
+1. First, we load a prompt file from disk using the standard .NET I/O functions.
+2. We then call the `InvokePromptAsync` method on the kernel instance to execute the
+   prompt template providing `arguments`, and the `templateFormat`.
+3. Finally, we print the result to the console.
+
+We're using a kernel instance in the code sample as described in
+[#s](#setting-up-semantic-kernel). You can find the full source code for this sample in
+the [GitHub repository][SK_TEMPLATE_SAMPLE].
+
+The `KernelArguments` object is a special type of dictionary used to pass arguments to a
+kernel function. In this case we're passing a single argument, the dish variable, to the
+prompt template.
+
+We haven't specified any hyperparameters with the prompt, but you can add those as part
+of the arguments for the prompt. You can modify the call to `InvokePromptAsync` to
+include execution settings for the LLM provider you're using. The following code
+fragment demonstrates this:
+
+```csharp
+var promptTemplate = File.ReadAllText(
+    Path.Join(Directory.GetCurrentDirectory(), "prompt.txt")
+);
+
+var executionSettings = new AzureOpenAIPromptExecutionSettings
+{
+    MaxTokens = 1000,
+    Temperature = 0.5,
+    TopP = 0.98,
+    FrequencyPenalty = 0.0,
+    PresencePenalty = 0.0
+};
+
+var result = await kernel.InvokePromptAsync(promptTemplate,
+    arguments: new KernelArguments(executionSettings)
+    {
+        ["dish"] = "pizza",
+    },
+    templateFormat: "semantic-kernel");
+```
+
+In this code snippet we've added execution settings for the Azure OpenAI LLM provider.
+The settings are passed to the `KernelArguments` object to specify the hyperparameters
+for the prompt.
+
+Semantic Kernel Prompt Templates have limited functionality. For example, you can't use
+any loops in the prompt template. If you need more advanced functionality
+you can use Handlebars or Liquid templates as an alternative. In the next chapter we'll
+look at using Handlebars templates.
 
 ### Using handlebars as an alternative templating language
 
-- Handlebars offers extras like loops and if-statements.
-- Using variables in handlebars templates
-- Using flow control statements in handlebars templates
-- Executing a handlebars-based prompt template
+You can use Handlebars templates through a separate package
+`Microsoft.SemanticKernel.PromptTemplates.Handlebars`. This package provides a
+Handlebars template engine that you can use to write more complex prompts.
 
-### Working with multiple LLM providers
+For example, if you want to use a Handlebars template to generate a recipe for a dish
+and pair it with a list of ingredients that you have in the fridge, you could write a
+template like this:
 
-- Sometimes prompts just work better with a specific provider. That's not a problem because you can use multiple providers in your application.
-- You can even have different execution settings per provider and choose the correct provider in your application code.
-- Making a prompt template for multiple providers is especially useful if you need to implement fallbacks.
+```handlebars
+Help me cook something nice, give me a recipe for {{ dish }}.
+Use the ingredients I have in the fridge: 
+
+{{#each ingredients}}
+    {{ . }}
+{{/each}}
+```
+
+Since handlebars supports loops, we can use the `#each` statement to loop over the
+ingredients list. Handlebars uses helpers to implement the more advanced functionality
+like loops. You can find a full explanation of the syntax in the [Handlebars
+documentation](https://handlebarsjs.com/guide/). You can use many of the helpers
+described in the manual, except for any that need to render templates from other files.
+
+You can invoke the Handlebars template using the following code:
+
+```csharp
+var promptTemplate = File.ReadAllText(
+    Path.Join(Directory.GetCurrentDirectory(), "prompt.txt")
+);
+
+var result = await kernel.InvokePromptAsync(promptTemplate,
+    arguments: new KernelArguments
+    {
+        ["dish"] = "pizza",
+        ["ingredients"] = new List<string> 
+        { 
+            "pepperoni",
+            "mozarella",
+            "spinach" 
+        }
+    },
+    templateFormat: "handlebars",
+    promptTemplateFactory: new HandlebarsPromptTemplateFactory());
+
+Console.WriteLine(result);
+```
+
+We perform the following steps in the code:
+
+1. First, we load the handlebars template from disk.
+2. Then, we call `InvokePromptAsync` on the kernel instance to execute the prompt
+   template specifying that we're rendering a Handlebars template. We must also specify
+   that the kernel should use the `HandlebarsPromptTemplateFactory` to render the
+   template.
+3. Finally, we print the result of the prompt template to the terminal.
+
+Handlebars templates aren't supported out of the box, so you need to provide the correct
+template factory instance using the `promptTemplateFactory` argument.
+
+You can find the full source for this sample in the [GitHub
+repository][HB_TEMPLATE_SAMPLE], including instructions on how to run the sample
+yourself.
+
+### Maximizing reuse of prompts in your application
+
+When you've tried the samples and debugged them in VSCode or your favorite IDE, you'll
+have noticed that the output of `InvokePromptAsync` is a `FunctionResult`. Prompts in
+Semantic Kernel are turned into callable C# functions called Kernel Functions.
+
+Why would Semantic Kernel do this? Compiling prompts down to program functions helps
+make the prompts reusable as program logic. You can store compiled prompts in your program
+logic reducing the amount of code you need to run a prompt.
+
+If you find that you use the same prompts over and over in your program it's helpful to
+upgrade the prompts from the coding pattern we used in the previous sections to a
+reusable kernel function. Let me show you how to create a kernel function from a prompt
+with the following code:
+
+```csharp
+var promptTemplate = File.ReadAllText(
+    Path.Join(Directory.GetCurrentDirectory(), "prompt.txt")
+);
+
+var executionSettings = new AzureOpenAIPromptExecutionSettings
+{
+    MaxTokens = 1200,
+    Temperature = 0.5,
+    TopP = 1.0,
+    FrequencyPenalty = 0.0,
+    PresencePenalty = 0.0
+};
+
+var prompt = kernel.CreateFunctionFromPrompt(
+    promptTemplate, templateFormat: "handlebars",
+    promptTemplateFactory: new HandlebarsPromptTemplateFactory(),
+    executionSettings: executionSettings);
+
+var result = await kernel.InvokeAsync(prompt, new KernelArguments
+{
+    ["dish"] = "pizza",
+    ["ingredients"] = new List<string>
+    {
+        "pepperoni",
+        "mozzarella",
+        "spinach"
+    }
+});
+```
+
+Let's go through this code to understand the differences from earlier code samples:
+
+1. In the first step, we load the prompt template from disk.
+2. Next, we specify the execution settings we want to use for the prompt.
+3. Then, we call `CreateFunctionFromPrompt` instead of invoking the prompt directly. The
+   input for the function contains the prompt template, the prompt template factory we
+   want to use, and the execution settings.
+4. Finally, we can invoke the new function using `InvokeAsync` on the `kernel` object
+   and pass the arguments to the function.
+
+In the sample we store the function in a `prompt` variable. In production code you can
+store the prompt as a private variable of a class that serves as a wrapper around the
+Semantic Kernel code.
+
+In chapter 5, we'll explore other patterns to efficiently make reusable prompts
+available to your application.
+
+I've made sure that the code for building a kernel function is available in the [GitHub
+repository][KF_SAMPLE] so you can explore it in greater depth if you want.
+
+Kernel functions are nice step towards fully reusable prompts. But there's one more
+step you can take if you want to make your business logic more readable.
+
+### Using YAML-based prompt configuration
+
+As prompts come with additional settings you can consider storing the prompt
+configuration with the prompt in a dedicated file. In Semantic Kernel you can use YAML
+files to do this. Let me demonstrate what the YAML format for a prompt looks like:
+
+```yaml
+name: GenerateRecipe
+description: Generates a recipe based on ingredients in your fridge
+template: |
+  Help me cook something nice, give me a recipe for {{ dish }}. 
+  Use the ingredients I have in the fridge: 
+
+  {{#each ingredients}}
+      {{ . }}
+  {{/each}}
+template_format: handlebars
+input_variables:
+  - name: dish
+    description: The name of the dish you want to make
+    is_required: true
+  - name: ingredients
+    description: A list of ingredient names you have in the fridge
+    is_required: true
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 1200
+```
+
+There's a lot to unpack here. Let's go over the important properties:
+
+1. `name` Determines the name of the kernel function that we'll create from the YAML file.
+2. `template` Contains the prompt template for the prompt. This is the same as the
+   prompt template we used in the previous sections.
+3. `template_format` Specifies the template format we're using for the YAML prompt.
+4. `input_variables` Describe the expected input data for the prompt.
+5. `execution_settings` Describe the hyperparameters for the prompt.
+
+Depending on your use case you'll want to configure more settings. For a full
+description of the YAML format, you can refer to the [Semantic Kernel
+documentation](https://learn.microsoft.com/en-us/semantic-kernel/concepts/prompts/yaml-schema).
+
+To use the YAML based prompt files, you'll need to add the
+`Microsoft.SemanticKernel.Yaml` package to your project. After you've added it to your
+project, you can load the YAML based prompt with the following code:
+
+```csharp
+
+var promptTemplate = File.ReadAllText(
+    Path.Join(Directory.GetCurrentDirectory(), "prompt.yaml")
+);
+
+var prompt = kernel.CreateFunctionFromPromptYaml(
+    promptTemplate, 
+    new HandlebarsPromptTemplateFactory());
+```
+
+In this code fragment we load the prompt YAML file from disk and then use the
+`CreateFunctionFromPromptYaml` method on the kernel to create a kernel function from the
+YAML file. As the Handlebars format we've used for the prompt template isn't readily
+available, we have to explicitly tell Semantic Kernel that we want to use it for the
+prompt template.
+
+The `prompt` variable now contains a kernel function that you can use in your
+application.
+
+I think the YAML format is interesting because it provides a way to store prompts with
+their execution settings in a single file. I find the `execution_settings` the best
+option of this format, because I can configure different execution settings depending on
+the LLM provider I'm using.
+
+Let me explain why having multiple execution settings is useful with a bit more detail.
+Remember from [#s](#llomops-failover-strategies) that it can be useful to have a
+failover option in your application. Using the YAML file I can specify multiple
+execution settings for different LLM providers.
+
+To support the failover scenario, we need to modify the YAML file to include extra
+execution settings:
+
+```yaml
+name: GenerateRecipe
+description: Generates a recipe based on ingredients in your fridge
+template: |
+  Help me cook something nice, give me a recipe for {{ dish }}.
+  Use the ingredients I have in the fridge: 
+
+  {{#each ingredients}}
+      {{ . }}
+  {{/each}}
+template_format: handlebars
+input_variables:
+  - name: dish
+    description: The name of the dish you want to make
+    is_required: true
+  - name: ingredients
+    description: A list of ingredient names you have in the fridge
+    is_required: true
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 1200
+  azure_openai:
+    top_p: 0.9
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 1200
+```
+
+The first set of execution settings specify defaults for all LLM providers. The second
+set of execution settings are only valid for an LLM provider I registered with a service
+ID `azure_openai`.
+
+When creating a kernel, I can add a chat completion service with a Service ID. Here's
+the code to do so:
+
+```csharp
+var kernel = Kernel.CreateBuilder()
+    .AddAzureOpenAIChatCompletion(
+        configuration["LanguageModel:DeploymentName"]!,
+        endpoint: configuration["LanguageModel:Endpoint"]!,
+        apiKey: configuration["LanguageModel:ApiKey"]!,
+        serviceId: "azure_openai"
+    )
+    .Build();
+```
+
+Now when I want to execute a YAML based prompt with the Azure OpenAI LLM provider, I can
+use the following code:
+
+```csharp
+var serviceSelection = new PromptExecutionSettings()
+{
+    ServiceId = "azure_openai"
+};
+
+var result = await kernel.InvokeAsync(prompt,
+    arguments: new KernelArguments(serviceSelection)
+    {
+        ["dish"] = "pizza",
+        ["ingredients"] = new List<string>
+        {
+            "pepperoni",
+            "mozarella",
+            "spinach" 
+        }
+    });
+```
+
+In this code we stack an additional set of execution settings on top of the ones we
+specified in the YAML file. You only need to specify the name of the LLM provider you
+want to use in the `ServiceId` property of the `PromptExecutionSettings` object and pass
+the execution settings into the arguments of the `InvokeAsync` method.
+
+Switching between LLM provider is now as simple as setting a different value for the
+`ServiceId` property in the execution settings.
+
+The YAML format does have some limitations too. I've found that YAML is sensitive to
+mismatches in spaces and tabs. And editing the text of the template in the YAML file can
+be a bit cumbersome. But it's nice to have the option to store prompts in a single file
+with multiple sets of excution settings.
+
+**Note:** Working with multiple sets of execution settings is experimental at the time
+of writing. You will need to add `<NoWarn>SKEXP0001</NoWarn>` to the `PropertyGroup`
+section of your project file to suppress the build error telling you that the feature is
+experimental.
 
 ## Using the chat history to your advantage
 
@@ -596,4 +972,8 @@ to interact with them.
 
 [CONTEXT_WINDOW_PAPER]: https://arxiv.org/abs/2307.03172
 [LLM_ALIGNMENT]: https://medium.com/@madalina.lupu.d/align-llms-with-reinforcement-learning-from-human-feedback-595d61f160d5
-[TOP_P_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/main/notebooks
+[TOP_P_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/notebooks
+[SK_TEMPLATE_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.SemanticKernelTemplates
+[HB_TEMPLATE_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.HandleBarsTemplates
+[PROMPT_TEMPLATE_INTERFACE]: https://github.com/microsoft/semantic-kernel/blob/main/dotnet/src/SemanticKernel.Abstractions/PromptTemplate/IPromptTemplateFactory.cs
+[KF_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.KernelFunctionPrompts
