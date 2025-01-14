@@ -235,6 +235,7 @@ providers that support the OpenAI API interface.
 
 Let's start a new project with Semantic Kernel and do some initial exploring.
 
+{#setting-up-semantic-kernel}
 ## Setting up a project with Semantic Kernel
 
 Most people will build some sort of web API around a LLM use case. But Semantic Kernel
