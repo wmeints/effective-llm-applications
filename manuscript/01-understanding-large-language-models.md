@@ -1,4 +1,5 @@
 {#understanding-llms}
+{sample: true}
 # Understanding Large Language Models
 
 I remember the first time I realized just how useful large language models could
