@@ -939,10 +939,8 @@ experimental.
 
 ## Prompt Testing and Iterating on Your Prompts
 
-- Use a separate test suite for prompt testing.
-- Test for properties in the text instead of relying on the exact output.
-- Use multiple input samples to verify your prompt.
-- You can use the LLM against itself to provide some form of validation as well.
+A> This section is left empty intentionally. I have something planned for this section, but I'm not there yet.
+A> I'll fill this in as soon as I have the content ready to go. It will be awesome, I promise.
 
 ## Monitoring Prompt Interactions in Production
 
