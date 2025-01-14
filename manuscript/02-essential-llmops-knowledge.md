@@ -123,8 +123,8 @@ to understand that you need to change your perspective on testing. Throughout th
 remaining chapters of this book I'll show you how to test LLM-based applications in more
 detail:
 
-- In chapter 4, we'll look at how to use prompt testing as a form of unit-testing for
-  your prompts.
+- In [#s](#the-art-and-nonsense-of-prompt-engineering), we'll look at how to use prompt
+  testing as a form of unit-testing for your prompts.
 - In chapter 5, we'll use integration testing to validate that the LLM can make tool
   calls by applying integration tests.
 - In chapter 6, we dive into integration tests for a combination of search and an LLM.
@@ -152,7 +152,7 @@ responses. You could call this data drift.
 
 We'll cover monitoring in greater deal as we go through the remaining chapters in this book:
 
-- In chapter 4, we use monitoring to collect data needed to iterate on your prompts.
+- In [#s](#the-art-and-nonsense-of-prompt-engineering), we use monitoring to collect data needed to iterate on your prompts.
 - In chapter 5, we cover how to monitor calls to tools connected to the LLM.
 - In chapter 6, we'll look at how to monitor the interaction between the LLM and a search engine.
 
