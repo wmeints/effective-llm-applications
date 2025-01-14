@@ -831,7 +831,7 @@ the LLM provider I'm using.
 
 Let me explain why having multiple execution settings is useful with a bit more detail.
 Remember from [#s](#llomops-failover-strategies) that it can be useful to have a
-failover option in your application. Using the YAML file I can specify multiple
+failover option in your application. Using the YAML file you can specify multiple
 execution settings for different LLM providers.
 
 To support the failover scenario, we need to modify the YAML file to include extra
@@ -871,10 +871,10 @@ execution_settings:
 ```
 
 The first set of execution settings specify defaults for all LLM providers. The second
-set of execution settings are only valid for an LLM provider I registered with a service
+set of execution settings are only valid for an LLM provider we registered with a service
 ID `azure_openai`.
 
-When creating a kernel, I can add a chat completion service with a Service ID. Here's
+When creating a kernel, we can add a chat completion service with a Service ID. Here's
 the code to do so:
 
 ```csharp
@@ -888,8 +888,8 @@ var kernel = Kernel.CreateBuilder()
     .Build();
 ```
 
-Now when I want to execute a YAML based prompt with the Azure OpenAI LLM provider, I can
-use the following code:
+Now when we want to execute a YAML based prompt with the Azure OpenAI LLM provider, we
+can use the following code:
 
 ```csharp
 var serviceSelection = new PromptExecutionSettings()
