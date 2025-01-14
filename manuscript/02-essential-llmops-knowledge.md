@@ -270,6 +270,7 @@ LLM to be fast, otherwise you're just adding to the problem. And I've found that
 rest of the application is nice and fast, users are more forgiving about the LLM being
 slow.
 
+{#llomops-failover-strategies}
 ## Failover strategies
 
 As if performance wasn't hard enough, we get another nice present from the LLM
