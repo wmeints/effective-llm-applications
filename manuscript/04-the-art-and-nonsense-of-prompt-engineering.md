@@ -526,6 +526,7 @@ Once you've written a good quality prompt, may want to keep it around for longer
 For this it's nice to have some sort of templating system in place. Let's take a look at
 what Semantic Kernel has to offer.
 
+{#prompt-templates}
 ## Using Prompt Templates for Reusability
 
 Writing your prompts inline with other C# code is never a good plan. It's hard to read,
@@ -925,22 +926,136 @@ mismatches in spaces and tabs. And editing the text of the template in the YAML 
 be a bit cumbersome. But it's nice to have the option to store prompts in a single file
 with multiple sets of excution settings.
 
-**Note:** Working with multiple sets of execution settings is experimental at the time
+**Note:** Working with multiple LLM providers is experimental at the time
 of writing. You will need to add `<NoWarn>SKEXP0001</NoWarn>` to the `PropertyGroup`
 section of your project file to suppress the build error telling you that the feature is
 experimental.
 
 ## Using the chat history to your advantage
 
-- A prompt doesn't have to be one sequence of text. You can use the chat history object to provide more context to the model.
-- The most important use of the chat history is to provide a set of system instructions
-  to the model. These instructions provide a base direction for the model to follow
-  while the prompt provides instructions to achieve a specific goal.
+In [#s](#prompt-templates) we discussed how to use single prompts with Semantic Kernel.
+While this is useful for non-chat based scenarios I think it's important to also discuss
+chat-based scenarios. With a chat-based scenario we're talking about chat applications.
+But the user interface doesn't have to be a chat interface. It can also be a
+conversation between two actors in a workflow as we'll explore in chapter 11 or possibly
+a team of agents as we'll see in chapter 13.
+
+You'll need a different approach when working with chat history. We're no longer dealing
+with a scenario where we need to generate a single response. Instead, we'll build a
+conversation and use that as the central unit of content to work with.
+
+Let's take a look at the chat history object first as this will be the central unit
+we'll work with. You can build a conversation using the following piece of code:
+
+```csharp
+
+```
+
+This code performs the following steps:
+
+1. First, we'll create a new chat history object.
+2. Then, we add a new system message containing instructions for the assistant.
+3. Finally, we add the first user message asking for an apple pie recipe.
+
+The system instructions make sure that the LLM generates responses in line with the goal
+of the application. The system instructions typically also provide instructions
+regarding the style of communication and things that we don't like to see in the
+response.
+
+Once we have a chat history object we can use it to generate a response using the
+`IChatCompletionService`. The following code fragment demonstrates how this works:
+
+```csharp
+
+```
+
+The code fragment performs the following steps:
+
+1. First, we obtain an instance of the `IChatCompletionService` from the kernel.
+2. After that, we ask the kernel to return a ChatMessage based on the chat history we
+   provided.
+3. Finally, we print the content of the final chat message.
+
+It's good to know that the chat history is serializable to JSON. So you can store it in
+a database in serialized form and reuse it later to continue a conversation. Nearly all
+databases support storing JSON objects these days so it's quite easy to save the history
+of a conversation with a user in a way that you can query it or use it later.
+
+The internal flow of the `IChatCompletionService` is the same is it is for executing
+prompts. The main difference here is that you're dealing with a chat history. Filters,
+and functions work for chat oriented applications as well as single prompts. But the
+main goal of the `IChatCompletionService` is to build chat-oriented applications.
+
+We haven't talked again about streaming. Generating a response for a longer conversation
+takes a lot of time because you need to transfer the whole chat history to the model
+that's going to process it token by token to produce a response. This is a slow process.
+
+Lucky for us, `IChatCompletionService` supports streaming responses if you call
+`GetStreamingChatMessageContentsAsync` instead of `GetChatMessageContentsAsync`. The
+streaming method returns an `IAsyncEnumerable` object that you can iterate over using
+`await foreach` as the following code demonstrates:
+
+```csharp
+
+```
+
+I've included a basic sample in the [GitHub Repository][STREAMING_SAMPLE] that
+demonstrates how to combine the streaming API with SignalR to build a streaming
+interface for Javascript and Blazor based frontends. Note that I've only included the
+backend portion of the code. The frontend is left as an exercise for you to discover.
+
+Note that as conversations get longer you'll run out of context space, and you'll need to
+decide how to keep the chat history within acceptable limits. This is where the chat
+history reducer component comes in.
+
+You can use a chat history reducer to either truncate or summarize the chat history. The
+following code sample demonstrates the use of a chat history reducer:
+
+```csharp
+
+```
+
+Let me explain what the code does:
+
+1. First, we obtain an instance of the `IChatCompletionService` from the kernel.
+2. Then, we attach a trunacting chat history reducer to the chat completion service.
+3. Finally, we ask the chat completion service to return a chat message based on the
+   chat history we provided.
+
+It's up to you decided how long the chat history can be in number of tokens. Not all
+models have the same context window size, and you'll likely get an exception or
+undefined behavior if you leave the history too long.
+
+Depending on your use case it can be useful to summarize the history instead of
+truncating it. The `SummarizingChatHistoryReducer` can help you at the cost of an extra
+call to the model. The following code shows how to use the summarizing chat history
+reducer:
+
+```csharp
+
+```
+
+In this code we replace the call to the chat history reducer with the summarizing chat
+history reducer. Like in other places, you can use a specific LLM provider for the
+summarization process. Although I expect that you're going to use the same LLM provider
+as the one you're using for chatting. In fact, I recommend doing so as mixing LLMs can
+lead to inconsistencies in the conversation.
+
+Working with a chat history is a bit more complex than working with a single prompt. But
+it's essential when you're building an assistant-like use case. It's good to know that
+you can mix and match prompts and chat in such a scenario. We'll explore this in the
+next chapter we look at using functions with Semantic Kernel.
 
 ## Prompt Testing and Iterating on Your Prompts
 
-A> This section is left empty intentionally. I have something planned for this section, but I'm not there yet.
-A> I'll fill this in as soon as I have the content ready to go. It will be awesome, I promise.
+A> **Coming soon**\
+A> I've not yet written this portion of this chapter yet because I'm debating whether
+A> I should include an internal tool that we're working on. The tool is not offered as
+A> open-source at the moment, but I think it can be very helpful to speed up the process
+A> of testing your prompts. On the other hand, I strongly believe that this book
+A> shouldn't force you to use a tool that we offer through my employer. I want this to
+A> be useful regardless of whether you're using my testing tool or regular unit-testing
+A> tools. To be continued...
 
 ## Monitoring Prompt Interactions in Production
 
