@@ -1027,50 +1027,34 @@ streaming method returns an `IAsyncEnumerable` object that you can iterate over 
 `await foreach` as the following code demonstrates:
 
 ```csharp
+var chatCompletionService = kernel.Services
+    .GetService<IChatCompletionService>();
 
+var responseIterator = chatCompletionService!
+    .GetStreamingChatMessageContentsAsync(chatHistory);
+
+await foreach (var token in responseIterator)
+{
+    Console.Write(token.Content);
+}
 ```
 
-I've included a basic sample in the [GitHub Repository][STREAMING_SAMPLE] that
-demonstrates how to combine the streaming API with SignalR to build a streaming
-interface for Javascript and Blazor based frontends. Note that I've only included the
-backend portion of the code. The frontend is left as an exercise for you to discover.
+I've included the full source code in the [GitHub Repository][STREAMING_SAMPLE].
 
-Note that as conversations get longer you'll run out of context space, and you'll need to
-decide how to keep the chat history within acceptable limits. This is where the chat
-history reducer component comes in.
+Note that as conversations get longer you'll run out of context space, and you'll need
+to decide how to keep the chat history within acceptable limits. It is up to you to
+decide how you want to handle this. You can choose to truncate older messages from
+the history or summarize the earlier messages to keep a shorter version around.
 
-You can use a chat history reducer to either truncate or summarize the chat history. The
-following code sample demonstrates the use of a chat history reducer:
+In my experience it works very well to truncate older messages from the chat history
+until you have a consistent set of messages within your desired context window size.
+I've never had to resort to summarization of the history. This is because in chat
+scenarios older messages become less relevant as the conversation goes on. In some cases
+I've seen the LLM flip out because I had unrelated content in the chat history. So it's
+good to keep the chat history focused on the task at hand.
 
-```csharp
-
-```
-
-Let me explain what the code does:
-
-1. First, we obtain an instance of the `IChatCompletionService` from the kernel.
-2. Then, we attach a trunacting chat history reducer to the chat completion service.
-3. Finally, we ask the chat completion service to return a chat message based on the
-   chat history we provided.
-
-It's up to you decided how long the chat history can be in number of tokens. Not all
-models have the same context window size, and you'll likely get an exception or
-undefined behavior if you leave the history too long.
-
-Depending on your use case it can be useful to summarize the history instead of
-truncating it. The `SummarizingChatHistoryReducer` can help you at the cost of an extra
-call to the model. The following code shows how to use the summarizing chat history
-reducer:
-
-```csharp
-
-```
-
-In this code we replace the call to the chat history reducer with the summarizing chat
-history reducer. Like in other places, you can use a specific LLM provider for the
-summarization process. Although I expect that you're going to use the same LLM provider
-as the one you're using for chatting. In fact, I recommend doing so as mixing LLMs can
-lead to inconsistencies in the conversation.
+You can use code from the [Microsoft Semantic Kernel GitHub repository][TRUNCATION_SAMPLE]
+as a good starting point to implement truncation logic in your application.
 
 Working with a chat history is a bit more complex than working with a single prompt. But
 it's essential when you're building an assistant-like use case. It's good to know that
@@ -1121,6 +1105,7 @@ to interact with them.
 [TOP_P_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/notebooks
 [SK_TEMPLATE_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.SemanticKernelTemplates
 [HB_TEMPLATE_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.HandleBarsTemplates
-[PROMPT_TEMPLATE_INTERFACE]: https://github.com/microsoft/semantic-kernel/blob/main/dotnet/src/SemanticKernel.Abstractions/PromptTemplate/IPromptTemplateFactory.cs
 [KF_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.KernelFunctionPrompts
 [HB_MANUAL]: https://handlebarsjs.com/guide/
+[STREAMING_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.StreamingChatCompletions
+[TRUNCATION_SAMPLE]: https://github.com/microsoft/semantic-kernel/blob/main/dotnet/samples/Concepts/ChatCompletion/MultipleProviders_ChatHistoryReducer.cs
