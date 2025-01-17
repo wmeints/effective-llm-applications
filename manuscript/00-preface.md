@@ -19,33 +19,33 @@ enough in a more enterprise-oriented language like C#.
 
 ## What this book covers
 
-- **[#f](#understanding-llms)**, introduces large language models
+- **[#s #t](#understanding-llms)**, introduces large language models
   (LLMs) through the lens of my personal experience, explaining what they are, their
   capabilities, and why they're transforming how we build applications. This
   foundational chapter is essential for understanding the core concepts, and terminology
   that will help you make informed decisions about using LLMs in your projects, even if
   you're completely new to working with these models.
 
-- **[#t](#essential-llmops-knowledge)**, explains the basic operations involved in
+- **[#s #t](#essential-llmops-knowledge)**, explains the basic operations involved in
   building and hosting LLM-based applications. This chapter provides important
   information you'll need to know to appreciate the design patterns that we cover in
   later chapters.
 
-- **[#t](#getting-started-with-semantic-kernel)**, covers Semantic Kernel, a framework
+- **[#s #t](#getting-started-with-semantic-kernel)**, covers Semantic Kernel, a framework
   from Microsoft that simplifies building applications with LLMs by providing tools,
   abstractions, and patterns for integrating AI capabilities into your projects. This
   chapter walks you through setting up your development environment and creating your
   first Semantic Kernel project, giving you hands-on experience with the framework we'll
   build upon throughout the rest of the book.
 
-- **[#t](#the-art-and-nonsense-of-prompt-engineering)**, dives into the art of prompt engineering,
+- **[#s #t](#the-art-and-nonsense-of-prompt-engineering)**, dives into the art of prompt engineering,
   teaching you how to craft effective prompts that get reliable, high-quality responses
   from LLMs by covering key concepts like temperature, templates, and advanced techniques.
   This chapter is crucial because the ability to write good prompts is the foundation of
   working with LLMs - without this skill, you'll struggle to get consistent results no
   matter what frameworks or patterns you use.
 
-- **[#t](#prompt-testing-and-monitoring)**, takes you through the steps needed to
+- **[#s #t](#prompt-testing-and-monitoring)**, takes you through the steps needed to
   test and monitor interactions with LLMs in your application. This chapter helps you
   understand the importance of testing and monitoring prompts to make sure your application
   remains operational in the long run.
