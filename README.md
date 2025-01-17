@@ -13,22 +13,22 @@ Kernel](https://leanpub.com/effective-llm-applications-with-semantic-kernel)
 
 I'm writing this book as you read this, and I'm at **28% completion**.
 
-| Chapter                                        | Status      |
-| ---------------------------------------------- | ----------- |
-| 1. Understanding Large Language Models         | Complete    |
-| 2. Essential LLMOps knowledge                  | Complete    |
-| 3. Getting started with Semantic Kernel        | Complete    |
-| 4. The art and nonsense of prompt engineering  | Complete    |
-| 5. Testing and monitoring prompts              | Not started |
-| 5. Enhancing LLMs with functions               | Not started |
-| 6. Retrieval Augmented Generation (RAG)        | Not started |
-| 7. Working with structured output              | Not started |
-| 8. Prompt chaining workflows                   | Not started |
-| 9. Intelligent request routing workflows       | Not started |
-| 10. LLM orchestration workflows                | Not started |
-| 11. Artist and critic workflows                | Not started |
-| 12. Building basic agents                      | Not started |
-| 13. Multi-agent teams                          | Not started |
+| Chapter                                       | Status      |
+| --------------------------------------------- | ----------- |
+| 1. Understanding Large Language Models        | Complete    |
+| 2. Essential LLMOps knowledge                 | Complete    |
+| 3. Getting started with Semantic Kernel       | Complete    |
+| 4. The art and nonsense of prompt engineering | Complete    |
+| 5. Testing and monitoring prompts             | Not started |
+| 6. Enhancing LLMs with functions              | Not started |
+| 7. Retrieval Augmented Generation (RAG)       | Not started |
+| 8. Working with structured output             | Not started |
+| 9. Prompt chaining workflows                  | Not started |
+| 10. Intelligent request routing workflows     | Not started |
+| 11. LLM orchestration workflows               | Not started |
+| 12. Artist and critic workflows               | Not started |
+| 13. Building basic agents                     | Not started |
+| 14. Multi-agent teams                         | Not started |
 
 ## Working with the examples
 
