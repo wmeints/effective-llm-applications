@@ -1195,11 +1195,11 @@ LLM-based application.
 [CONTEXT_WINDOW_PAPER]: https://arxiv.org/abs/2307.03172
 [LLM_ALIGNMENT]: https://medium.com/@madalina.lupu.d/align-llms-with-reinforcement-learning-from-human-feedback-595d61f160d5
 [TOP_P_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/notebooks
-[SK_TEMPLATE_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.SemanticKernelTemplates
-[HB_TEMPLATE_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.HandleBarsTemplates
-[KF_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.KernelFunctionPrompts
+[SK_TEMPLATE_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/csharp/Chapter4.SemanticKernelTemplates
+[HB_TEMPLATE_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/csharp/Chapter4.HandleBarsTemplates
+[KF_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/csharp/Chapter4.KernelFunctionPrompts
 [HB_MANUAL]: https://handlebarsjs.com/guide/
-[STREAMING_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.StreamingChatCompletions
+[STREAMING_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/csharp/Chapter4.StreamingChatCompletions
 [TRUNCATION_SAMPLE]: https://github.com/microsoft/semantic-kernel/blob/main/dotnet/samples/Concepts/ChatCompletion/MultipleProviders_ChatHistoryReducer.cs
 [AZ_PII_DETECTION]: https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/how-to-call
 [GA_PII_DETECTION]: https://cloud.google.com/sensitive-data-protection/docs/deidentify-sensitive-data
