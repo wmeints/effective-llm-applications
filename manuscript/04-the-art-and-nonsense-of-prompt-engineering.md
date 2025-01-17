@@ -20,7 +20,7 @@ In this chapter we'll dive deeper into the art and science of prompt engineering
 about writing prompts. We'll cover the following topics:
 
 - Why are prompts important for effective LLM-based applications?
-- The 6 basics of a good prompt
+- The 5 basics of a good prompt
 - Using prompt templates for reusability
 - Prompt testing and iterating on your prompts
 - Monitoring prompt interactions in production
