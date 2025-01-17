@@ -1109,7 +1109,7 @@ If you have to filter PII from the input of the prompt you can use a filter to d
 Let me show you a quick example of how to build a filter for this purpose:
 
 ```csharp
-public class PIIFilter: IFunctionInvocationFilter, IPromptRenderFilter
+public class PIIFilter: IPromptRenderFilter
 {
     public async Task OnFunctionInvocationAsync(
         FunctionInvocationContext context, 
@@ -1150,34 +1150,24 @@ public class PIIFilter: IFunctionInvocationFilter, IPromptRenderFilter
 
 In this code we perform the following steps:
 
-1. First, we create a class that implements the `IFunctionInvocationFilter` and
-   `IPromptRenderFilter` interfaces. The first one is meant to filter the output of the
-   model. The second interface helps filter the prompt after the template is rendered.
-2. Then, in the filter, we implement the `OnFunctionInvocationAsync` method to filter
-   the output.
-3. Finally, we implement the `OnPromptRenderAsync` to filter the rendered prompt.
+1. First, we create a class that implements the `IPromptRenderFilter` interface.
+2. Next, we implement the `OnPromptRenderAsync` to filter the rendered prompt.
 
-To use the filter, we need to configure it in the kernel using the following code:
+To use the filter, we can configure it in the kernel using the following code:
 
 ```csharp
-kernel.FunctionInvocationFilters.Add(new PIIFilter());
 kernel.PromptRenderFilters.Add(new PIIFilter());
 ```
 
-Notice that we need to configure the filter as a prompt render filter and a function
-invocation filter. The same filter lives in two spots. If you're using dependency
-injection you can register the PII Filter as `IFunctionInvocationFilter` and
-`IPromptRenderFilter` in the DI container and the kernel will pick it up automatically.
-
-Note that I haven't included any actual PII filtering services in the filter. If you're
-interested in learning how to use one of the popular filters, please find the
-documentation for each of them here:
+Note that I haven't included any actual PII filtering code in the filter. If you're
+interested in learning how to use one of the popular PII filtering tools, please find
+the documentation for each of them here:
 
 1. [Azure PII Detection][AZ_PII_DETECTION]
 2. [Google de-identification][GA_PII_DETECTION]
 3. [AWS PII detection][AWS_PII_DETECTION]
 
-I do recommend getting rid of PII as soon as it enters the application if you have to.
+I recommend getting rid of PII as soon as it enters the application if you have to.
 There's less chance of it leaking anywhere the sooner you remove it. But sadly, I can't
 tell you how to apply any of these services specifically, because I'm not building your
 application.
