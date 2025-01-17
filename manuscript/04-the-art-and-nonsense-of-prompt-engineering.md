@@ -1,5 +1,5 @@
 {#the-art-and-nonsense-of-prompt-engineering}
-# The Art and Nonsense of Prompt Engineering
+# The art and nonsense of prompt engineering
 
 In chapter 3 we got the first chance to work with Semantic Kernel to execute a basic
 prompt. Prompts are arguably the most important part of working with large language
@@ -32,13 +32,13 @@ and non-chat use cases when it comes to using an LLM.
 
 Let's get started by exploring why prompt engineering is so popular.
 
-## Why Are Prompts Important for Effective LLM-Based Applications?
+## Why are prompts important for effective LLM-Based applications?
 
 Prompt engineering is super popular today because it's the cornerstone of using an LLM.
 Let's first get a good understanding of why prompt engineering is such an important
 concept when working on LLM-based applications.
 
-### Why Prompt Engineering Matters
+### Why prompt engineering matters
 
 Large Language Models can process language and produce language. Prompts are the only
 method to control an LLM. But there's something positively weird about using prompts.
@@ -72,7 +72,7 @@ to our advantage. Funny enough it's the weirdest combinations of words that let 
 embeddings and attention mechanism of the LLM work best. The clearer the pattern, the
 better the output.
 
-### Common Misconceptions About Prompts
+### Common misconceptions about prompts
 
 There are a few common misconceptions about prompts that I want to address before we
 dive into the rest of prompt engineering.
@@ -115,7 +115,7 @@ There's a lot that can go sideways with prompts. But if you understand how to ap
 prompt engineering it is very helpful in building effective LLM-based applications.
 
 {#prompt-principles}
-## The 5 Basics of a Good Prompt
+## The 5 basics of a good prompt
 
 Writing a good prompt is hard, because you have to think like the LLM you're working
 with. If you want to be close to 100% effective, you'll need to know:
@@ -132,7 +132,7 @@ I've found that they only provide a biased guideline as many LLM providers are l
 game them. You'll have to guess what works best, because the datasets used to train LLMs
 aren't open-source. They're a well guarded secret by the companies that build them.
 
-That leaves us with 6 basic principles that I know from experience work well for
+That leaves us with 5 basic principles that I know from experience work well for
 prompts:
 
 - Provide clear direction
@@ -143,7 +143,7 @@ prompts:
 
 Let's go through them one by one.
 
-### Provide Clear Direction
+### Provide clear direction
 
 Take a step back and think about how the LLM works. Remember that the LLM is a pattern
 matching machine that uses embeddings (modelling relationships between words in a
@@ -173,7 +173,7 @@ The detailed instructions help the LLM to follow a specific style pattern. For e
 if you ask for short responses, it's much more likely for the LLM to produce short
 outputs.
 
-### Specify the Output Format for the Prompt
+### Specify the output format for the prompt
 
 Next, we have to think about the output format for the prompt. In chat applications it's
 often enough to not specify the output format at all. LLMs are trained as chatbots, and
@@ -242,7 +242,7 @@ output in greater detail in chapter 8.
 
 Let's look at how you can help the model with samples next.
 
-### Add Samples to the Prompt
+### Add samples to the prompt
 
 Any LLM is capable of reproducing patterns it learned from the large body of text it was
 trained on. But that body of text hopefully doesn't contain internal documents of the
@@ -348,7 +348,7 @@ of the output.
 While adding multiple samples to the prompt is helpful, adding multiple tasks to a
 prompt isn't. Let's take a look.
 
-### Keep the Prompt Focused on One Task
+### Keep the prompt focused on one task
 
 LLMs are good at a lot of things, but they're not good at performing multiple tasks in
 one prompt. You'll get better results if you can focus the prompt on one task.
@@ -398,7 +398,7 @@ For LLM-based applications I recommend skipping chain-of-thought prompts. Instea
 recommend splitting the task into multiple prompts and using logic or one of the design
 patterns in the remaining chapters of this book to come to a complete result.
 
-### Tune Your Prompt With Hyperparameters
+### Tune your prompt with hyperparameters
 
 The last basic principle of a good prompt is to tune your prompt with hyperparameters.
 In the previous sections we've only looked at the text of the prompt. But that's only
@@ -503,7 +503,7 @@ frequency penalty applies a penalty to the probability of tokens that frequently
 in the output. The more often a token appears in the output, the higher the penalty and
 the less likely the token is to be selected during the Top-P sampling process.
 
-#### What to Choose for Each of the Hyper Parameters
+#### What to choose for each of the hyper parameters
 
 I know that this is a lot to take in so let me give you some direction on what to choose
 for each of the parameters.
@@ -529,7 +529,7 @@ For this it's nice to have some sort of templating system in place. Let's take a
 what Semantic Kernel has to offer.
 
 {#prompt-templates}
-## Writing Prompt Templates for Reusability
+## Writing prompt templates for reusability
 
 Writing your prompts inline with other C# code is never a good plan. It's hard to read,
 hard to maintain, and you can't reuse it. That's why Semantic Kernel offers a way to
@@ -544,7 +544,7 @@ write prompt templates using a variety of templating languages:
 The prompt templating feature in Semantic Kernel is quite powerful. Let's take a look at
 the internal templating engine first.
 
-### Creating a Prompt Template in Semantic Kernel
+### Creating a prompt template in Semantic Kernel
 
 The Semantic Kernel templating language is a text based language. You can write a basic
 prompt template like this:
@@ -624,7 +624,7 @@ any loops in the prompt template. If you need more advanced functionality
 you can use Handlebars or Liquid templates as an alternative. In the next chapter we'll
 look at using Handlebars templates.
 
-### Using Handlebars as an Alternative Templating Language
+### Using Handlebars as an alternative templating language
 
 You can use Handlebars templates through a separate package
 `Microsoft.SemanticKernel.PromptTemplates.Handlebars`. This package provides a
@@ -759,7 +759,7 @@ repository][KF_SAMPLE] so you can explore it in greater depth if you want.
 Kernel functions are nice step towards fully reusable prompts. But there's one more
 step you can take if you want to make your business logic more readable.
 
-### Using YAML-based Prompt Configuration
+### Using YAML-based prompt configuration
 
 As prompts come with additional settings you can consider storing the prompt
 configuration with the prompt in a dedicated file. In Semantic Kernel you can use YAML
@@ -934,7 +934,7 @@ of writing. You will need to add `<NoWarn>SKEXP0001</NoWarn>` to the `PropertyGr
 section of your project file to suppress the build error telling you that the feature is
 experimental.
 
-## Using the Chat History to Your Advantage
+## Using the chat history to your advantage
 
 In [#s](#prompt-templates) we discussed how to use single prompts with Semantic Kernel.
 While this is useful for non-chat based scenarios I think it's important to also discuss
@@ -1066,14 +1066,14 @@ chapter 6 when we look at using functions with Semantic Kernel.
 Prompt engineering is an art, and it can be dangerous if you're not careful. Let's
 look at how you can protect your prompts from abuse.
 
-## Security Considerations When Using Prompts
+## Security considerations when using prompts
 
 In [#s](#llmops-application-security) we discussed the importance of a layered defense.
 The layered defense starts with the prompt execution proces. We'll need to make sure
 that the input and output of the prompt are filtered for any unwanted content. We also
 need to make sure that we reduce the risk of prompt injection.
 
-### Filtering Executable Code from Prompts and Model Output
+### Filtering executable code from prompts and the model output
 
 One attack vector that's impacting prompt engineering is called prompt injection. This
 class of attack is used by malicious actors to inject content into the prompt that
@@ -1098,7 +1098,7 @@ security and is beyond the scope of the book. However, I recommend reading the [
 Atlas][MITRE] and the [OWASP Top 10 for LLMs][OWASP_LLM] to get a better understanding
 of how hackers are abusing prompts these days.
 
-### Filtering PII From the Input
+### Filtering PII from the prompt and the model output
 
 Many organizations want to make sure that they're not exposing personal information to
 the LLM because they're worried that the LLM provider may store that information. This
@@ -1111,25 +1111,6 @@ Let me show you a quick example of how to build a filter for this purpose:
 ```csharp
 public class PIIFilter: IPromptRenderFilter
 {
-    public async Task OnFunctionInvocationAsync(
-        FunctionInvocationContext context, 
-        Func<FunctionInvocationContext, Task> next)
-    {
-        // This function is called when the prompt is executed
-        // using the LLM provider. We can't modify the prompt
-        // at this point. We can only filter the outpput.
-        
-        await next(context);
-        
-        var output = context.Result.GetValue<string>();
-        
-        //TODO: Replace PII in the output
-
-        // Create a new function result, based on the old one,
-        // but with the filtered value.
-        context.Result = new FunctionResult(context.Result, output);
-    }
-
     public async Task OnPromptRenderAsync(
       PromptRenderContext context, 
       Func<PromptRenderContext, Task> next)

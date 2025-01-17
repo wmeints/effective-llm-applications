@@ -94,7 +94,7 @@ tokens into the model, the attention mechanism state is updated with the current
 understanding of the context that we're working on. Based on this information the model
 can now more reliably predict the next likely token.
 
-### Why This Matters for Software Development
+### Why this matters for software development
 
 You might be thinking, "Okay, cool technology, but why should I care as a developer?"
 Here's why:
@@ -120,7 +120,7 @@ they required understanding natural language. Now we can build applications that
 
 And we're just getting started!
 
-### The Current Reality
+### The current reality
 
 Let's be clear though – LLMs aren't magic. They have real limitations. They can provide
 you with some pretty surprising responses, the response can look right but contain
@@ -443,15 +443,15 @@ solutions in production. In the next section we'll dive into key concepts and
 terminology to use LLMs effectively. Understanding these fundamentals will help you make
 better decisions during the development process of your LLM-based applications.
 
-## Key Concepts and Terminology
+## Key concepts and terminology
 
 Before we dive into building applications with LLMs, let's cover some essential concepts
 you'll need to understand. Don't worry if some of these seem abstract at first – we'll
 put them into practice throughout the rest of the book.
 
-### Essential Terminology
+### Essential terminology
 
-#### Tokens and Tokenization
+#### Tokens and tokenization
 
 Before an LLM can process your text, it needs to break it down into tokens. Think of
 tokens as the building blocks the model uses to understand text. A token can be:
@@ -496,7 +496,7 @@ You'll work directly with embeddings later when we implement the Retrieval Augme
 Generation (RAG) pattern in Chapter 5. For now, just know that they're important for how
 LLMs understand text.
 
-#### Context Window
+#### Context window
 
 Every LLM has a limit to how much text it can consider at once – this is called the
 context window. It's essentially the model's short-term memory, including both your
@@ -513,7 +513,7 @@ Managing this context window effectively becomes crucial when building applicati
 we'll see in later chapters.
 
 {#llm-output-sampling}
-#### Output Sampling and Temperature
+#### Output sampling and temperature
 
 LLMs aim to produce human-like text, and one way they do this is through output
 sampling. When generating each token, the model doesn't just pick the most likely
@@ -534,7 +534,7 @@ While temperature is the most common setting you'll adjust, there are other samp
 parameters available. I recommend checking out [this article][PARAMETER_EXPLANATION] for
 a deeper dive into all the options.
 
-#### Few-shot Learning
+#### Few-shot learning
 
 Sometimes the best way to get what you want from an LLM is to show it examples. This is
 called few-shot learning, and it comes in two flavors:
@@ -564,7 +564,7 @@ Now classify: "The service was excellent"
 
 Often, one good example is enough, but complex tasks might need more.
 
-#### Zero-shot Capabilities
+#### Zero-shot capabilities
 
 Modern LLMs are so well-trained that they can often perform tasks without any examples.
 This is called the zero-shot capability of a model. You just describe what you want:
@@ -580,9 +580,9 @@ approach you use.
 In the next section, we'll look at core concepts for working with these
 models.
 
-### Core Concepts
+### Core concepts
 
-#### Prompt Engineering
+#### Prompt engineering
 
 The input you give to an LLM is called a prompt. Think of it as instructions that tell
 the model what you want it to do. A prompt contains both the task description and any
@@ -618,7 +618,7 @@ break in unexpected ways. What works better is:
 
 We'll dive deep into practical prompt engineering in Chapter 3.
 
-#### Fine-tuning vs. Prompt Engineering
+#### Fine-tuning vs. prompt engineering
 
 You might hear people talk about fine-tuning models for specific domains. Let me share
 my perspective on this.
@@ -675,7 +675,7 @@ system so you can see these benefits firsthand.
 In the next section, we'll look at practical considerations for working with these
 models, building on these fundamental concepts to create reliable applications.
 
-## Practical Considerations for Working with LLMs
+## Practical considerations for working with LLMs
 
 There are quite a few things that you need to account for when building LLM-based
 applications. This book is full of those things, but I've found there are three
@@ -718,7 +718,7 @@ task automation, I've found the real potential goes far beyond these common exam
 Let me share some real-world cases I've worked on that showcase what's possible when you
 think bigger.
 
-### Generating Targeted Reports from Technical Information
+### Generating targeted reports from technical information
 
 One organization I worked with was running charity projects with donor support. They had
 a challenge: their field reports were too technical and detailed for donors to digest
@@ -739,7 +739,7 @@ where information came from because reviewers wouldn't trust the system without 
 transparency. It's a great example of how LLMs work best when they augment human
 capabilities rather than trying to replace them entirely.
 
-### AI-Powered Knowledge Sharing Through Interviews
+### AI-Powered knowledge sharing through interviews
 
 Another interesting case involved Info Support itself, the organization I work for. We
 were struggling with knowledge sharing. We had a common problem: experts who were too
@@ -758,7 +758,7 @@ the LLM fully control the interview flow was tricky. We eventually replaced our 
 prompt-based decision-making with a simpler function that tracked question count to
 manage interview length.
 
-### Modernizing Legacy Code Bases
+### Modernizing legacy code bases
 
 One of my favorite projects involved upgrading legacy web forms from XML to TypeScript.
 The organization had so many forms that manual conversion would have taken years.
@@ -774,7 +774,7 @@ they struggle with handling large amounts of complex code all at once. Breaking 
 problem down into smaller pieces and using traditional parsing where appropriate gave us
 much better results.
 
-### We're Only Just Starting
+### We're only just starting out
 
 These cases represent just the beginning of what's possible with LLMs. While many people
 start their LLM journey with personal automation through tools like ChatGPT, these
