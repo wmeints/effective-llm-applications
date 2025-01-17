@@ -24,7 +24,6 @@ var kernel = Kernel.CreateBuilder()
     )
     .Build();
 
-kernel.FunctionInvocationFilters.Add(new PIIFilter());
 kernel.PromptRenderFilters.Add(new PIIFilter());
 
 var promptTemplate = File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "prompt.txt"));
