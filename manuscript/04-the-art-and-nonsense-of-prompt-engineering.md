@@ -1,5 +1,5 @@
 {#the-art-and-nonsense-of-prompt-engineering}
-# the Art and Nonsense of Prompt Engineering
+# The Art and Nonsense of Prompt Engineering
 
 In chapter 3 we got the first chance to work with Semantic Kernel to execute a basic
 prompt. Prompts are arguably the most important part of working with large language
@@ -27,20 +27,22 @@ about writing prompts. We'll cover the following topics:
 - Security considerations when using prompts
 
 At the end of this chapter you'll understand how to write effective prompt templates
-for your LLM-based application and how to test and monitor the performance of your
-prompts.
+for your LLM-based application. You'll also understand the difference between chat
+and non-chat use cases when it comes to using an LLM.
+
+Let's get started by exploring why prompt engineering is so popular.
 
 ## Why Are Prompts Important for Effective LLM-Based Applications?
 
+Prompt engineering is super popular today because it's the cornerstone of using an LLM.
 Let's first get a good understanding of why prompt engineering is such an important
 concept when working on LLM-based applications.
 
 ### Why Prompt Engineering Matters
 
-Large Language Models can process language and produce language. So it makes sense that
-we need to use language to interact with them. But there's something positively weird
-about LLMs. When you work with ChatGPT you're likely going write a prompt that looks
-like this:
+Large Language Models can process language and produce language. Prompts are the only
+method to control an LLM. But there's something positively weird about using prompts.
+When you work with ChatGPT you're likely going write a prompt that looks like this:
 
 ```text
 You're a world-class chef and you're preparing a meal.
@@ -65,23 +67,15 @@ network that's a mathmatical concept pattern matching input so that we get, hope
 the right output. That means we need to think about prompts not as normal sentences, but
 as computer instructions.
 
-For a prompt to be effective, we need to prime the attention mechanism and use the
-embeddings to our advantage. That's why prompts are an important part of working with
-LLMs. And that's why the unnatural way of speaking to an LLM is so effective.
+For a prompt to be effective, we need to use the attention mechanism and the embeddings
+to our advantage. Funny enough it's the weirdest combinations of words that let the
+embeddings and attention mechanism of the LLM work best. The clearer the pattern, the
+better the output.
 
 ### Common Misconceptions About Prompts
 
 There are a few common misconceptions about prompts that I want to address before we
-dive into the rest of prompt engineering. These misconceptions can harm your success
-when building an LLM-based application.
-
-#### Prompt engineering is a job
-
-Prompt engineering isn't a job. It's a skill that's part of another job like programming
-or copywriting. Prompt engineering is effective for tools like ChatGPT, but you have to
-remember that ChatGPT is more than just a prompt interface. A lot of the logic that
-makes the tool work is hidden from you. If you want to move beyond basic chat interfaces
-it's important to understand the other parts of building LLM-based applications.
+dive into the rest of prompt engineering.
 
 #### Prompts are static
 
@@ -97,9 +91,11 @@ Some people will tell you to write complicated prompts to get better results. Bu
 will often get better results by splitting complex tasks into smaller tasks and running
 them separately. This is because of how the context window of the LLM works. From [this
 paper][CONTEXT_WINDOW_PAPER] we can learn that LLMs have an attention span that isn't
-exactly what you'd expect from a machine. [#s](#context-window-curve) shows the
-attention span of a typical LLM. Input that's at the start and end of a prompt is likely
-to get picked up better by the LLM than content in the middle of the prompt.
+exactly what you'd expect from a machine. And although the models have been updated
+since the release of the paper, I still see this behavior in our production
+applications. [#s](#context-window-curve) shows the attention span of a typical LLM.
+Input that's at the start and end of a prompt is likely to get picked up better by the
+LLM than content in the middle of the prompt.
 
 ![Context window attention curve](context-window-curve.png)
 
@@ -112,14 +108,14 @@ adjust your application accordingly.
 LLMs are trained on a lot of data. As a result you can get a recipe for apple pie that
 looks very reasonable. But you can't rely on the general knowledge captured in the LLM.
 There's a high statistical chance that you get a response that looks reasonable, but the
-LLM may lie to you very convincingly. After all, we're just matching a pattern and the
-LLM doesn't remember facts, it just predicts the next token based on the pattern it saw.
+LLM may lie to you very convincingly. After all, we're just matching a pattern. The LLM
+doesn't remember facts, it just predicts the next token based on the pattern it saw.
 
 There's a lot that can go sideways with prompts. But if you understand how to approach
 prompt engineering it is very helpful in building effective LLM-based applications.
 
 {#prompt-principles}
-## the 6 Basics of a Good Prompt
+## The 5 Basics of a Good Prompt
 
 Writing a good prompt is hard, because you have to think like the LLM you're working
 with. If you want to be close to 100% effective, you'll need to know:
@@ -135,7 +131,6 @@ Sadly, you can't know any of these three things as hard facts. There are benchma
 I've found that they only provide a biased guideline as many LLM providers are likely to
 game them. You'll have to guess what works best, because the datasets used to train LLMs
 aren't open-source. They're a well guarded secret by the companies that build them.
-Because without the data they wouldn't make money.
 
 That leaves us with 6 basic principles that I know from experience work well for
 prompts:
@@ -161,11 +156,12 @@ that's okay for chat applications like ChatGPT, but it's not okay for business
 applications where users expect high quality results.
 
 There are two things that are helpful for generating a pattern that the LLM can match.
-First, it's helpful to provide the LLM with a persona. For example, a chef, or a
-copywriter. Second, it's important to provide the LLM with detailed instructions about
+First, it's helpful to provide the LLM with a clear context. For example, you can give it
+a persona to provide the context. Or you can tell it what project/task you're working on.
+Second, it's important to provide the LLM with detailed instructions about
 the desired output and the style of the output.
 
-The persona helps prime the embeddings and attention mechanism of the LLM so it starts
+The context helps set the embeddings and attention mechanism of the LLM so it starts
 searching for output tokens in the right word space. For example, the persona of a chef
 will likely lead the LLM in the direction of food, recipes, cooking techniques, and so
 on. A copywriter persona primes the embeddings and attention mechanism in the direction
@@ -235,27 +231,25 @@ Certainly! Here's a classic apple pie recipe in a fenced markdown block:
 ```
 ~~~
 
-Note that the response contains the recipe in between Markdown code block delimiters. We
-can now use a regular expression to extract the recipe from the response.
+Note that the response contains the recipe in between Markdown fenced code block
+delimiters. We can now use a regular expression to extract the recipe from the response.
 
 While this looks like an excellent way of working with LLMs in use cases outside of
 chat, there are better ways to handle structured outputs. You can instruct the LLM to
 generate JSON results or even call a function to output the generated code. Both of
 these options provide much more control over the output format. We'll cover structured
-output in greater detail in chapter 7.
+output in greater detail in chapter 8.
 
-I'll keep repeating this throughout the book. We're controlling a pattern matching
-machine. Telling it what output format you want is only putting in the right pattern
-for what you want to achieve.
+Let's look at how you can help the model with samples next.
 
-### Add Context and samples to the Prompt
+### Add Samples to the Prompt
 
 Any LLM is capable of reproducing patterns it learned from the large body of text it was
 trained on. But that body of text hopefully doesn't contain internal documents of the
 client or company you work for. So if you need to answer questions about internal
 information, you're going to have to tell the LLM about the information.
 
-We'll cover Retrieval Augmented Generation in greater depth in chapter 6. But for now,
+We'll cover Retrieval Augmented Generation in greater depth in chapter 7. But for now,
 it's important to understand that the LLM can't remember facts. It's a talking parrot
 that reproduces patterns it has seen before. This looks like a limitation, but you can
 turn this into a powerful trait.
@@ -280,12 +274,16 @@ provided as context.
 <The employee question>
 ```
 
-It's highly likely that the LLM will reproduce the sample content you provided as
-context in the prompt. There are of course downsides to this. If your context
-information is incorrect, vague, or non-existent, then the LLM can't match the pattern,
-and you'll get an answer that doesn't make much sense or is plain misleading.
+You can consider the context heading in the prompt as the samples that the model can
+use to generate a useful response. It's highly likely that the LLM will reproduce the
+content you provided because of the talking parrot effect.
 
-Adding context to a prompt helps establish a good pattern for the LLM to follow. You'll
+If your sample is incorrect, vague, or non-existent, then the LLM can't
+match the pattern, and you'll get an answer that doesn't make much sense or is plain
+misleading. So it's important to make sure you only inject information that's safe,
+and sensible.
+
+Adding samples to a prompt helps establish a good pattern for the LLM to follow. You'll
 see a lot of people add examples of the results they want to a prompt. Adding examples
 to your prompt is called one-shot learning or few-shot learning if you add more than one
 example of the expected output. Let's look at an example to understand what that
@@ -347,6 +345,9 @@ that one sample doesn't help, don't be afraid to add more samples to help the LL
 your desired patern. Providing enough variety in the samples will help with the quality
 of the output.
 
+While adding multiple samples to the prompt is helpful, adding multiple tasks to a
+prompt isn't. Let's take a look.
+
 ### Keep the Prompt Focused on One Task
 
 LLMs are good at a lot of things, but they're not good at performing multiple tasks in
@@ -387,8 +388,8 @@ thing.
 
 Note, the recipe looks better, but it doesn't have to be correct. You need to verify the
 output of the LLM here. And it will be harder to validate, because you need to look at
-more text. Chain-of-thought prompts lack control. You will need to address this if you
-want to provide stable results to your users.
+more text. Chain-of-thought prompts lack control in many cases. You will need to address
+this if you want to provide stable results to your users.
 
 Chain-of-thought prompts work with tools like ChatGPT, because you've got nothing better
 there. You can't program the workflow in ChatGPT.
@@ -421,11 +422,13 @@ various tasks to get good quality responses.
 #### Top-P
 
 The important bit to understand about an LLM in relation output sampling is this. The
-final layer of a LLM performs a softmax calculation. The neural network predicts output
-values between -1 and +1. The softmax calculation turns these values into a probability
-distribution. Each of the possible output tokens (words, numbers, etc.) is assigned a
-value adding up to a total of one. The higher the value, the more likely the token is to
-be the next token in the output.
+final layer of a LLM performs a softmax calculation. The neural network doesn't produce
+words, it produces numbers that we have to translate into numbers. The numbers it
+produces are typically negative and range from 0 to values well into -200 range. The
+softmax output layer turns these values into a probability distribution. Each position
+in the output layer represents a possible output token (words, numbers, etc.) . Each of
+the possible output tokens is assigned a value adding up to a total of one. The higher
+the value, the more likely the token is to be the next token in the output.
 
 From this probability distribution we could simply select the token with the highest
 probability as the output. However, this leads to repetitive and boring output. We can
@@ -454,14 +457,14 @@ want greater variety.
 
 #### Temperature
 
-LLMs don't just use Top-P sampling. The people who invented these types of models found
+LLMs don't just use Top-P sampling. The inventors of these types of models found
 that Top-P sampling isn't enough to get natural text. So they decided to add temperature
 to the mix. Temperature controls the shape of the probability distribution used to
 perform Top-P sampling.
 
-Before performing the Top-P sampling, the raw scores for the
-candidate tokens are divided by the temperature value. After that the softmax function
-is applied to determine the probabilities for the candidate tokens. In
+Here's how temperature works. Before performing the Top-P sampling, the raw scores for
+the candidate tokens are divided by the temperature value. After that the softmax
+function is applied to determine the probabilities for the candidate tokens. In
 [#s](#temperature-effects) you can see this in action with a before and after.
 
 {#temperature-effects}
@@ -473,9 +476,8 @@ selection. Conversely, the lower the temperature, the harder the curve is. It ta
 time to reach the threshold.
 
 Ideally you'd want to see the distribution of each of the tokens in the output to make
-an informed decision about the temperature and Top-P values, but you can't do that. I'm
-not 100% sure why this information isn't available, but my guess is that it would expose
-too many details of the internal to the user of the LLM.
+an informed decision about the temperature and Top-P values, but you can't do that. So
+tuning the temperature is a bit of an arcane art.
 
 At this point I understand that you're probably thinking that this is a lot to get
 through. And it is. I've included an interactive notebook that demonstrates Top-P
@@ -503,10 +505,10 @@ the less likely the token is to be selected during the Top-P sampling process.
 
 #### What to Choose for Each of the Hyper Parameters
 
-I know that this is a lot to take in so let me give you some
-direction on what to choose for each of the parameters.
+I know that this is a lot to take in so let me give you some direction on what to choose
+for each of the parameters.
 
-Coding requires a more repetitive and boring output to be effective. So you'd want to
+Coding requires a more repetitive and boring output to be effective. So you want to
 choose a lower value for Top-P and a lower value for temperature. The presence penalty
 and frequency penalty should be set to 0, because we don't want to apply any penalties.
 Coding is repetitive by nature.
@@ -522,12 +524,12 @@ establish what works for the majority of cases. Because the values for the proba
 distribution ultimately depend on the content of your prompt, and it's very likely that
 you need to adjust the hyperparameters a little bit based on that.
 
-Once you've written a good quality prompt, may want to keep it around for longer.
+Once you've written a good quality prompt, you may want to keep it around for longer.
 For this it's nice to have some sort of templating system in place. Let's take a look at
 what Semantic Kernel has to offer.
 
 {#prompt-templates}
-## Using Prompt Templates for Reusability
+## Writing Prompt Templates for Reusability
 
 Writing your prompts inline with other C# code is never a good plan. It's hard to read,
 hard to maintain, and you can't reuse it. That's why Semantic Kernel offers a way to
@@ -542,7 +544,7 @@ write prompt templates using a variety of templating languages:
 The prompt templating feature in Semantic Kernel is quite powerful. Let's take a look at
 the internal templating engine first.
 
-### Creating a prompt template in Semantic Kernel
+### Creating a Prompt Template in Semantic Kernel
 
 The Semantic Kernel templating language is a text based language. You can write a basic
 prompt template like this:
@@ -574,7 +576,7 @@ Console.WriteLine(result);
 Let's go over this code to understand what's happening:
 
 1. First, we load a prompt file from disk using the standard .NET I/O functions.
-2. We then call the `InvokePromptAsync` method on the kernel instance to execute the
+2. Then, we call the `InvokePromptAsync` method on the kernel instance to execute the
    prompt template providing `arguments`, and the `templateFormat`.
 3. Finally, we print the result to the console.
 
@@ -582,9 +584,9 @@ We're using a kernel instance in the code sample as described in
 [#s](#setting-up-semantic-kernel). You can find the full source code for this sample in
 the [GitHub repository][SK_TEMPLATE_SAMPLE].
 
-The `KernelArguments` object is a special type of dictionary used to pass arguments to a
-kernel function. In this case we're passing a single argument, the dish variable, to the
-prompt template.
+You can pass in values for the variables in the template by providing a `KernelArguments` object. 
+This object is a special type of dictionary that stores both values for use in the template and
+a set of hyperparameters used when executing the prompt.
 
 We haven't specified any hyperparameters with the prompt, but you can add those as part
 of the arguments for the prompt. You can modify the call to `InvokePromptAsync` to
@@ -622,7 +624,7 @@ any loops in the prompt template. If you need more advanced functionality
 you can use Handlebars or Liquid templates as an alternative. In the next chapter we'll
 look at using Handlebars templates.
 
-### Using handlebars as an alternative templating language
+### Using Handlebars as an Alternative Templating Language
 
 You can use Handlebars templates through a separate package
 `Microsoft.SemanticKernel.PromptTemplates.Handlebars`. This package provides a
@@ -695,8 +697,8 @@ have noticed that the output of `InvokePromptAsync` is a `FunctionResult`. Promp
 Semantic Kernel are turned into callable C# functions called Kernel Functions.
 
 Why would Semantic Kernel do this? Compiling prompts down to program functions helps
-make the prompts reusable as program logic. You can store compiled prompts in your program
-logic reducing the amount of code you need to run a prompt.
+make the prompts reusable as program logic. You can store compiled prompts in your
+program logic reducing the amount of code you need to run a prompt.
 
 If you find that you use the same prompts over and over in your program it's helpful to
 upgrade the prompts from the coding pattern we used in the previous sections to a
@@ -748,7 +750,7 @@ In the sample we store the function in a `prompt` variable. In production code y
 store the prompt as a private variable of a class that serves as a wrapper around the
 Semantic Kernel code.
 
-In chapter 5, we'll explore other patterns to efficiently make reusable prompts
+In chapter 6, we'll explore other patterns to efficiently make reusable prompts
 available to your application.
 
 I've made sure that the code for building a kernel function is available in the [GitHub
@@ -757,7 +759,7 @@ repository][KF_SAMPLE] so you can explore it in greater depth if you want.
 Kernel functions are nice step towards fully reusable prompts. But there's one more
 step you can take if you want to make your business logic more readable.
 
-### Using YAML-based prompt configuration
+### Using YAML-based Prompt Configuration
 
 As prompts come with additional settings you can consider storing the prompt
 configuration with the prompt in a dedicated file. In Semantic Kernel you can use YAML
@@ -792,7 +794,8 @@ execution_settings:
 
 There's a lot to unpack here. Let's go over the important properties:
 
-1. `name` Determines the name of the kernel function that we'll create from the YAML file.
+1. `name` Determines the name of the kernel function that we'll create from the YAML
+   file.
 2. `template` Contains the prompt template for the prompt. This is the same as the
    prompt template we used in the previous sections.
 3. `template_format` Specifies the template format we're using for the YAML prompt.
@@ -829,8 +832,8 @@ application.
 
 I think the YAML format is interesting because it provides a way to store prompts with
 their execution settings in a single file. I find the `execution_settings` the best
-option of this format, because I can configure different execution settings depending on
-the LLM provider I'm using.
+option of this format, because you can configure different execution settings depending on
+the LLM provider you're using.
 
 Let me explain why having multiple execution settings is useful with a bit more detail.
 Remember from [#s](#llomops-failover-strategies) that it can be useful to have a
@@ -921,28 +924,28 @@ the execution settings into the arguments of the `InvokeAsync` method.
 Switching between LLM provider is now as simple as setting a different value for the
 `ServiceId` property in the execution settings.
 
-The YAML format does have some limitations too. I've found that YAML is sensitive to
-mismatches in spaces and tabs. And editing the text of the template in the YAML file can
-be a bit cumbersome. But it's nice to have the option to store prompts in a single file
-with multiple sets of excution settings.
+The YAML format does have some limitations. I've found that the YAML format in general
+is sensitive to mismatches in spaces and tabs. And editing the text of the template in
+the YAML file can be a bit cumbersome. But it's nice to have the option to store prompts
+in a single file with multiple sets of excution settings.
 
 **Note:** Working with multiple LLM providers is experimental at the time
 of writing. You will need to add `<NoWarn>SKEXP0001</NoWarn>` to the `PropertyGroup`
 section of your project file to suppress the build error telling you that the feature is
 experimental.
 
-## Using the chat history to your advantage
+## Using the Chat History to Your Advantage
 
 In [#s](#prompt-templates) we discussed how to use single prompts with Semantic Kernel.
 While this is useful for non-chat based scenarios I think it's important to also discuss
-chat-based scenarios. With a chat-based scenario we're talking about chat applications.
-But the user interface doesn't have to be a chat interface. It can also be a
-conversation between two actors in a workflow as we'll explore in chapter 11 or possibly
-a team of agents as we'll see in chapter 13.
+chat-based scenarios. When talking about chat-based scenarios you have to keep in mind
+that you don't necessarily need a chat user interface. We're strictly talking about
+a list of prompts and responses that form a conversation.
 
 You'll need a different approach when working with chat history. We're no longer dealing
 with a scenario where we need to generate a single response. Instead, we'll build a
-conversation and use that as the central unit of content to work with.
+conversation that can have multiple turns and use that as the central unit of content to
+work with.
 
 Let's take a look at the chat history object first as this will be the central unit
 we'll work with. You can build a conversation using the following piece of code:
@@ -994,7 +997,7 @@ Console.WriteLine(response[0].Content);
 The code fragment performs the following steps:
 
 1. First, we obtain an instance of the `IChatCompletionService` from the kernel.
-2. After that, we ask the kernel to return a ChatMessage based on the chat history we
+2. After that, we ask the kernel to return a chat message based on the chat history we
    provided.
 3. Finally, we print the content of the first chat message that's returned.
 
@@ -1011,15 +1014,14 @@ of a conversation with a user in a way that you can query it or use it later.
 
 The internal flow of the `IChatCompletionService` is the same is it is for executing
 prompts (see [#s](#semantic-kernel-architecture)). The main difference here is that
-you're dealing with a chat history. Filters, and functions work for chat oriented
-applications as well as single prompts. But the main goal of the
+you're dealing with a longer prompt shaped like a conversation. Filters, and functions
+work for chat oriented applications as well as single prompts. But the main goal of the
 `IChatCompletionService` is to build chat-oriented applications.
 
-Generating a response for a longer conversation
-takes a lot of time because you need to transfer the whole chat history to the model
-that's going to process it token by token to produce a response. This is a slow process.
-It's good to know that Semantic Kernel supports streaming responses to prompts 
-and in chat scenarios.
+Generating a response for a longer conversation takes a lot of time because you need to
+transfer the whole chat history to the model that's going to process it token by token
+to produce a response. This is a slow process. It's good to know that Semantic Kernel
+supports streaming responses to prompts and in chat scenarios.
 
 You can ask `IChatCompletionService` to stream the response by calling
 `GetStreamingChatMessageContentsAsync` instead of `GetChatMessageContentsAsync`. The
@@ -1046,7 +1048,7 @@ to decide how to keep the chat history within acceptable limits. It is up to you
 decide how you want to handle this. You can choose to truncate older messages from
 the history or summarize the earlier messages to keep a shorter version around.
 
-In my experience it works very well to truncate older messages from the chat history
+In my experience it works well to truncate older messages from the chat history
 until you have a consistent set of messages within your desired context window size.
 I've never had to resort to summarization of the history. This is because in chat
 scenarios older messages become less relevant as the conversation goes on. In some cases
@@ -1059,23 +1061,10 @@ as a good starting point to implement truncation logic in your application.
 Working with a chat history is a bit more complex than working with a single prompt. But
 it's essential when you're building an assistant-like use case. It's good to know that
 you can mix and match prompts and chat in such a scenario. We'll explore this in the
-next chapter we look at using functions with Semantic Kernel.
+chapter 6 when we look at using functions with Semantic Kernel.
 
-## Prompt Testing and Iterating on Your Prompts
-
-A> **Coming soon**\
-A> I've not yet written this portion of this chapter yet because I'm debating whether
-A> I should include an internal tool that we're working on. The tool is not offered as
-A> open-source at the moment, but I think it can be very helpful to speed up the process
-A> of testing your prompts. On the other hand, I strongly believe that this book
-A> shouldn't force you to use a tool that we offer through my employer. I want this to
-A> be useful regardless of whether you're using my testing tool or regular unit-testing
-A> tools. To be continued...
-
-## Monitoring Prompt Interactions in Production
-
-- Use application insights to collect telemetry data on prompt interactions.
-- Export data from application insights and use it in your tests.
+Prompt engineering is an art, and it can be dangerous if you're not careful. Let's
+look at how you can protect your prompts from abuse.
 
 ## Security Considerations When Using Prompts
 
@@ -1084,11 +1073,114 @@ The layered defense starts with the prompt execution proces. We'll need to make 
 that the input and output of the prompt are filtered for any unwanted content. We also
 need to make sure that we reduce the risk of prompt injection.
 
+### Filtering Executable Code from Prompts and Model Output
+
+One attack vector that's impacting prompt engineering is called prompt injection. This
+class of attack is used by malicious actors to inject content into the prompt that
+produces output that's executed by the application in unwanted ways.
+
+For example, you can construct prompts that produce harmful javascript that your browser
+is going to execute if you don't filter out the executable code from the response.
+
+By default, the template engines used in Semantic Kernel escape javascript, CSS, and
+script tags in the prompt input and output. This way you're somewhat protected against
+abuse if you're rendering content in the browser. However, if you're going to use the
+output of a prompt as code to be executed in the context of your application you should
+be aware that it can't be trusted. I wouldn't do it at all, but if you have to, be sure
+to limit what that code has access to.
+
+Keep in mind that filtering the input and output of the LLM is an important step, but 
+will not be enough to protect your application. We'll cover more steps in chapter 6 as
+we look at using functions with Semantic Kernel.
+
+Fully understanding just how dangerous prompt injection is requires a deep dive into the
+security and is beyond the scope of the book. However, I recommend reading the [MITRE
+Atlas][MITRE] and the [OWASP Top 10 for LLMs][OWASP_LLM] to get a better understanding
+of how hackers are abusing prompts these days.
+
 ### Filtering PII From the Input
 
-### Protecting Yourself Against Prompt Injection
+Many organizations want to make sure that they're not exposing personal information to
+the LLM because they're worried that the LLM provider may store that information. This
+is a valid concern, although many LLM providers have provisions in their contract that
+handle this concern quite well.
 
-### Filtering Harmful Content From the Output
+If you have to filter PII from the input of the prompt you can use a filter to do so.
+Let me show you a quick example of how to build a filter for this purpose:
+
+```csharp
+public class PIIFilter: IFunctionInvocationFilter, IPromptRenderFilter
+{
+    public async Task OnFunctionInvocationAsync(
+        FunctionInvocationContext context, 
+        Func<FunctionInvocationContext, Task> next)
+    {
+        // This function is called when the prompt is executed
+        // using the LLM provider. We can't modify the prompt
+        // at this point. We can only filter the outpput.
+        
+        await next(context);
+        
+        var output = context.Result.GetValue<string>();
+        
+        //TODO: Replace PII in the output
+
+        // Create a new function result, based on the old one,
+        // but with the filtered value.
+        context.Result = new FunctionResult(context.Result, output);
+    }
+
+    public async Task OnPromptRenderAsync(
+      PromptRenderContext context, 
+      Func<PromptRenderContext, Task> next)
+    {
+        // This function is called when the prompt is rendered. This is where
+        // we can filter the contents of the prompt before it's submitted.
+        
+        var renderedPrompt = context.RenderedPrompt;
+        
+        //TODO: Filter the prompt contents
+        
+        // Replace the original prompt with the filtered prompt.
+        context.RenderedPrompt = renderedPrompt; 
+        await next(context);
+    }
+}
+```
+
+In this code we perform the following steps:
+
+1. First, we create a class that implements the `IFunctionInvocationFilter` and
+   `IPromptRenderFilter` interfaces. The first one is meant to filter the output of the
+   model. The second interface helps filter the prompt after the template is rendered.
+2. Then, in the filter, we implement the `OnFunctionInvocationAsync` method to filter
+   the output.
+3. Finally, we implement the `OnPromptRenderAsync` to filter the rendered prompt.
+
+To use the filter, we need to configure it in the kernel using the following code:
+
+```csharp
+kernel.FunctionInvocationFilters.Add(new PIIFilter());
+kernel.PromptRenderFilters.Add(new PIIFilter());
+```
+
+Notice that we need to configure the filter as a prompt render filter and a function
+invocation filter. The same filter lives in two spots. If you're using dependency
+injection you can register the PII Filter as `IFunctionInvocationFilter` and
+`IPromptRenderFilter` in the DI container and the kernel will pick it up automatically.
+
+Note that I haven't included any actual PII filtering services in the filter. If you're
+interested in learning how to use one of the popular filters, please find the
+documentation for each of them here:
+
+1. [Azure PII Detection][AZ_PII_DETECTION]
+2. [Google de-identification][GA_PII_DETECTION]
+3. [AWS PII detection][AWS_PII_DETECTION]
+
+I do recommend getting rid of PII as soon as it enters the application if you have to.
+There's less chance of it leaking anywhere the sooner you remove it. But sadly, I can't
+tell you how to apply any of these services specifically, because I'm not building your
+application.
 
 ## Summary
 
@@ -1097,8 +1189,8 @@ the important role prompts play in LLM-based applications and how to write effec
 prompts. We also covered the importance of testing and monitoring your prompts so you
 can ensure that your application will still work in 6 months time.
 
-In the next chapter, we'll extend the capabilities of the LLM with functions and use prompts
-to interact with them.
+In the next chapter, we'll look at testing and monitoring prompts in your
+LLM-based application.
 
 [CONTEXT_WINDOW_PAPER]: https://arxiv.org/abs/2307.03172
 [LLM_ALIGNMENT]: https://medium.com/@madalina.lupu.d/align-llms-with-reinforcement-learning-from-human-feedback-595d61f160d5
@@ -1109,3 +1201,8 @@ to interact with them.
 [HB_MANUAL]: https://handlebarsjs.com/guide/
 [STREAMING_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/Chapter4.StreamingChatCompletions
 [TRUNCATION_SAMPLE]: https://github.com/microsoft/semantic-kernel/blob/main/dotnet/samples/Concepts/ChatCompletion/MultipleProviders_ChatHistoryReducer.cs
+[AZ_PII_DETECTION]: https://learn.microsoft.com/en-us/azure/ai-services/language-service/personally-identifiable-information/how-to-call
+[GA_PII_DETECTION]: https://cloud.google.com/sensitive-data-protection/docs/deidentify-sensitive-data
+[AWS_PII_DETECTION]: https://docs.aws.amazon.com/comprehend/latest/dg/how-pii.html
+[OWASP_LLM]: https://owasp.org/www-project-top-10-for-large-language-model-applications/
+[MITRE]: https://atlas.mitre.org/matrices/ATLAS
