@@ -1,9 +1,9 @@
 {#the-art-and-nonsense-of-prompt-engineering}
 # The art and nonsense of prompt engineering
 
-In chapter 3 we got the first chance to work with Semantic Kernel to execute a basic
-prompt. Prompts are arguably the most important part of working with large language
-models.
+In [#s](#getting-started-with-semantic-kernel) we got the first chance to work with
+Semantic Kernel to execute a basic prompt. Prompts are arguably the most important part
+of working with large language models.
 
 I've seen so many posts on social media about prompt engineering it almost made no sense
 to me to talk about prompt engineering. It feels as if everyone already knows everything
