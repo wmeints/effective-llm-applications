@@ -5,7 +5,7 @@ Kernel. This book is available on Leanpub! This repository is where I build the 
 
 ## Reading the book
 
-The first chapter of the book is complete. Get a copy now and start reading! Read it on
+Get a copy now and start reading! Read it on
 Leanpub: [Building effective LLM-based applications with Semantic
 Kernel](https://leanpub.com/effective-llm-applications-with-semantic-kernel)
 
