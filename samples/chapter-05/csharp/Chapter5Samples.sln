@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter5.PromptTestingBasics", "Chapter5.PromptTestingBasics\Chapter5.PromptTestingBasics.csproj", "{547A6D80-A26A-4FD2-84BF-E68FBFDBCB54}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter5.ModelBasedTesting", "Chapter5.ModelBasedTesting\Chapter5.ModelBasedTesting.csproj", "{EDCAD999-C48F-4162-B386-93EE3BA5AC5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{547A6D80-A26A-4FD2-84BF-E68FBFDBCB54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{547A6D80-A26A-4FD2-84BF-E68FBFDBCB54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{547A6D80-A26A-4FD2-84BF-E68FBFDBCB54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDCAD999-C48F-4162-B386-93EE3BA5AC5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDCAD999-C48F-4162-B386-93EE3BA5AC5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDCAD999-C48F-4162-B386-93EE3BA5AC5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDCAD999-C48F-4162-B386-93EE3BA5AC5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

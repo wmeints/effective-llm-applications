@@ -1,0 +1,39 @@
+name: ValidateRecipeConsistency
+description: Validates the consistency of a generated recipe
+template: |
+  ## Instructions 
+
+  You will be given a recipe for a dish based on ingredients
+  that the user has in the fridge.  Your task is to rate the
+  recipe on a single metric. 
+
+  ## Recipe
+
+  {{ recipe }}
+
+  ## Evaluation criteria
+
+  Consistency (1-5): How consistent is the recipe with the
+  ingredients provided? Are the ingredients used in the recipe?
+  Are the instructions logical?
+
+  ## Evaluation steps
+
+  1. Read the recipe carefully and identify the ingredients.
+  2. Read the instructions. Check if they are logical.
+  3. Check if instructions use the ingredients provided.
+  3. Assign a score for the evaluation criteria in the evaluation form.
+
+  ## Evaluation form (scores ONLY)
+template_format: handlebars
+input_variables:
+  - name: recipe
+    description: The generated recipe that we want to validate
+    is_required: true
+execution_settings:
+  default:
+    temperature: 0.0
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 500
+
