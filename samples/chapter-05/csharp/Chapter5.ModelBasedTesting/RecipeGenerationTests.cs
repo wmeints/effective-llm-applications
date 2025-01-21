@@ -37,18 +37,12 @@ public class RecipeGenerationTests
     [Fact]
     public async Task TestGenerateRecipe_GeneratesConsistentResults()
     {
-        // First, generate a response for the input sample.
         var result = await _prompt.InvokeAsync(_kernel, new KernelArguments
         {
             ["dish"] = "pizza",
             ["ingredients"] = new string[] { "spinach", "mozzarella" }
         });
 
-        // Next, use the generated response with the
-        // test prompt to score the outcome
-        // on a scale from 1 to 5. Note: we're using a
-        // structured response format
-        // so the output is parsable as JSON.
         var testExecutionSettings = new AzureOpenAIPromptExecutionSettings
         {
             ResponseFormat = typeof(EvaluationResult)
