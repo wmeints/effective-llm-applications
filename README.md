@@ -19,7 +19,7 @@ I'm writing this book as you read this, and I'm at **28% completion**.
 | 2. Essential LLMOps knowledge                 | Complete    |
 | 3. Getting started with Semantic Kernel       | Complete    |
 | 4. The art and nonsense of prompt engineering | Complete    |
-| 5. Testing and monitoring prompts             | Not started |
+| 5. Testing and monitoring prompts             | In progress |
 | 6. Enhancing LLMs with functions              | Not started |
 | 7. Retrieval Augmented Generation (RAG)       | Not started |
 | 8. Working with structured output             | Not started |
