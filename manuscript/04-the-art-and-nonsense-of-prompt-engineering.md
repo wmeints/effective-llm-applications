@@ -690,6 +690,7 @@ You can find the full source for this sample in the [GitHub
 repository][HB_TEMPLATE_SAMPLE], including instructions on how to run the sample
 yourself.
 
+{#reusable-prompts}
 ### Maximizing reuse of prompts in your application
 
 When you've tried the samples and debugged them in VSCode or your favorite IDE, you'll
