@@ -15,15 +15,14 @@ following topics:
 - Using model-based testing methods to validate prompts
 - Monitoring prompt interactions in production
 
-Let's get started by using deterministic testing methods to validate that we're getting
-useful responses from the LLM.
+Let's get started by getting a good test strategy in place for testing prompts.
 
 ## Establishing a good test strategy for prompts
 
 Prompt testing is a difficult subject, because you'll find that the LLM will give you a
 different response each time you call it. You can't test for a specific response. And
 that makes for brittle tests. I know from experience that not many of you will be very
-happy with this situation in their code base. But there are ways to make things better.
+happy with brittle tests in their codebase. But there are ways around the problem.
 
 Let's take a step back and look at what you can expect from an LLM-based application
 first. You can't expect the same response every time from an LLM. This is because the
@@ -44,17 +43,14 @@ for an LLM is quite hard. You need the input to follow a useful pattern and be
 representative for what your users are going to send in. For now, let's put this problem
 aside and start with a few handwritten samples as input for the prompt.
 
-While there are frameworks available for property-based testing, I'm not using them in
-this book or in my own projects. I've found that it is enough to build data-driven tests
-with a test framework like xunit or MSTest.
-
-Let's start by looking at how to apply a property-based testing approach to testing a
-prompt with a deterministic approach.
+While there are frameworks available for property-based testing, I'm not using any of
+them in this book or in my own projects. I've found that it is enough to build
+data-driven tests with a test framework like xunit or MSTest.
 
 {#prompt-testing-basics}
 ## Using deterministic testing methods to validate prompts
 
-To demonstrate how to build prompt testing logic, let's go back to a prompt that we used
+To demonstrate how to build a prompt test, let's go back to a prompt that we used
 earlier in the book to generate a recipe for a dish based on ingredients you have in the
 fridge. Here's the prompt we used before:
 
@@ -117,13 +113,14 @@ This code performs the following steps:
   testing.
 - Next, we create a new constructor for the test class that initializes the kernel and
   the prompt function. We're using `Microsoft.Extensions.Configuration` to obtain
-  settings from the user-secrets store.
+  settings from the user-secrets store. This allows us to keep the API key and other
+  sensitive information out of the codebase.
 - Finally, we define a test method that takes a dish name and a list of ingredients as
   input. We marked the test method as `[Theory]` to enable parameterized testing. The
   test method will be called for each set of input data.
 
-With the skeleton of the test in place, we can write test logic to validate the prompt.
-The following code shows how to write the test logic:
+With the skeleton for the test in place, we can write the test logic to validate the
+prompt. The following code shows how to write the test logic:
 
 ```csharp
 [Theory]
@@ -145,9 +142,9 @@ public async Task TestGenerateRecipe_ContainsInstructions(
 The test performs the following steps:
 
 1. First, we extended the test method with `[InlineData(...)]` to specify a sample that
-   we want to run the test for. You can use inline data or you can load data from a test
-   file in your code base. You can learn more about the various methods to load test
-   samples for your data driven test in [this blogpost][XUNIT_DATA_DRIVEN_TESTS].
+   we want to run the test for. You can use inline data, or you can load data from a
+   test file in your code base. You can learn more about the various methods to load
+   test samples for your data driven test in [this blogpost][XUNIT_DATA_DRIVEN_TESTS].
 2. Next, we call the prompt function with the dish name and the list of ingredients as
    input. The result is stored in the `result` variable.
 3. Finally, we use the `Assert.Contains` method to check if the result contains the
@@ -155,12 +152,12 @@ The test performs the following steps:
    passes.
 
 You can extend this test with more samples as you see fit. The test will run for each
-of the provided samples and report a separate test results for each of the samples.
+of the provided samples and report a separate test results for each of them.
 
-I must warn you that running more samples will make the test slower, and it isn't fast
-to begin with. I highly recommend you mark the test with a separate category and only
-run the LLM-based tests periodically, for example when you're about to finish up
-a new user story in your application or when you change the prompt, the model, or
+It may come as no surprise that running more samples will make the test slower, and it
+isn't fast to begin with. I highly recommend you mark the test with a separate category
+and only run the LLM-based tests periodically, for example when you're about to finish
+up a new user story in your application or when you change the prompt, the model, or
 model configuration.
 
 You can mark the test with a category by adding the following attribute to the test
@@ -181,7 +178,7 @@ dotnet test --filter Category!=LLM
 This command will run all tests except the ones marked with the "LLM" category. You can
 switch the filter around to run just the LLM-based tests.
 
-Our sample covers just one method to validate that a prompt generates a useful response.
+Our sample covers just one test to validate that a prompt generates a useful response.
 This one test isn't going to be enough though, because the LLM could generate a recipe
 that's inconsistent. It could also generate a very long response that's hard to read.
 
@@ -192,7 +189,7 @@ properties of your prompts.
 ## Using model-based testing methods to validate prompts
 
 So far we've only tested for simple patterns in the output. We've checked if the output
-contains specific keywords and we could extend this to check for things like number of
+contains specific keywords, and we could extend this to check for things like number of
 items in a list or the number of words. But we can't check if instructions are
 consistent or if ingredients use the same kind of units of measurement.
 
@@ -225,15 +222,15 @@ but you can also assert on the average score for a set of samples. That's up to 
 
 I recommend running multiple samples through the model and looking at the average score.
 Since LLMs are inherently undeterministic, you can't rely on a single sample to give you
-a solid answer.
+a useful answer.
 
-Let's explore what the test prompt for the setup we just discussed looks like:
+Let's explore what a test prompt for the setup we just discussed looks like:
 
 ```text
 ## Instructions 
 
 You will be given a recipe for a dish based on ingredients
-that the user has in the fridge.  Your task is to rate the
+that the user has in the fridge. Your task is to rate the
 recipe on a single metric. 
 
 ## Recipe
@@ -256,7 +253,7 @@ Are the instructions logical?
 ## Evaluation form (scores ONLY)
 ```
 
-You can run this prompt inside a unit-test setup with xunit or MSTest. The following
+You can run this prompt inside a unit-test setup with, for example, xunit. The following
 code demonstrates this:
 
 ```csharp
@@ -305,8 +302,30 @@ The test performs the following steps:
 You can expand this test case with more samples. But unlike the sample in
 [#s](#prompt-testing-basics) you can't use the data-driven approach as xunit tests per
 sample rather than the whole collection. Instead, you'll want to load a set of samples
-from CSV and run them all through the model collecting the results in a list. Then you
-can calculate the average score and check if it's within a certain range.
+from CSV or other file format and run them all through the model collecting the results
+in a list. Then you can calculate the average score and check if it's within a certain
+range.
+
+Before you go wild with this approach, there's a warning that I need to leave you with.
+
+## The dangers of the model-based testing approach
+
+You should be aware that model-based testing comes with a huge disclaimer. I can't
+stress this enough, you're dealing with a token predicting pattern matching machine. So
+the scores you're going to see are not actual scores, but a token in a sequence. It's
+quite misleading to present this as a proper evaluation. But still, I'm writing about
+it, because testing with this approach does bring some value.
+
+When you ask a human to evaluate a response and score the response on a scale from 1 to
+5 you get reasonable sounding results. Until you ask the human to explain their scoring.
+There is no mathematical explanation to the score. And this is the same for the LLM
+because the score is the result of a pattern matching exercise with output sampling. The
+thing you should be looking for is this: Are the LLM and human expert in agreement?
+
+After reading the papers for G-Eval and GPTScore I can tell you that the LLM evaluation
+is strange in nature, but does show remarkable agreement with human experts. And that is
+all you can ask for at the moment. So if you're wondering, why are we
+doing this? It's because it's the best we have at the moment.
 
 ## Monitoring prompt interactions in production
 
@@ -316,8 +335,28 @@ limited to what you can come up with and might not be representative of what use
 going to do. The only way we can get test data that's representative of the real world
 is to collect it from production.
 
+And keeping my warning in mind, it's important to gather feedback from users on the
+quality of your prompts. LLMs should not have a final say about quality.
+
 Let's look at using monitoring to keep an eye on how the application is being used in
 production and using collected telemetry to improve the application.
+
+### Enabling telemetry in your LLM-based application
+
+The first step to get monitoring data is to enable telemetry in your application.
+As luck would have it, .NET features a great set of diagnostics tools that are also included
+in Semantic Kernel. Let's set up a set of diagnostic tools. We need to collect 3 things:
+
+- Meter data for token usage
+- Traces to see how the application and LLM interact
+- Logging for any event data related to the traces
+
+The following code demonstrates how to extend a console application with diagnostics
+for Semantic Kernel:
+
+```csharp
+
+```
 
 ### Writing monitoring data to application insights
 
@@ -341,3 +380,4 @@ production and using collected telemetry to improve the application.
 [XUNIT_DATA_DRIVEN_TESTS]: https://hamidmosalla.com/2017/02/25/xunit-theory-working-with-inlinedata-memberdata-classdata/
 [G_EVAL]: https://arxiv.org/abs/2303.16634
 [GPTSCORE]: https://arxiv.org/pdf/2302.04166
+[PROMPTFOO]: https://promptfoo.dev
