@@ -15,10 +15,10 @@ Use the command `dotnet user-secrets set <key> <value` to set the secrets. The f
 
 ## Running the sample
 
-This sample uses xunit to model unit-tests. You can run this sample using the following command:
+This sample is built as a console application. You can run it from this directory using the following command:
 
 ```bash
-dotnet test
+dotnet run
 ```
 
-The output is a green test result.
+You should see log events on the terminal and information about metering data being collected.
