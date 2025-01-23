@@ -21,13 +21,13 @@ var resourceBuilder = ResourceBuilder.CreateDefault()
 
 using var traceProvider = Sdk.CreateTracerProviderBuilder()
     .SetResourceBuilder(resourceBuilder)
-    .AddSource("Microsoft.SemanticKernel")
+    .AddSource("Microsoft.SemanticKernel*")
     .AddConsoleExporter()
     .Build();
 
 using var meterProvider = Sdk.CreateMeterProviderBuilder()
     .SetResourceBuilder(resourceBuilder)
-    .AddMeter("Microsoft.SemanticKernel")
+    .AddMeter("Microsoft.SemanticKernel*")
     .AddConsoleExporter()
     .Build();
 
