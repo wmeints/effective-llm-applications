@@ -322,10 +322,13 @@ There is no mathematical explanation to the score. And this is the same for the 
 because the score is the result of a pattern matching exercise with output sampling. The
 thing you should be looking for is this: Are the LLM and human expert in agreement?
 
-After reading the papers for G-Eval and GPTScore I can tell you that the LLM evaluation
-is strange in nature, but does show remarkable agreement with human experts. And that is
-all you can ask for at the moment. So if you're wondering, why are we
-doing this? It's because it's the best we have at the moment.
+After reading and reproducing the papers for G-Eval and GPTScore I can tell you that the
+LLM evaluation is strange in nature, but does show remarkable agreement with human
+experts. And that is all you can ask for at the moment. So if you're wondering, why are
+we doing this? It's because it's the best we have at the moment.
+
+While testing is a great first step, you'll need to add monitoring as an extra
+safety net to keep your LLM-based application running as intended.
 
 ## Monitoring prompt interactions in production
 
@@ -335,27 +338,192 @@ limited to what you can come up with and might not be representative of what use
 going to do. The only way we can get test data that's representative of the real world
 is to collect it from production.
 
-And keeping my warning in mind, it's important to gather feedback from users on the
-quality of your prompts. LLMs should not have a final say about quality.
+### Before you start collecting telemetry
 
-Let's look at using monitoring to keep an eye on how the application is being used in
-production and using collected telemetry to improve the application.
+Before you start collecting telemetry data from your LLM-based application, you need to
+ensure that you're allowed to. Users will enter all sorts of information into your
+application and you need to take the proper precautions before collecting any of that
+data. You need to ensure that you're compliant with the privacy laws in your country and
+that you're not collecting any sensitive information. And if you need to collect
+sensitive information, you need to make sure that your telemetry infrastructure is
+secure.
 
-### Enabling telemetry in your LLM-based application
+With that in mind, let's look at enabling telemetry collection in Semantic Kernel.
 
-The first step to get monitoring data is to enable telemetry in your application.
-As luck would have it, .NET features a great set of diagnostics tools that are also included
-in Semantic Kernel. Let's set up a set of diagnostic tools. We need to collect 3 things:
+### Enabling tracing in your LLM-based application
 
-- Meter data for token usage
-- Traces to see how the application and LLM interact
-- Logging for any event data related to the traces
+Semantic Kernel is capable of generating telemetry data in the
+[OpenTelemetry][OPEN_TELEMETRY] format through the .NET diagnostics stack. In case
+you're not familiar with OpenTelemetry and the .NET diagnostics stack, let me give you a
+brief overview.
 
-The following code demonstrates how to extend a console application with diagnostics
-for Semantic Kernel:
+OpenTelemetry is a set of APIs, libraries, and tools to instrument applications to
+generate telemetry and process that telemetry into useful insights. The standard is
+implemented in a lot of places for a lot of languages.
+
+The .NET diagnostics classes are an implementation of OpenTelemetry. You can generate
+metrics, traces, and logs in the OpenTelemetry format. The table shows the OpenTelemetry
+terms, the .NET implementation and a description of each term:
+
+| Concept | .NET Equivalent | Description                                                               |
+| ------- | --------------- | ------------------------------------------------------------------------- |
+| Span    | Activity        | A span is a unit of work in a trace. It has a start time and an end time. |
+| Event   | Log message     | An event with a description and attributes                                |
+| Metric  | Meter           | A metric is a value that changes over time.                               |
+
+Multiple spans will form a distributed trace in OpenTelemetry. So you could have calls
+to the LLM produce spans as well as other methods in your application. Both types of
+spans are important to get a full picture of your application in production.
+
+Let's explore tracing in .NET a bit more with an example. You can generate a trace
+in your code using an ``ActivitySource` using the following code:
 
 ```csharp
 
+public class MyApplicationService
+{
+    private static readonly activitySource = new ActivitySource("My.ActivitySource", "1.0.0");
+
+    public void DoSomething()
+    {
+        using var activity = activitySource.StartActivity("DoSomething");
+        // Do something
+    }
+}
+```
+
+This code generates a trace with the name `DoSomething` when you call the `DoSomething`
+method. The trace is generated by the activity source `My.ActivitySource` with version
+`1.0.0`.
+
+There are a lot of hidden things to this code. When you start a new activity,  a span is
+started that ends when the variable storing the activity goes out of scope. Hence the
+using statement to make sure that the GC cleans up the activity as soon as possible.
+
+The span produced by the activity is written to a tracer, which is called an
+`ActivitySource` in .NET. The activity source is responsible for writing the span to an
+exporter. We haven't configured one in this code, but you can configure one in the
+startup of your application. For example, the following code builds a basic trace
+exporter that writes traces to the console:
+
+```csharp
+var resourceBuilder = ResourceBuilder.CreateDefault()
+    .AddService("Chapter5.Telemetry");
+
+using var traceProvider = Sdk.CreateTracerProviderBuilder()
+    .SetResourceBuilder(resourceBuilder)
+    .AddSource("My.ActivitySource")
+    .AddConsoleExporter()
+    .Build();
+```
+
+In this code we perform the following steps:
+
+1. First, we create a resource builder that adds metadata to the traces like the
+   application name and application version.
+2. Next, we create a tracer provider builder that we can configure with a source, and an
+   exporter. We add the activity source we want to process and export the traces to the
+   terminal.
+
+You can configure multiple sources to the tracer provider. Only traces for sources that
+you've added to the tracer provider will be exported. Right now, we only export our
+custom source. Sources can be prefixes, so I could say: `My*` to export anything that
+starts with `My`.
+
+The exporter is responsible for writing traces somewhere. In this case, we're writing
+traces to the terminal, but in production you want something more durable. You can use
+an application insights exporter to write the traces to application insights. But you
+can also use other exporters. There are a lot of packages available on Nuget.
+
+To export traces from Semantic Kernel, we'll need to modify the code a bit. The
+following code shows how to add telemetry to the Semantic Kernel:
+
+```csharp
+using var traceProvider = Sdk.CreateTracerProviderBuilder()
+    .SetResourceBuilder(resourceBuilder)
+    .AddSource("Microsoft.SemanticKernel*")
+    .AddConsoleExporter()
+    .Build();
+```
+
+This code adds the `Microsoft.SemanticKernel*` prefix as a source to the tracer
+provider. And that's all you need to do to enable tracing for Semantic Kernel.
+
+But what does Semantic Kernel export to the tracer provider? Whenever you call a kernel
+function, you'll see a span being generated for that function. This span contains data
+as defined in [the semantic conventions for generative AI systems][GENAI_STANDARD]. This
+standard is experimental for now, but already provides a lot of value when you're
+building LLMOps tools or applications. In short, this standard defines what attributes
+to add to metrics and traces. For example, it provides the following attributes for
+spans generated when calling an LLM:
+
+- `gen_ai.system`: The LLM provider you called in the code.
+- `gen_ai.request.model`: The model you called in the code.
+- `gen_ai.response.completion_tokens`: The number of tokens in the response.
+- `gen_ai.response.prompt_tokens`: The number of tokens in the prompt.
+- `gen_ai.prompt`: The prompt you submitted.
+- `gen_ai.completion`: The response generated by the LLM.
+
+In addition to these properties you'll find the name of the kernel function that was
+invoked, the time it took to complete the operation and of course the timestamp it was
+started.
+
+Tracing will be your most important tool to track what data is processed with the LLM in production so you can later use it for debugging purposes.
+Next to tracing you can also use metrics to track the performance of your LLM-based application.
+
+Building meters into .NET code is different from adding traces. You need to define a `Meter` in your code that's responsible for collecting metrics.
+After you've created a `Meter` instance you can use it to create histograms, counters, and other metrics to measure signals in your application.
+The following code demonstrates how to create a `Meter` and use it to create a counter:
+
+```csharp
+public class MyMeteredService
+{
+    private static readonly Meter meter = new Meter("My.MeterCategory");
+    private static readonly Counter callCounter = meter.CreateCounter<int>("my.metercategory.meteredservice.calls");
+
+    public void DoSomething()
+    {
+        callCounter.Add(1);
+        // Do something
+    }
+}
+```
+
+This code performs the following steps:
+
+1. First, we create a meter to store all related metrics. The meter is created once and kept in a static variable.
+2. Next, we create a counter to measure the number of calls to the `DoSomething` method.
+3. Finally, we increment the counter by one each time the `DoSomething` method is called.
+
+To export metrics through OpenTelemetry, we need to write the following code in the startup of the application:
+
+```csharp
+using var meterProvider = Sdk.CreateMeterProviderBuilder()
+    .SetResourceBuilder(resourceBuilder)
+    .AddMeter("My.MeterCategory*")
+    .AddConsoleExporter()
+    .Build();
+```
+
+This code performs the following steps:
+
+1. First, we create a `MeterProviderBuilder` using the `Sdk` component offered by OpenTelemetry.
+2. Next, we provide a resource builder to add metadata like the application name to the metrics.
+3. Then, we add the meter category we want to export.
+4. Finally, we add a console exporter to write the metrics to the terminal.
+
+Just like with the traces, you can use other exporters to write the metrics to other destinations.
+Only the metrics you configure as source are exported to the configured exporter.
+
+To export metrics for Semantic Kernel, you need to modify the code a bit, just like we did
+with the traces:
+
+```csharp
+using var meterProvider = Sdk.CreateMeterProviderBuilder()
+    .SetResourceBuilder(resourceBuilder)
+    .AddMeter("Microsoft.SemanticKernel*")
+    .AddConsoleExporter()
+    .Build();
 ```
 
 ### Writing monitoring data to application insights
@@ -380,4 +548,5 @@ for Semantic Kernel:
 [XUNIT_DATA_DRIVEN_TESTS]: https://hamidmosalla.com/2017/02/25/xunit-theory-working-with-inlinedata-memberdata-classdata/
 [G_EVAL]: https://arxiv.org/abs/2303.16634
 [GPTSCORE]: https://arxiv.org/pdf/2302.04166
-[PROMPTFOO]: https://promptfoo.dev
+[OPEN_TELEMETRY]: https://opentelemetry.io/
+[GENAI_STANDARD]: https://opentelemetry.io/docs/specs/semconv/gen-ai/
