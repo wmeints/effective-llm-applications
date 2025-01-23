@@ -12,6 +12,10 @@ using OpenTelemetry.Trace;
 
 var configuration  = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
+// Be careful! This switch should not be on in production unless you're absolutely sure you need this information.
+// It exposes PII information to the telemetry collection system. That's bad news!
+AppContext.SetSwitch("Microsoft.SemanticKernel.Experimental.GenAI.EnableOTelDiagnosticsSensitive", true);
+
 var resourceBuilder = ResourceBuilder.CreateDefault()
     .AddService("Chapter5.Telemetry");
 
