@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>9120c17b-f79e-453e-a3d9-dfff38fd84b9</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.1" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.34.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.HAndlebars" Version="1.34.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.34.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.11.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="prompt.yaml" />
+  </ItemGroup>
+</Project>
