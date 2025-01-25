@@ -675,10 +675,6 @@ There are a couple of things that you'll want to see in an LLMOps dashboard:
 - How fast is the application and is that within an acceptable range?
 - Are any of your requests failing?
 
-We'll cover the first two aspects of the dashboard in this section. The last aspect I'll
-leave up to you to figure out. But don't worry, it's not that hard to figure out once
-you've got the first two working.
-
 Let's start by creating a dashboard in your Azure environment. Navigate to the homepage
 of [the Azure portal](https://portal.azure.com). Then click on the hamburger menu as
 shown in [#s](#azure-portal-hamburger-menu).
@@ -754,7 +750,22 @@ changed them or added them to the application. Dashboards are a living piece of 
 monitoring setup and should be updated regularly. If you don't, you're likely not going
 to look at it or do anything with the information on it.
 
+Let's add the final piece of the puzzle. The tokens and duration metrics are useful to
+find things that are out of the ordinary. But it's the costs that really matter for most
+people. Here's how to add them to the dashboard.
+
+Navigate to the OpenAI Resource in the Azure Portal, and select the *Resource
+Management* > *Cost analysis* option from the left sidebar. This will show you a chart
+displaying the costs for the resource. To add the cost analysis to your dashboard, click
+the pushpin next to the title *Cost analysis* and choose the dashboard you want to add
+it to.
+
+Now that we have monitoring in place, let's go back to collecting feedback information.
+If you've enabled the collection of prompts and responses in your application, you can
+export that data and use it to improve your tests.
+
 ### Exporting data from Application Insights to collect test data
+
 
 
 ## Summary
