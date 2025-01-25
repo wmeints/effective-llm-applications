@@ -764,9 +764,40 @@ Now that we have monitoring in place, let's go back to collecting feedback infor
 If you've enabled the collection of prompts and responses in your application, you can
 export that data and use it to improve your tests.
 
-### Exporting data from Application Insights to collect test data
+### Collecting data to improve tests
 
+Telemetry data in Application Insights is stored in a structured format in a Log
+Analytics Workspace. You can query the data using the [Kusto Query Language
+(KQL)][KUSTO_INTRODUCTION]. But you can also export it to a storage account for later
+use. We're going to use the data export feature to retrieve the prompts and responses
+for specific prompt templates.
 
+After we've downloaded the data, we'll build an application to extract the prompts and
+responses from the raw log data and use it to improve our tests.
+
+Before you start exporting data, make sure you have a storage account with hierarchical
+namespaces enabled. You can create one using [this guide][CREATE_STORAGE_ACCOUNT].
+
+Let's start by creating an export rule to move data from the Log Analytics Workspace to
+the storage account. You can get access to the Log Analytics Workspace for your
+Application Insights resource by going to the Application Insights in the Azure portal
+and clicking on the link next to the Workspace property in the overview page of the
+resource. This will take you to the Log Analytics Workspace.
+
+In the Log Analytics Workspace, you can find the data export feature in the sidebar
+of the workspace resource under *Settings* > *Data export*. [#s](#export-rules-overview)
+shows the data export overview page.
+
+{#export-rules-overview}
+![Export rules overview page](azure-law-export-rules-overview.png)
+
+Create a new rule by clicking on the *New export rule* button. This will take you to the
+rule creation page. On this page you can set a name for the new rule, select the tables
+you want to export, and the destination for the data. [#s](#export-rule-step-1) shows
+what this page looks like.
+
+{#export-rule-step-1}
+![Export rule creation page](azure-law-export-rules-step-1.png)
 
 ## Summary
 
@@ -781,3 +812,5 @@ export that data and use it to improve your tests.
 [OPEN_TELEMETRY]: https://opentelemetry.io/
 [GENAI_STANDARD]: https://opentelemetry.io/docs/specs/semconv/gen-ai/
 [AI_DOCS]: https://learn.microsoft.com/en-us/azure/azure-monitor/app/create-workspace-resource?tabs=bicep#create-a-workspace-based-resource
+[KUSTO_INTRODUCTION]: https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-overview
+[CREATE_STORAGE_ACCOUNT]: https://learn.microsoft.com/en-us/azure/storage/blobs/create-data-lake-storage-account
