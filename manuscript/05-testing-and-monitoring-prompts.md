@@ -338,6 +338,13 @@ limited to what you can come up with and might not be representative of what use
 going to do. The only way we can get test data that's representative of the real world
 is to collect it from production.
 
+A> Gathering telemetry data in Semantic Kernel is experimental at the moment. There are
+A> some useful bits of information that you can collect today but it is somewhat
+A> incomplete. I'll make sure to point out the stuff that's missing so you can work
+A> around them.
+
+### Safety precautions when collecting telemetry
+
 Before you start collecting telemetry data from your LLM-based application, you need to
 ensure that you're allowed to. Users will enter all sorts of information into your
 application, and you need to take the proper precautions before collecting any of that
@@ -800,6 +807,44 @@ what this page looks like.
 {#export-rule-step-1}
 ![Export rule creation page](azure-law-export-rules-step-1.png)
 
+Provide a descriptive name for the rule, and click *Next* to go to the next step as
+shown in [#s](#export-rule-step-2). On the next screen you can select the tables you
+want to export. The `AppTraces` table contains the data for the prompts and responses.
+Select this table and click *Next* to go to the destination configuration screen.
+
+{#export-rule-step-2}
+![Table selection screen](azure-law-export-rules-step-2.png)
+
+You have two choices for the destination of the data. We'll use a storage account to
+store the exported data. [#s](#export-rule-step-3) shows the screen to configure the
+destination.
+
+{#export-rule-step-3}
+![Destination configuration screen](azure-law-export-rules-step-3.png)
+
+Select the storage account you want to store the exported data in and complete the
+configuration.
+
+After you've completed the configuration, any new data coming into the Log Analytics
+Workspace is automatically exported to your storage account. A new container is created
+for each table you export. In this case we'll have a container called `am-apptraces`.
+
+You can download the data from the storage account using the [Azure Storage
+Explorer][STORAGE_EXPLORER] or use the [Azure Blob Storage Package][NUGET_BLOB_STORAGE]
+to download the data programmatically.
+
+Let's look at how you can use the Blob Storage package to download the data from the
+storage account. The following code demonstrates how to set up a connection to the
+storage account and download all the data:
+
+```csharp
+
+```
+
+The code performs the following steps:
+
+
+
 ## Summary
 
 ## Further reading
@@ -815,3 +860,5 @@ what this page looks like.
 [AI_DOCS]: https://learn.microsoft.com/en-us/azure/azure-monitor/app/create-workspace-resource?tabs=bicep#create-a-workspace-based-resource
 [KUSTO_INTRODUCTION]: https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-overview
 [CREATE_STORAGE_ACCOUNT]: https://learn.microsoft.com/en-us/azure/storage/blobs/create-data-lake-storage-account
+[STORAGE_EXPLORER]: https://learn.microsoft.com/en-us/azure/storage/storage-explorer/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows
+[NUGET_BLOB_STORAGE]: https://www.nuget.org/packages/Azure.Storage.Blobs
