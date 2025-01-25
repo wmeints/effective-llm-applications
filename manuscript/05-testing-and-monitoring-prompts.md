@@ -153,6 +153,8 @@ The test performs the following steps:
 
 You can extend this test with more samples as you see fit. The test will run for each
 of the provided samples and report a separate test results for each of them.
+Make sure to check out the full source code for this sample on
+[Github][PROMPT_TEST_SAMPLE].
 
 It may come as no surprise that running more samples will make the test slower, and it
 isn't fast to begin with. I highly recommend you mark the test with a separate category
@@ -305,6 +307,8 @@ sample rather than the whole collection. Instead, you'll want to load a set of s
 from CSV or other file format and run them all through the model collecting the results
 in a list. Then you can calculate the average score and check if it's within a certain
 range.
+
+You can find the full source code for this sample on [Github][MODEL_BASED_TEST_SAMPLE].
 
 Before you go wild with this approach, there's a warning that I need to leave you with.
 
@@ -662,6 +666,8 @@ This code performs the following steps:
 3. Next, we configure the meter provider as before, but this time we're adding the Azure
    Monitor exporter using the same connection string we used for the tracer provider.
 
+You can find the full source code for this sample on [Github][MONITORING_SAMPLE].
+
 With this code in place, you can start monitoring your LLM-based application in
 Application Insights. You need to set up an Application Insights resource in Azure to
 obtain the connection string for the exporters. There's a great manual for this
@@ -838,14 +844,184 @@ storage account. The following code demonstrates how to set up a connection to t
 storage account and download all the data:
 
 ```csharp
+var configuration = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
+
+var blobServiceClient = new BlobServiceClient(configuration["ConnectionStrings:BlobStorage"]);
+var traceContainerClient = blobServiceClient.GetBlobContainerClient("am-apptraces");
 
 ```
 
 The code performs the following steps:
 
+1. First, we build a configuration object so we can securely load the connection string
+   for the blob storage account.
+2. Next, we create a new `BlobServiceClient` object providing it with a connection
+   string for the storage account containing the trace data.
+3. Finally, we get a reference to the container that contains the trace data.
 
+After we've obtained a connection we can start processing the JSON files in the storage
+container, one by one:
+
+```csharp
+var processor = new TraceEventDataProcessor();
+
+await foreach (var blobItem in traceContainerClient.GetBlobsAsync())
+{
+    if (blobItem.Name.EndsWith(".json"))
+    {
+        var blobClient = traceContainerClient.GetBlobClient(blobItem.Name);
+        using var reader = new StreamReader(blobClient.OpenRead());
+
+        while (!reader.EndOfStream)
+        {
+            var rawEventData = reader.ReadLine();
+
+            var eventData = JsonSerializer.Deserialize<TraceEventData>(
+                rawEventData!, new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement
+            });
+
+            if (eventData!.Message == "gen_ai.content.completion" || 
+                eventData.Message == "gen_ai.content.prompt")
+            {
+                processor.ProcessEvent(eventData);
+            }
+        }
+    }
+}
+```
+
+This code performs the following steps:
+
+1. First, we create a new `TraceEventDataProcessor` object to process the trace data
+   into useful test samples.
+2. Next, we iterate over the files in the trace storage container and read the contents
+   of each file. The content in the file is stored in JSON lines format. Each line is a
+   JSON object.
+3. Then, we deserialize the JSON object data into a `TraceEventData` object. The
+   `TraceEventData` object is a class that will represent the trace data.
+4. Finally, we process the trace data using the `TraceEventDataProcessor` object.
+
+Let's look at the shape of the `TraceEventData` class first:
+
+```csharp
+public class TraceEventData
+{
+    public string Message { get; set; }
+    public TraceProperties Properties { get; set; }
+    public DateTime TimeGenerated { get; set; }
+}
+
+public class TraceProperties
+{
+    [JsonPropertyName("gen_ai.completion")]
+    public string? Completion { get; set; }
+
+    [JsonPropertyName("gen_ai.prompt")] 
+    public string? Prompt { get; set; }
+}
+```
+
+The `TraceEventData` class contains the data logged as part of a single trace span.
+It contains a `Message` property that describes the type of span we're looking at. It also
+contains a `Properties` property containing the extra metadata we need to process.
+For prompts and responses the `Properties` property contains the content that we need.
+
+You can't do much with the data in the `TraceEventData` class. You need two copies of it
+to get the prompt and the completion because they're logged as two separate spans. That's
+why we have the `TraceEventDataProcessor` class to process the data into useful test samples.
+
+```csharp
+public class TraceEventDataProcessor
+{
+    private string? _currentPrompt;
+    private bool _isParsingPair;
+
+    public List<PromptCompletionPair> ParsedPromptCompletionPairs { get; } = new();
+
+    public void ProcessEvent(TraceEventData eventData)
+    {
+        if (eventData.Message == "gen_ai.content.prompt")
+        {
+            _currentPrompt = eventData.Properties.Prompt;
+            _isParsingPair = true;
+        }
+
+        if (_isParsingPair)
+        {
+            if (eventData.Message == "gen_ai.content.completion")
+            {
+                if (!string.IsNullOrEmpty(_currentPrompt))
+                {
+                    var pair = new PromptCompletionPair()
+                    {
+                        Prompt = _currentPrompt,
+                        Completion = eventData.Properties.Completion!
+                    };
+
+                    ParsedPromptCompletionPairs.Add(pair);
+                }
+            }
+        }
+    }
+}
+```
+
+The `TraceEventDataProcessor` class works as follows:
+
+1. First, we look at the message in the incoming `TraceEventData` record. If this
+   message is a prompt, we store the prompt temporarily in the `_currentPrompt` variable
+    and set the `_isParsingPair` flag to true.
+2. Then, when we are parsing a pair and receive a `gen_ai.content.completion` record, we
+   create a new `PromptCompletionPair` object and add it to the list of parsed pairs.
+
+The `PromptCompletionPair` class is a simple class that contains the prompt and the
+completion:
+
+```csharp
+public class PromptCompletionPair
+{
+    public string Prompt { get; set; }
+    public string Completion { get; set; }
+}
+```
+
+After you've processed all the trace data, you can store the data from the
+`ParsedPromptCompletionPairs` property in a CSV file. You can then analyze this CSV file
+to improve your tests.
+
+You can find the full source code for the sample on [Github][EXTRACTION_SAMPLE].
+
+Now you may be wondering, why not use the test data directly in the tests? There are two
+problems with using the raw test data.
+
+First, we don't have the input variables for the prompt template we executed. We can
+only see the rendered prompt. Also, we don't know which prompt template was executed,
+because that's not logged by Semantic Kernel at the time of writing.
+
+Second, and this is the most important reason, the data could be poisoned by someone
+who's trying to break your application. People can enter all sorts of instructions in
+the prompt, including less savory content. You don't want to run that through your
+tests.
+
+Given these limitations, I understand that it's going to take effort to expand your test
+set. But it's worth it. Although raw, the data is useful to understand how users are
+using your application.
 
 ## Summary
+
+In this chapter we've looked at how you can test and monitor your LLM-based application.
+We started by looking at how you can test prompts in a controlled environment. We then
+covered how to add monitoring, build a dashboard, and collect data from the monitoring
+environment to improve the tests.
+
+In the next chapter, we'll use what we've learned so far to expand the LLM with
+functions and data from external sources.
 
 ## Further reading
 
@@ -862,3 +1038,7 @@ The code performs the following steps:
 [CREATE_STORAGE_ACCOUNT]: https://learn.microsoft.com/en-us/azure/storage/blobs/create-data-lake-storage-account
 [STORAGE_EXPLORER]: https://learn.microsoft.com/en-us/azure/storage/storage-explorer/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows
 [NUGET_BLOB_STORAGE]: https://www.nuget.org/packages/Azure.Storage.Blobs
+[MONITORING_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/csharp/Chapter5.ApplicationInsightsExporter
+[EXTRACTION_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/csharp/Chapter5.ExtractPromptTestData
+[PROMPT_TEST_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/csharp/Chapter5.PromptTestingBasics
+[MODEL_BASED_TEST_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/csharp/Chapter5.ModelBasedTesting
