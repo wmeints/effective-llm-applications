@@ -709,8 +709,8 @@ input tokens, and one to display the output tokens as a timeseries chart. Select
 button twice. When you've done that, edit the name of the dashboard and save it. You
 should end up with a screen looking like the one in [#s](#edited-dashboard-screen).
 
-{#edited-dashboard-screen} ![The dashboard with two charts
-added](edited-azure-dashboard.png)
+{#edited-dashboard-screen}
+![The dashboard with two charts added](edited-azure-dashboard.png)
 
 You can click on either one of the charts to configure the metric that you want to
 display. After clicking one of the charts, you're presented with the metric
@@ -727,6 +727,7 @@ After setting the configuration, save the metric by clicking on the *Save to das
 button in the top right of the screen. [#s](#configured-metric-screen) shows the fully
 configured metric for average input tokens.
 
+{#configured-metric-screen}
 ![Fully configured metric for input tokens](configured-input-token-metric.png)
 
 You can repeat the same steps for the output tokens metric. The metric you need to

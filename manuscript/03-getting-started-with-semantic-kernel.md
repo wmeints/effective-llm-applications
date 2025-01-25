@@ -386,9 +386,8 @@ OpenAI and OpenAI.
 ASP.NET Core uses dependency injection to manage components in the application. Setting
 up Semantic Kernel in an ASP.NET Core application is different from using it in a
 console application. You need to use the dependency injection container to register the
-kernel object in the application as shown in [#s](#configure-kernel-in-aspnet-core).
+kernel object in the application. The following code demonstrates this.
 
-{#configure-kernel-in-aspnet-core}
 ```csharp
 using Azure.AI.OpenAI;
 using Azure.Identity;
@@ -430,15 +429,15 @@ ASP.NET Core code and a regular console application:
    `AzureOpenAI:Endpoint` configuration value to set the endpoint of the Azure OpenAI
    service. We use the `DefaultAzureCredential` class to authenticate with Azure
    services.
-2. After that, instead of creating a `IKernelBuilder` ourselves, we call the `AddKernel`
+3. After that, instead of creating a `IKernelBuilder` ourselves, we call the `AddKernel`
    method on the service collection of the application. This method returns a
    `IKernelBuilder` that we can use to configure the kernel. It also registers the
    kernel builder in the service collection so that a new kernel instance is created
    when we later ask for a `Kernel` object in a controller or endpoint.
-3. Then, we use the `AddAzureOpenAIChatCompletion` method on the kernel builder to add
+4. Then, we use the `AddAzureOpenAIChatCompletion` method on the kernel builder to add
    the Azure OpenAI connector to the kernel. This method takes the deployment name of
    the model as a parameter.
-4. Finally, we run the application as normal with the `Run` method.
+5. Finally, we run the application as normal with the `Run` method.
 
 Note that ASP.NET Core provides a nice configuration system that allows you to store
 configuration values in a `settings.json` file. You can also store configuration in

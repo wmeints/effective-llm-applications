@@ -97,6 +97,7 @@ applications. [#s](#context-window-curve) shows the attention span of a typical 
 Input that's at the start and end of a prompt is likely to get picked up better by the
 LLM than content in the middle of the prompt.
 
+{#context-window-curve}
 ![Context window attention curve](context-window-curve.png)
 
 Longer and more complicated prompts can work, but if you find that the LLM doesn't give
