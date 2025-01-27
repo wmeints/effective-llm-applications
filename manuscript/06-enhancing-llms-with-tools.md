@@ -11,77 +11,124 @@ through the use of Semantic Kernel functions.
 
 We'll cover the following topics in this chapter:
 
-TODO: Chapter topics
+- Why you need to use tools with LLMs
+- What are tools, skills, and plugins
+- Using functions with Semantic Kernel
+- Using filters to enhance functions
+- Using transformations for safety
 
 Let's take a step back, and look at how we turned a prompt into a function, and use that
 starting point to look at plugins and functions to do other things.
 
-## Plugins and functions in Semantic Kernel
+## Why you need to use tools with LLMs
 
 In [#s](#reusable-prompts) we used the concept of a kernel function to compile a
-prompt to a C# callable piece of code. Functions, together with Plugins, are one of the
-key building blocks in Semantic Kernel. You'll use them everywhere.
+prompt to a C# callable piece of code. We used code similar to this code to compile
+a prompt into a function:
 
-In Semantic Kernel you can invoke a function directly to get a response to a prompt.
-However, in many scenarios you'll want to use the LLM as a reasoning core and provide
-it with tools to do the heavy lifting.
+```csharp
+var promptTemplate = File.ReadAllText(
+    Path.Join(Directory.GetCurrentDirectory(), "prompt.yaml")
+);
 
-### Tools, skills, and functions defined
+var prompt = kernel.CreateFunctionFromPromptYaml(
+    promptTemplate, 
+    new HandlebarsPromptTemplateFactory());
+```
 
-To fully understand the power of tools, it's important that we go back to what an LLM is.
-It's a pattern-matching machine that can predict the likely next token in a sequence of
-tokens. It can transform text, and that's it.
+The output of that code produces a `KernelFunction` object that you can call providing
+it with arguments and the kernel to get a response to the prompt.
 
-But we want to build applications that can do much more and use language to do the
-things we want to do. For example, we might want to build an appplication that can
-answer questions based on manuals. And we want the LLM to use the most up-to-date
-information to answer that question. You could try to train the LLM with your business
-information, but that's a very expensive process and extremely slow. Not to mention that
-you'd have to retrain the model every time your business information changes.
+A single prompt function sometimes gets the job done, but often you'll need more than
+that. Let's look at a few cases where functions play an important role.
 
-Instead of training the LLM, we can give it a tool to find information from the manuals.
-This tool can be a function in C# that uses a search engine to find relevant pieces of
-information that we return to the LLM to use in its response to the user. This way we
-don't have to train the LLM to understand our manuals, keeping the costs down.
+For example, if you want a chatbot that can answer questions based on manuals, you'll
+want to implement a RAG pattern that uses functions to find relevant information related
+to your question. We'll cover this pattern in chapter 6, but it's good to know that it
+uses functions under the covers.
 
-Another great use case for tools is to let the LLM execute actions in other software.
-For example, you can build an application that lets the LLM email a customer
-based on your input.
+If you want to generate or parse images in your application, you'll need to use a
+function to either parse the image or generate a new image. The LLM can't do this. I'm
+aware that it looks like that when you use OpenAI's ChatGPT, but they use the very same
+tricks we're going to discuss in this chapter.
 
-When we talk about tools in LLM-based based application we can make a distinction between
-two types of tools:
+Finally, if you want to interact with the environment, like updating data in a database,
+turning on lights, or something similar, you're going to need functions as well.
 
-- **Information retrieval tools**: These are typically used to get information needed to
-  provide a response to a prompt. For example, you'll need to use an information
-  retrieval tool if you're going to build a chatbot that can answer questions based on
-  manuals or internal information.
-- **Task automation tools**: These are tools that change things or store information.
-  For example, a calculator is a task automation tool. Another tool could be a function
-  that produces an image (this is how ChatGPT generates images).
+## What are tools, skills, and plugins
 
-As far as Semantic Kernel is concerned, it only knows about plugins and functions. Some
-LLM providers will use the term tools, while others use skills. In this book we'll use
-the term functions to keep things simple.
+Tools, skills, and functions are used interchangeably in the context of LLM-based
+applications. Some providers use the term tools, others use skills, and some use
+plugins. In this book we'll stick to functions to keep in line with what you're going to
+find in the Semantic Kernel manual.
 
-### Plugins in the context of Semantic Kernel
+When we talk about functions in relation to LLMs, we're talking about two kinds of
+functions:
 
-So far we've only used a single function and invoked it directly. Semantic Kernel
-however, has the notion of plugins. Plugins are a collection of functions that provide a
-set of closely related capabilities. For example, you can create a Writer plugin that
-contains a function to generate an outline for a blog post, a function to review the
-outline of the blogpost, and a function to write sections of the blog post.
+- **Information retrieval functions**: These are typically used to get information
+  needed to provide a response to a prompt. For example, you'll need to use an
+  information retrieval tool if you're going to build a chatbot that can answer
+  questions based on manuals or internal information.
+- **Task automation functions**: These are tools that change things or store
+  information. For example, a calculator is a task automation tool. Another tool could
+  be a function that produces an image (this is how ChatGPT generates images).
 
-## Building a plugin for Semantic Kernel
+It's good to remember that functions require structured input and produce structured
+output. And you can only use text input parameters and generated output that can be
+converted to text. Because, as we've seen in the previous chapters, LLMs can only work
+with text.
+
+So if you're generating an image, you need to return the URL to the image rather than
+the data for the image. And the image must be accessible to the person who's going to
+read the output.
+
+To use a function with an LLM, you need to provide the LLM with information about the
+function. This information is provided as extra metadata in addition the the prompt. For
+each function we need to tell the LLM the following details
+
+- The name of the function
+- The description of what the function achieves
+- The input parameters with their names, datatypes, and descriptions
+- The output parameter with a description and type information
+
+When you call the LLM, it will try to figure out if it needs to call a function based on
+the prompt you're sending. If it does, it will return a special response identifying
+which tool it wants to call and the data for the input parameters. It is your job to
+parse this response and call the appropriate function with the provided input and call
+the LLM again with the output of the function.
+
+Remember from [#s](#llm-function-calling) that Semantic Kernel comes with standard code
+that takes care of calling functions for you. It even attempts to use multiple tools if
+necessary. So that's one less thing you need to worry about. Although sometimes you
+might want to control the process yourself.
+
+Functions in Semantic Kernel are usually part of a plugin. Plugins group related
+functions together to make it easier to package them as a separate library to maximize
+their reuse across various applications within your organization. For me, plugins are
+part of what makes Semantic Kernel useful in an enterprise environment.
+
+## Using functions with Semantic Kernel
+
+We've already seen functions at work in previous chapters for generating content based
+on a prompt template. It's worth diving deeper into what makes a function and how to
+build more complicated functions.
+
+Let's get started by converting the prompt functions we built earlier into a plugin.
 
 ### Authoring prompt-based functions
 
-- Explain how to build prompt-based function (repeat from earlier chapter).
+Remember from earlier chapters
 - Explain how to group prompts into a plugin structure.
 
 ### Authoring code-based functions
 
 - Explain how to build plugin classes with one or more functions.
 - Explain how to use the plugins with semantic kernel
+
+### Advanced configuration patterns
+
+- Explain the importance of controlling what functions are available to the kernel at one time.
+- Explain where to configure plugins and functions in a project to control what's available to the kernel.
 
 ## Applying filters to functions
 

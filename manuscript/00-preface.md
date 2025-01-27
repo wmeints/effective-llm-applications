@@ -50,12 +50,12 @@ enough in a more enterprise-oriented language like C#.
   understand the importance of testing and monitoring prompts to make sure your
   application remains operational in the long run.
 
-- **Chapter 6, "Enhancing LLMs With Tools"**, explores how to enhance LLMs by giving them
-  access to external tools and skills, showing you how to build custom tools, integrate
-  APIs, and manage memory and context to create more capable AI systems. LLMs become
-  dramatically more powerful when they can interact with external tools and data -
-  understanding these patterns will let you build AI assistants that can take actual
-  actions and work with real-world data.
+- **[#s, #](#enhancing-llms-with-tools), explores how to enhance LLMs by giving them
+  access to external tools, showing you how to build custom tools, integrate APIs, and
+  manage memory and context to create more capable AI systems. LLMs become dramatically
+  more powerful when they can interact with external tools and data - understanding
+  these patterns will let you build AI assistants that can take actual actions and work
+  with real-world data.
 
 - **Chapter 7, "Retrieval Augmented Generation (RAG)"**, shows you how to improve your LLM
   applications by grounding the responses in your own data using Retrieval Augmented
