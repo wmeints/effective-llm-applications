@@ -1,0 +1,19 @@
+name: generate_outline
+description: Generates an outline for a blogpost based on a topic that you provide.
+template: |
+  Generate an outline for a blogpost about {{ topic }}.
+  Output the outline as a list of bullet points.
+  
+  Outline:
+template_format: handlebars
+input_variables:
+  - name: topic
+    description: The topic you want to discuss in the blogpost.
+    is_required: true
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 1200
