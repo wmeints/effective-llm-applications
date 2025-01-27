@@ -2,7 +2,7 @@
 # Testing and Monitoring Prompts
 
 In the previous chapter we covered how to use prompt engineering to get useful results
-out of an LLM. Despite all the prompt engineering techniques we covered, you'll find
+out of an LLM. Despite all the prompt engineering techniques available, you'll find
 that building an LLM-based application is hard. The response will be different every
 time you use your prompt. There is only one way to make sure your application works
 reasonably well, you're going to have to test and continuously improve it.
@@ -19,29 +19,29 @@ Let's get started by getting a good test strategy in place for testing prompts.
 
 ## Establishing a good test strategy for prompts
 
-Prompt testing is a difficult subject, because you'll find that the LLM will give you a
-different response each time you call it. You can't test for a specific response. And
-that makes for brittle tests. I know from experience that not many of you will be very
-happy with brittle tests in their codebase. But there are ways around the problem.
+Prompt testing is a difficult subject, because the LLM will give you a different
+response each time you call it. You can't test for a specific response. And that makes
+for brittle tests. I know from experience that not many of you will be very happy with
+brittle tests in their codebase. But there are ways around the problem.
 
 Let's take a step back and look at what you can expect from an LLM-based application
-first. You can't expect the same response every time from an LLM. This is because the
-LLM uses sampling to generate response tokens. Also, the runtime environment is
-inherently undeterministic thanks to the use of modern GPU/TPU hardware. However, you
-can expect the response to follow a general pattern. This is what we're going to test
-for.
+first. You can't expect the same response every time from an LLM because the LLM uses
+sampling to generate response tokens. Also, the runtime environment is inherently
+undeterministic thanks to the use of modern GPU/TPU hardware. However, you can expect
+the response to follow a general pattern. This is what we're going to test for.
 
 I dabbled in functional programming in the past, and they have the concept of
 property-based testing that's quite useful when building LLM-based applications.
 Property-based testing is a way to test your code by checking if certain properties hold
-true for your code. The test framework used in these types of tests will generate random
-input data and check if the properties hold true for that data. While this method has
-its own limitations, it's worth considering for testing prompts.
+true for your code. The test framework used in these types of tests will generate a set
+of random input samples and check if the properties hold true for that data. While this
+method has its own limitations, it's worth considering for testing prompts.
 
-Property-based testing leans on random inputs to test your code. Generating random input
-for an LLM is quite hard. You need the input to follow a useful pattern and be
-representative for what your users are going to send in. For now, let's put this problem
-aside and start with a few handwritten samples as input for the prompt.
+Generating random input for an LLM is quite hard. You need the input to follow a useful
+and representative pattern for what your users are going to send in. Ultimately,
+production will be the place to get the best input for your tests. But that's not
+possible until you've put something in production. Until then, let's start with a few
+handwritten samples as input for the prompt.
 
 While there are frameworks available for property-based testing, I'm not using any of
 them in this book or in my own projects. I've found that it is enough to build
@@ -50,9 +50,9 @@ data-driven tests with a test framework like xunit or MSTest.
 {#prompt-testing-basics}
 ## Using deterministic testing methods to validate prompts
 
-To demonstrate how to build a prompt test, let's go back to a prompt that we used
-earlier in the book to generate a recipe for a dish based on ingredients you have in the
-fridge. Here's the prompt we used before:
+To demonstrate how to build a prompt test, let's evaluate a prompt that we used earlier
+in the book to generate a recipe for a dish based on ingredients you have in the fridge.
+Here's the prompt we used before:
 
 ```text
 Help me cook something nice, give me a recipe for {{ dish }}.
@@ -141,26 +141,25 @@ public async Task TestGenerateRecipe_ContainsInstructions(
 
 The test performs the following steps:
 
-1. First, we extended the test method with `[InlineData(...)]` to specify a sample that
+1. First, we marked the test method with `[InlineData(...)]` to specify a sample that
    we want to run the test for. You can use inline data, or you can load data from a
    test file in your code base. You can learn more about the various methods to load
    test samples for your data driven test in [this blogpost][XUNIT_DATA_DRIVEN_TESTS].
 2. Next, we call the prompt function with the dish name and the list of ingredients as
    input. The result is stored in the `result` variable.
 3. Finally, we use the `Assert.Contains` method to check if the result contains the
-   words "ingredients" and "instructions". If the result contains these words, the test
+   words *ingredients* and *instructions*. If the result contains these words, the test
    passes.
 
 You can extend this test with more samples as you see fit. The test will run for each
 of the provided samples and report a separate test results for each of them.
-Make sure to check out the full source code for this sample on
-[Github][PROMPT_TEST_SAMPLE].
+You can find the full source code for the test on [Github][PROMPT_TEST_SAMPLE].
 
 It may come as no surprise that running more samples will make the test slower, and it
 isn't fast to begin with. I highly recommend you mark the test with a separate category
 and only run the LLM-based tests periodically, for example when you're about to finish
-up a new user story in your application or when you change the prompt, the model, or
-model configuration.
+up a new user story in your application or when you change the prompt, the LLM version,
+or model configuration.
 
 You can mark the test with a category by adding the following attribute to the test
 method:
@@ -197,14 +196,15 @@ consistent or if ingredients use the same kind of units of measurement.
 
 This is typical for LLM-based applications. You're automating something that solves a
 more complex problem so you need more complex tests to check for correctness. And to be
-honest, the test isn't going to cover for all the problems that you'll run into.
+honest, despite your best efforts, the tests arent't going to cover for all the problems
+that you'll run into.
 
 However, there's an interesting method that you can use to validate more complex
 properties of the response by using the LLM itself as an analysis tool. I prefer to call
 this method of testing model-based prompt testing.
 
-There's a lot of research into prompt testing by employing LLMs to validate the
-response. For example, there's [G-Eval][G_EVAL] that proposes a specific test prompt
+There's a lot of research into model-based testing approaches for LLM-based
+applications. For example, there's [G-Eval][G_EVAL] that proposes a specific test prompt
 that scores the response on a single metric. Using G-Eval you can for example check if
 the response is coherent or if it's consistent with the input. [GPTScore][GPTSCORE]
 follows a similar pattern where you employ a prompt with instructions to score a
@@ -213,9 +213,9 @@ response on a specific aspect.
 GPTScore and G-Eval have a common strategy to them:
 
 1. First, you use the LLM to generate a response to the prompt with test data.
-2. Then, put the response back into a test prompt with specific instructions to
-   evaluate a single metric for the prompt. In the test instructions you include a scale
-   to measure the metric.
+2. Then, put the response into a test prompt with specific instructions to evaluate a
+   single metric for the prompt. In the test instructions you include a scale to measure
+   the metric.
 3. Finally, you record the score generated by the LLM as the test result.
 
 When you run enough samples with this technique, you end up getting a picture of
@@ -254,6 +254,23 @@ Are the instructions logical?
 
 ## Evaluation form (scores ONLY)
 ```
+
+The test prompt is quite complicated. Let's break it down a bit so you understand the
+general pattern behind it:
+
+1. In the first section of the prompt, we provide instructions for the task we are
+   working on.
+2. In the second section, we're using the one-shot learning pattern to include the
+   recipe originally generated.
+3. In the third section, we provide a chain-of-thought pattern to help produce a more
+   exact response.
+4. Finally, we steer the LLM to output just the score by giving it the start of the
+   output for it.
+
+If you leave the final portion out, you'll get a lot of yapping from the model that it's
+super happy to help you score the output. But that's not what you need at all. Putting
+in hints like "Score:" will help the model steer clear of the yapping and get to the
+point.
 
 You can run this prompt inside a unit-test setup with, for example, xunit. The following
 code demonstrates this:
@@ -297,7 +314,7 @@ The test performs the following steps:
 2. Next, we take the output of the prompt and put it into the test prompt. We're using
    a specific set of execution settings to ensure we're generating structured output.
    We haven't covered this yet, but the `ResponseFormat` setting is used to tell the
-   LLM we want a structured response that has a `Score` property.
+   LLM we want a structured JOSN response that has a `Score` property.
 3. Finally, we deserialize the response to JSON and check if the score is
    between 3 and 5. This is a simple check to see if the response is consistent.
 
@@ -308,9 +325,16 @@ from CSV or other file format and run them all through the model collecting the 
 in a list. Then you can calculate the average score and check if it's within a certain
 range.
 
-You can find the full source code for this sample on [Github][MODEL_BASED_TEST_SAMPLE].
+I've found that despite my efforts to reduce the yapping, the model sometimes still
+produces somewhat irrelevant output. You can't avoid this, unless you set the
+`ResponseFormat` in the execution settings. We'll cover structured output in greater
+detail in chapter 7.
 
-Before you go wild with this approach, there's a warning that I need to leave you with.
+If you like, you can give the code a try yourself. You can find the full source code for
+this sample on [Github][MODEL_BASED_TEST_SAMPLE].
+
+Testing LLM output with LLMs looks very powerful, and it is. But before you go wild with
+this approach, there's a warning that I need to leave you with.
 
 ## The dangers of the model-based testing approach
 
@@ -331,8 +355,9 @@ LLM evaluation is strange in nature, but does show remarkable agreement with hum
 experts. And that is all you can ask for at the moment. So if you're wondering, why are
 we doing this? It's because it's the best we have at the moment.
 
-While testing is a great first step, you'll need to add monitoring as an extra
-safety net to keep your LLM-based application running as intended.
+With this warning in mind, we need to come to the conclusion that testing is a great
+first step in sustainable LLM-based application development. But we need additional
+safety nets. Let's look at how you can monitor prompt interactions in production.
 
 ## Monitoring prompt interactions in production
 
@@ -344,8 +369,7 @@ is to collect it from production.
 
 A> Gathering telemetry data in Semantic Kernel is experimental at the moment. There are
 A> some useful bits of information that you can collect today but it is somewhat
-A> incomplete. I'll make sure to point out the stuff that's missing so you can work
-A> around them.
+A> incomplete. I'm sure they'll improve this in the coming months.
 
 ### Safety precautions when collecting telemetry
 
@@ -356,13 +380,16 @@ data.
 
 For my projects, I notify users when I'm collecting data and what I'm collecting. I also
 make sure that I'm not collecting any personal information. For most projects I add
-a switch in the configuration, so I can toggle collection of prompts and response.
+a switch in the configuration so I can toggle collection of prompts and response.
 I enable the switch on a separate environment and only collect data for a limited time.
 
-It's limiting what I can achieve with the data, but it's a good compromise between
-collecting data that I don't want to see and improving the application. Most of the data
-that you'll get from production doesn't add value for testing, so it's better to target
-your collection efforts as much as possible.
+It's limiting what I can achieve with the this approach, but it's a good compromise
+between respecting the privacy of the users and collecting enough data to get them the
+best product possible.
+
+There's another reason why you should limit your data collection efforts. Most of the
+data that you'll get from production doesn't add value for testing, so it's better to
+target your collection efforts as much as possible.
 
 With that in mind, let's look at enabling telemetry collection in Semantic Kernel.
 
@@ -375,12 +402,14 @@ brief overview.
 
 OpenTelemetry is a set of APIs, libraries, and tools to instrument applications to
 generate telemetry and process that telemetry into useful insights. The standard is
-implemented in a lot of places for a lot of languages.
+implemented in a lot of places for a lot of languages. OpenTelemetry doesn't provide
+monitoring tools, just the libraries to get data into a monitoring tool.
 
-Because the .NET stack is quite old, Microsoft hasn't adopted quite the same terminology
-as OpenTelemetry. The OpenTelemetry standard came after .NET was invented. That's why
-you'll find that the .NET stack uses different terminology for the same things. I made
-the following table to help you understand the differences:
+Microsoft implements OpenTelemetry in .NET. Because the .NET stack is quite old,
+Microsoft hasn't adopted quite the same terminology as OpenTelemetry. The OpenTelemetry
+standard came after .NET was invented. That's why you'll find that the .NET stack uses
+different terminology for the same things. I made the following table to help you
+understand the differences:
 
 | Concept | .NET Equivalent | Description                                                               |
 | ------- | --------------- | ------------------------------------------------------------------------- |
@@ -418,14 +447,15 @@ method. The trace is generated by the activity source `My.ActivitySource` with v
 
 Activities should always be created with a `using` statement to ensure that it's
 collected by the garbage collector as soon as we're done. This is important because when
-you clean up an activity, it's recorded by the tracer, and it's somewhat time-sensitive
-to accurately measure the time it took to complete the activity.
+you clean up an activity, it's recorded by the tracer including how long the activity
+was running for. So cleaning up is a time-sensitive action.
 
 The span produced by the activity is written to a tracer, which is called an
 `ActivitySource` in .NET. The activity source is responsible for writing the span to an
 exporter. We haven't configured one in this code, because it's up to the consumer of our
-code to choose how and where to collect telemetry. The following code builds a basic
-trace exporter that writes traces to the console:
+code to choose how and where to collect telemetry. You can add the following code to the
+startup of a console application to build a basic trace exporter that writes traces
+to the console:
 
 ```csharp
 var resourceBuilder = ResourceBuilder.CreateDefault()
@@ -447,13 +477,13 @@ In this code we perform the following steps:
    terminal.
 
 You can configure multiple sources to the tracer provider. Only traces for sources that
-you've added to the tracer provider will be exported. Right now, we only export our
-custom source. Sources can be prefixes, so I could say: `My*` to export anything that
-starts with `My`.
+you've added to the tracer provider will be exported. In the sample, we only export our
+custom source. You can add sources using a prefix notation, so you could say: `My*` to
+export anything that starts with `My`.
 
 The exporter is responsible for writing traces to a monitoring system. In this case,
 we're writing traces to the terminal, but in production you want something more durable.
-For example, you can use an Application Insights exporter to write the traces to
+For example, you can use an Azure Monitor exporter to write the traces to
 Application Insights. But you can also use other exporters. There are a lot of packages
 available on Nuget.
 
@@ -472,10 +502,10 @@ This code adds the `Microsoft.SemanticKernel*` prefix as a source to the tracer
 provider. And that's all you need to do to enable tracing for Semantic Kernel.
 
 But what does Semantic Kernel export to the tracer provider? Spans created by Semantic
-Kernel contains data as defined in [the semantic conventions for generative AI
+Kernel contain data as defined in [the semantic conventions for generative AI
 systems][GENAI_STANDARD]. This experimental standard provides guidance on what
 information is needed to properly monitor LLM-based applications. It provides the
-following attributes among others for spans generated when calling an LLM:
+following attributes, among others, for spans generated when calling an LLM:
 
 - `gen_ai.system`: The LLM provider you called in the code.
 - `gen_ai.request.model`: The model you called in the code.
@@ -483,10 +513,6 @@ following attributes among others for spans generated when calling an LLM:
 - `gen_ai.response.prompt_tokens`: The number of tokens in the prompt.
 - `gen_ai.prompt`: The prompt you submitted.
 - `gen_ai.completion`: The response generated by the LLM.
-
-In addition to these properties you'll find the name of the kernel function that was
-invoked, the time it took to complete the operation and of course the timestamp it was
-started.
 
 By default, no sensitive information is collected by Semantic Kernel. To collect the
 prompt and response to your prompt you need to add the following code to the startup of
@@ -499,16 +525,17 @@ AppContext.SetSwitch(
 ```
 
 Tracing will be your most important tool to track what data is processed with the LLM in
-production so you can later use it for debugging purposes. Next to tracing you can also
-use metrics to track the performance of your LLM-based application.
+production so you can later use it for debugging purposes.
+
+Next to tracing you can also use metrics to track the performance of your LLM-based
+application.
 
 ### Enabling metrics in your LLM-based application
 
-Building meters into .NET code is different from adding traces. You need to define a
-`Meter` in your code that's responsible for collecting metrics. After you've created a
-`Meter` instance you can use it to create histograms, counters, and other metrics to
-measure signals in your application. The following code demonstrates how to create a
-`Meter` and use it to create a counter:
+Building meters into .NET code is different from adding traces because you can have
+various kinds of meters in your application. You can have counters, histograms, and
+gauges. The `Meter` class is the entry point for creating various kinds of meters in a
+specific category. The following code demonstrates how this works:
 
 ```csharp
 public class MyMeteredService
@@ -536,6 +563,9 @@ This code performs the following steps:
 3. Finally, we increment the counter by one each time the `DoSomething` method is
    called.
 
+If you're interested in learning more about the specific types of metrics, I recommend
+taking a look [at the OpenTelemetry documentation][OTEL_METRICS].
+
 To export metrics through OpenTelemetry, we need to write the following code in the
 startup of the application:
 
@@ -561,10 +591,10 @@ destinations. Only the metrics you configure with `AddSource` are exported to th
 configured exporters.
 
 Now that we've covered adding metrics to an application, let's look at how we can export
-metrics from Semantic Kernel.
+metrics from the Semantic Kernel category.
 
-To export metrics for Semantic Kernel, you need to modify the code a bit, just like we
-did with the traces:
+To export metrics for the Semantic Kernel category in a console application, we need to
+modify the code a bit, just like we did with the traces:
 
 ```csharp
 using var meterProvider = Sdk.CreateMeterProviderBuilder()
@@ -584,7 +614,7 @@ a look to decide what metrics make sense for you.
 We haven't covered logging yet, let's look at that before we dive into exporting traces
 to a monitoring tool like Application Insights.
 
-### Logging in Semantic Kernel
+### Logging in LLM-based applications
 
 Aynone who's worked with .NET 6 and later knows about the `Logger<T>` class and logging
 in general. You can configure logging as a separate tool in Semantic Kernel. When you're
@@ -620,7 +650,7 @@ generated by the application. This way you can view traces and log messages as a
 unit in the monitoring tool.
 
 The OpenTelemetry console exporter is nice to check that everything is configured as
-intended, but I don't recommend using it in production. It will slow down you
+intended, but I don't recommend using it in production. It will slow down your
 application, and it's not durable. Let's look at how to configure Application Insights
 as an exporter and how to configure a dashboard for your LLM-based application in this
 tool.
@@ -629,7 +659,8 @@ tool.
 
 Configuring Application Insights as an exporter for traces, metrics, and logs requires
 an additional package. You can add the `Azure.Monitor.OpenTelemetry.Exporter` package to
-your project. The following code demonstrates how to configure the exporter:
+your project. The following code demonstrates how to configure the exporter in a 
+console application:
 
 ```csharp
 var resourceBuilder = ResourceBuilder.CreateDefault()
@@ -673,13 +704,23 @@ Application Insights. You need to set up an Application Insights resource in Azu
 obtain the connection string for the exporters. There's a great manual for this
 available in [the Application Insights documentation][AI_DOCS].
 
+A> The samples in this chapter only talk about console applications. But you can certainly
+A> use OpenTelemetry in ASP.NET Core. You can set it up using [this guide][OTEL_ASPNET].
+
 One way to monitor your application is by setting up a dedicated dashboard in
 Application Insights. Let's dive into setting up an LLMOps dashboard in this tool.
 
 ### Building a LLMOps dashboard with Application Insights
 
-Application Insights doesn't focus on monitoring LLM-based applications. It was there
-before we even had LLMs. So it takes a bit of effort to make a useful dashboard for
+I had to make a choice which tool to show you for monitoring LLM-based applications.
+There are a lot of startups working on monitoring LLM-based applications, but they're
+not quite there yet. It's not standardized, and many of those tools are really expensive
+while providing limited value.
+
+While Application Insights doesn't focus on monitoring LLM-based applications it is a
+good quality general-purpose monitoring tool in Azure. LLM-based applications have
+special requirements for monitoring the prompts and responses, but the scope of that is
+pretty limited to be honest. It does take a bit of effort to make a useful dashboard for
 applications that use an LLM. But it is doable.
 
 There are a couple of things that you'll want to see in an LLMOps dashboard:
@@ -716,11 +757,12 @@ you've choosen the custom dashboard template.
 The dashboard editor shows a grid to display metrics and other information as tiles. The
 tile gallery shows various types of tiles you can add to the dashboard.
 
-For the LLMOps dashboard we'll start by adding two tiles, one for showing the number of
-input tokens, and one to display the output tokens as a timeseries chart. Select the
-*Metrics Chart* tile type from the list to the right of the screen and click the *Add*
-button twice. When you've done that, edit the name of the dashboard and save it. You
-should end up with a screen looking like the one in [#s](#edited-dashboard-screen).
+For the LLMOps dashboard we'll start by adding two tiles, one to display the number of
+input tokens as a timeseries chart, and one to display the output tokens as a timeseries
+chart. Select the *Metrics Chart* tile type from the list to the right of the screen and
+click the *Add* button twice. When you've done that, edit the name of the dashboard and
+save it. You should end up with a screen looking like the one in
+[#s](#edited-dashboard-screen).
 
 {#edited-dashboard-screen}
 ![The dashboard with two charts added](edited-azure-dashboard.png)
@@ -731,10 +773,10 @@ configurator. This tool allows you to select a scope, and a metric from that sco
 display. You'll need to select the following options for the scope, metric namespace,
 metric, and aggregation:
 
-- Scope: The name of your application insights resource
-- Metric namespace: Log based metrics
-- Metric: semantic_kernel.invocation.function.token_usage.prompt
-- Aggregation: Avg
+- *Scope:* The name of your application insights resource
+- *Metric namespace:* Log based metrics
+- *Metric:* semantic_kernel.invocation.function.token_usage.prompt
+- *Aggregation:* Avg
 
 After setting the configuration, save the metric by clicking on the *Save to dashboard*
 button in the top right of the screen. [#s](#configured-metric-screen) shows the fully
@@ -783,22 +825,23 @@ export that data and use it to improve your tests.
 Telemetry data in Application Insights is stored in a structured format in a Log
 Analytics Workspace. You can query the data using the [Kusto Query Language
 (KQL)][KUSTO_INTRODUCTION]. But you can also export it to a storage account for later
-use. We're going to use the data export feature to retrieve the prompts and responses
-for specific prompt templates.
+use.
 
-After we've downloaded the data, we'll build an application to extract the prompts and
-responses from the raw log data and use it to improve our tests.
+We're going to use the data export feature to retrieve the prompts and responses for
+specific prompt templates. After we've downloaded the data, we'll build an application
+to extract the prompts and responses from the raw log data and use it to improve our
+tests.
 
 Before you start exporting data, make sure you have a storage account with hierarchical
 namespaces enabled. You can create one using [this guide][CREATE_STORAGE_ACCOUNT].
 
-Let's start by creating an export rule to move data from the Log Analytics Workspace to
+Let's start by creating an export rule to copy data from the Log Analytics Workspace to
 the storage account. You can get access to the Log Analytics Workspace for your
 Application Insights resource by going to the Application Insights in the Azure portal
 and clicking on the link next to the Workspace property in the overview page of the
 resource. This will take you to the Log Analytics Workspace.
 
-In the Log Analytics Workspace, you can find the data export feature in the sidebar
+In the Log Analytics Workspace you can find the data export feature in the sidebar
 of the workspace resource under *Settings* > *Data export*. [#s](#export-rules-overview)
 shows the data export overview page.
 
@@ -814,7 +857,7 @@ what this page looks like.
 ![Export rule creation page](azure-law-export-rules-step-1.png)
 
 Provide a descriptive name for the rule, and click *Next* to go to the next step as
-shown in [#s](#export-rule-step-2). On the next screen you can select the tables you
+shown in [#s](#export-rule-step-2). In the next screen you can select the tables you
 want to export. The `AppTraces` table contains the data for the prompts and responses.
 Select this table and click *Next* to go to the destination configuration screen.
 
@@ -848,9 +891,11 @@ var configuration = new ConfigurationBuilder()
     .AddUserSecrets<Program>()
     .Build();
 
-var blobServiceClient = new BlobServiceClient(configuration["ConnectionStrings:BlobStorage"]);
-var traceContainerClient = blobServiceClient.GetBlobContainerClient("am-apptraces");
+var blobServiceClient = new BlobServiceClient
+    configuration["ConnectionStrings:BlobStorage"]);
 
+var traceContainerClient = blobServiceClient.GetBlobContainerClient(
+    "am-apptraces");
 ```
 
 The code performs the following steps:
@@ -867,6 +912,13 @@ container, one by one:
 ```csharp
 var processor = new TraceEventDataProcessor();
 
+var serializerSettings = new JsonSerializerOptions()
+{
+    PropertyNameCaseInsensitive = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement
+};
+
 await foreach (var blobItem in traceContainerClient.GetBlobsAsync())
 {
     if (blobItem.Name.EndsWith(".json"))
@@ -879,12 +931,7 @@ await foreach (var blobItem in traceContainerClient.GetBlobsAsync())
             var rawEventData = reader.ReadLine();
 
             var eventData = JsonSerializer.Deserialize<TraceEventData>(
-                rawEventData!, new JsonSerializerOptions()
-            {
-                PropertyNameCaseInsensitive = true,
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement
-            });
+                rawEventData!, serializerSettings);
 
             if (eventData!.Message == "gen_ai.content.completion" || 
                 eventData.Message == "gen_ai.content.prompt")
@@ -927,14 +974,15 @@ public class TraceProperties
 }
 ```
 
-The `TraceEventData` class contains the data logged as part of a single trace span.
-It contains a `Message` property that describes the type of span we're looking at. It also
-contains a `Properties` property containing the extra metadata we need to process.
-For prompts and responses the `Properties` property contains the content that we need.
+The `TraceEventData` class contains the data logged as part of a single trace span. It
+contains a `Message` property that describes the type of span we're looking at. It also
+contains a `Properties` property containing the extra metadata we need to process. For
+prompts and responses the `Properties` property contains the content that we need.
 
-You can't do much with the data in the `TraceEventData` class. You need two copies of it
-to get the prompt and the completion because they're logged as two separate spans. That's
-why we have the `TraceEventDataProcessor` class to process the data into useful test samples.
+You can't do much with the data in the `TraceEventData` class without processing it
+further. You need two copies of it to get the prompt and the completion because they're
+logged as two separate spans. That's why we have the `TraceEventDataProcessor` class to
+process the data into useful test samples.
 
 ```csharp
 public class TraceEventDataProcessor
@@ -942,7 +990,8 @@ public class TraceEventDataProcessor
     private string? _currentPrompt;
     private bool _isParsingPair;
 
-    public List<PromptCompletionPair> ParsedPromptCompletionPairs { get; } = new();
+    public List<PromptCompletionPair> 
+        ParsedPromptCompletionPairs { get; } = new();
 
     public void ProcessEvent(TraceEventData eventData)
     {
@@ -995,7 +1044,8 @@ After you've processed all the trace data, you can store the data from the
 `ParsedPromptCompletionPairs` property in a CSV file. You can then analyze this CSV file
 to improve your tests.
 
-You can find the full source code for the sample on [Github][EXTRACTION_SAMPLE].
+Feel free to download and adapt the sample code for your own project. You can find the
+full source code for the sample on [Github][EXTRACTION_SAMPLE].
 
 Now you may be wondering, why not use the test data directly in the tests? There are two
 problems with using the raw test data.
@@ -1042,3 +1092,5 @@ functions and data from external sources.
 [EXTRACTION_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/csharp/Chapter5.ExtractPromptTestData
 [PROMPT_TEST_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/csharp/Chapter5.PromptTestingBasics
 [MODEL_BASED_TEST_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/csharp/Chapter5.ModelBasedTesting
+[OTEL_METRICS]: https://opentelemetry.io/docs/concepts/signals/metrics/
+[OTEL_ASPNET]: https://medium.com/@jepozdemir/configuring-opentelemetry-tracing-for-asp-net-core-114c2c9cf557
