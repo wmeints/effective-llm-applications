@@ -1,5 +1,5 @@
 {#prompt-testing-and-monitoring}
-# Testing and Monitoring Prompts
+# Testing and monitoring prompts
 
 In the previous chapter we covered how to use prompt engineering to get useful results
 out of an LLM. Despite all the prompt engineering techniques available, you'll find

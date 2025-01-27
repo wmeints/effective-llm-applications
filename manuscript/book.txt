@@ -5,3 +5,4 @@ mainmatter.txt
 03-getting-started-with-semantic-kernel.md
 04-the-art-and-nonsense-of-prompt-engineering.md
 05-testing-and-monitoring-prompts.md
+06-enhancing-llms-with-tools.md
