@@ -117,7 +117,6 @@ Let's get started by converting the prompt functions we built earlier into a plu
 
 ### Authoring prompt-based functions
 
-Remember from earlier chapters
 - Explain how to group prompts into a plugin structure.
 
 ### Authoring code-based functions
@@ -129,6 +128,11 @@ Remember from earlier chapters
 
 - Explain the importance of controlling what functions are available to the kernel at one time.
 - Explain where to configure plugins and functions in a project to control what's available to the kernel.
+
+## Sharing plugins across applications with OpenAPI
+
+- Explain why you would share plugins and functions.
+- Explain how to use the OpenAPI specification to share plugins across languages and frameworks.
 
 ## Applying filters to functions
 
