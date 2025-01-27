@@ -1,7 +1,7 @@
-﻿# Model-based testing
+﻿# Extracting test data from application insights
 
-This sample demonstrates how to configure telemetry for Semantic Kernel with application insights using
-the Azure Monitor OpenTelemetry Exporter.
+This sample demonstrates how to process raw application insights trace data into potential test data for your
+application. This can be useful for expanding test cases in your application with real-world data.
 
 ## Prerequisites
 
@@ -22,4 +22,5 @@ This sample is built as a console application. You can run it from this director
 dotnet run
 ```
 
-You should see log events on the terminal and information about metering data being collected.
+The output of the program is a CSV file with the extracted test data. Make sure to review your test data
+before including it in your tests!
