@@ -761,6 +761,7 @@ repository][KF_SAMPLE] so you can explore it in greater depth if you want.
 Kernel functions are nice step towards fully reusable prompts. But there's one more
 step you can take if you want to make your business logic more readable.
 
+{#yaml-based-prompts}
 ### Using YAML-based prompt configuration
 
 As prompts come with additional settings you can consider storing the prompt
