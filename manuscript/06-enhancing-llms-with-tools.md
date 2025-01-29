@@ -83,6 +83,11 @@ quite hard to parse information from a response in a structured way. As luck wou
 it, you can ask for structured responses. We'll discuss this in chapter 7 when we talk
 about using LLMs to create structured outputs.
 
+Before we dive into code, it's important to note that at the time of writing not all
+LLM providers available in Semantic Kernel support tool use. OpenAI and Azure OpenAI,
+for example, are supported, while Microsoft is still working on support for Claude,
+OLlama, and many other providers.
+
 Let's take a look at building a tool using a kernel function.
 
 ## Building tools using a kernel function
@@ -174,7 +179,8 @@ This all happens thanks to the function calling loop as shown in
 This function calling loop is not part of the LLM, but something that Semantic Kernel
 provides. It works like this:
 
-1. We call the LLM with one or more messages and a set of tools that the LLM can use. 
+1. First, We call the LLM with one or more messages and a set of tools that the LLM can
+   use.
 2. Next, the LLM will detect that it needs to call a tool to generate a proper response
    resulting in a tool_call response.
 3. Then, Semantic Kernel parses the response and calls the tool with the data provided
@@ -262,9 +268,9 @@ In this code we perform the following steps:
    LLM.
 
 We have to tell Semantic Kernel that it is allowed to call functions. If you don't do
-this, the tools available in the kernel aren't provided to the LLM. A great safety
-measure to prevent the LLM from calling all sorts of functions that you never intended
-it to call.
+this, the tools available in the kernel aren't provided to the LLM. This is a great
+safety measure to prevent the LLM from calling all sorts of functions that you never
+intended it to call.
 
 The first argument for the `FunctionChoiceBehavior.Auto()` is a list of functions that
 the LLM can call. By providing this a list of functions you control what's available at
@@ -280,14 +286,15 @@ to call functions instead of generating a response by setting the
 `FunctionChoiceBehavior` to `FunctionChoiceBehavior.Required()`. This setting allows you
 to set a list of functions too, but this time the list should contain functions that the
 LLM must call. The required setting is mostly useful when working with structured output
-that we'll discuss in chapter 7.
+that we'll discuss in chapter 7. When you use this setting, only the first call to the
+LLM will force it to use a tool, otherwise we'd end up with an endless loop.
 
 ### Providing functions to the kernel
 
-You may notice that the samples use different spots to introduce functions to the
-kernel. When creating the prompt-based functions, we added the plugin with the functions
-to a kernel instance. In the second sample with the C# based time function, we added the
-function to the kernel builder.
+You may notice that the samples in the previous sections use different spots to
+introduce functions to the kernel. When creating the prompt-based functions, we added
+the plugin with the functions to a kernel instance. In the second sample with the C#
+based time function, we added the function to the kernel builder.
 
 You'll want to create kernel instances often and throw them away after you're done.
 Kernel instances contain state information in relation to the operation you're
@@ -310,6 +317,89 @@ conversation, you're allowed to use this tool. It limits the scope of what the L
 do, and consequently what users can do. Remember, there are two kinds of users here that
 I'm referring to: your friendly colleague, and the maybe less friendly hacker that's
 going to use your application too if they get the chance.
+
+### Dependency injection in kernel functions
+
+A time plugin doesn't need any external dependencies, but a plugin that interacts
+with a database does need access to a database. This is where it becomes useful to
+inject dependencies into your plugin.
+
+There are two levels at which you can define dependencies. First, there's the plugin
+level. You can define dependencies in the constructor of your plugin class like so:
+
+```csharp
+public class MyPlugin 
+{
+   public MyPlugin(ApplicationDbContext dbContext)
+   {
+      // ...
+   }
+}
+```
+
+To use a plugin that has dependencies defined in the constructor, you'll need to
+register it using the following C# code:
+
+```csharp
+var kernelBuilder = Kernel.CreateBuilder()
+    .AddAzureOpenAIChatCompletion(
+        deploymentName: configuration["LanguageModel:DeploymentName"]!,
+        endpoint: configuration["LanguageModel:Endpoint"]!,
+        apiKey: configuration["LanguageModel:ApiKey"]!
+    );
+
+kernelBuilder.Plugins.AddFromType<MyPlugin>();
+```
+
+This way the kernel will automatically locate the dependencies from the
+dependency injection container in your application. In the case of console
+applications you need to provide the `ApplicationDbContext` and other services
+by adding them to the `kernelBuilder.Services` collection. For ASP.NET Core it's
+enough to add them to the services collection of the application builder
+instance in the startup of your web project.
+
+Next to providing dependencies on plugin level, you can also ask for certain
+services in the function itself. There following limited set of services can be
+provided to your function:
+
+- `Kernel` - Useful when you need to access parts of the kernel in your function.
+- `KernelArguments` - The raw arguments provided when executing the function.
+- `ILoggerFactory` and `ILogger` - Use this to log information from the function.
+- `IAIServiceSelector` - Useful when you need to locate the correct connector to
+  invoke a function.
+- `CultureInfo` and `IFormatProvider` - Useful when you support multiple languages.
+- `CancellationToken` - Used to cancel a long running asynchronous operation.
+
+Some of these services are immediately useful, while others are only useful if
+you're building advanced functions. It's important to remember that you'll need
+to define dependencies on the plugin class if you want anything beyond basic
+helpers to execute your function logic.
+
+If you don't need to inject dependencies, or you want more control over how
+dependencies are injected into your kernel functions, I recommend using the
+`kernelBuilder.Plugins.AddFromObject` method. You have to create an instance of
+your plugin, which takes more effort, but you also have much more control over
+how the function is created.
+
+Both operations to include plugins into the kernel are available on the
+`KernelBuilder` and the `Kernel` type. That way you have maximum flexibility in
+how your application behaves.
+
+### Architecting with plugins
+
+As long as you're building a small to medium-sized LLM-based applications, I recommend
+building one or at least very few plugin classes in C#. It will make it easier to manage
+the structure of your application this way.
+
+There's a growth path though from smaller to bigger LLM-based application when it comes
+to using functions and plugins. As your application grows, you'll need to build more
+plugins. It can be useful to move the plugins into separate libraries to make it easier
+to navigate the code base.
+
+As soon as you find that you need to work on an application with multiple teams, it can
+be beneficial to split plugins into separate microservice style applications and use
+OpenAPI to link the plugins to your main application. That's what we'll discuss in the
+next section.
 
 ## Sharing functions across applications with OpenAPI
 
