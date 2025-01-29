@@ -11,153 +11,309 @@ through the use of Semantic Kernel functions.
 
 We'll cover the following topics in this chapter:
 
-- Why you need to use tools with LLMs
 - What are tools, skills, and plugins
-- Building a kernel function
+- When and where to use tools
+- Building a tool using a kernel function
 - Sharing functions across applications with OpenAPI
 - Applying filters to functions
 - Using function transformations
 
-Let's first understand why you need functions if you want to go beyond simple prompts.
-
-## Why you need to use tools with LLMs
-
-If you're just starting out with building an application that uses an LLM, you maybe
-wondering why you need to use functions at all. After all, you can get a lot done with
-a single prompt. But as you start building more complex applications there's no escaping
-the need for functions.
-
-For example, if you want a chatbot that can answer questions based on manuals, you'll
-want to implement a RAG pattern that uses functions to find relevant information related
-to your question in a manual.
-
-If you want to build a workflow that needs to generate a Github issue from a rough
-description, you'll want to post the issue to Github as a draft or possibly find
-information using the Github API.
-
-If you want to generate or parse images in your application, you'll need to use a
-function too. Because despite what ChatGPT might have you believe, LLMs don't generate
-images. They only work with text.
-
-A> Observant readers maybe wondering why I'm saying that LLMs don't do pictures, because
-A> you can post an URL to an image to GTP-4o and it will interpret it. And you're right,
-A> it does. But it uses a different model to do so. It just doesn't tell you about it.
-A> And while GPT-4o can interpret images, it doesn't generate them.
-
-Finally, if you want to interact with the environment, like updating data in a database,
-turning on lights, or something similar, you're going to need functions as well.
+Let's first understand what tools are in the context of an LLM, and where they're
+useful.
 
 ## What are tools, skills, and plugins
 
-Tools, skills, and functions are used interchangeably in the context of LLM-based
-applications. Some providers use the term tools, others use skills, and some use
-plugins. In this book we'll stick to functions to keep in line with what you're going to
-find in the Semantic Kernel manual.
+Tools, skills, functions, they're all used interchangeably in the context of LLMs. Most
+of the providers call them tools and they provide access to capabilities not available
+in the LLM itself. For example, you can find a tool on ChatGPT.com that allows the LLM
+to search the web. Even image generation on ChatGPT is really just a tool provided to
+GPT-4o for it to generate images.
 
-When we talk about functions in relation to LLMs, we're talking about two kinds of
-functions:
+Here's how it works. When you call the LLM you normally provide a prompt and you get a
+response. However, you can also provide other data alongside the prompt. You can give
+the LLM a list of tools with a specification of what each tool does. The LLM can detect
+from the prompt which tool to use and call it for you with data extracted from the
+prompt.
 
-- **Information retrieval functions**: These are typically used to get information
-  needed to provide a response to a prompt. For example, you'll need to use an
-  information retrieval tool if you're going to build a chatbot that can answer
-  questions based on manuals or internal information.\
-- **Task automation functions**: These are tools that change things or store
-  information. For example, a calculator is a task automation tool. Another tool could
-  be a function that produces an image (this is how ChatGPT generates images).
+There's no guarantuee that the LLM will call your tool though. It is a neural network
+trained to detect tool use. However, if your prompt is too unclear or the tool
+description doesn't match well enough with the prompt, the LLM will do something
+different. So you need to test whether it is calling your tool at the right moments with
+the right data.
 
-It's good to remember that functions require structured input and produce structured
-output. And you can only use text input parameters and generated output that can be
-converted to text. Because, as we've seen in the previous chapters, LLMs can only work
-with text.
+Tools come in two shapes:
 
-So if you're generating an image from one of your functions, you need to return the URL
-to the image rather than the data for the image. And the image must be accessible to the
-person who's going to read the output.
+1. **Information retrieval tools**: This category of tools provide information to the
+   LLM to generate more grounded responses. For example, you can connect a search engine
+   or a database to the LLM to provide additional context information.
+2. **Task automation tools**: This category of tools allow the LLM to interact with its
+   environment. For example, you can connect a tool that invokes an API to complete an
+   order or to send a notification.
 
-To use a function with an LLM, you need to provide the LLM with information about the
-function. This information is provided as extra metadata in addition the the prompt. For
-each function we need to tell the LLM the following details
+As far as the LLM is concerned, it only knows about tools. It doesn't know whether a
+tool is an information retrieval tool or a task automation tool.
 
-- The name of the function
-- The description of what the function achieves
-- The input parameters with their names, datatypes, and descriptions
-- The output parameter with a description and type information
+Now there's one more layer that we need to discuss: plugins. In an enterprise
+environment you may have tools that you use across multiple LLM-based applications. You
+don't want to copy and paste the same tools across all your applications. To help you
+solve this problem, Semantic Kernel introduced the notion of plugins. Plugins contain a
+collection of tools related to the same system or category of operations. You can have
+plugins in your main LLM-based application, in a separate library or even provide them
+as HTTP-based APIs to your LLM-based application. It's up to you to decide the structure
+of a plugin, because ultimately, we only use plugins to organize the code in the
+application. The LLM doesn't care.
 
-When you call the LLM, it will try to figure out if it needs to call a function based on
-the prompt you're sending. If it does, it will return a special response identifying
-which tool it wants to call and the data for the input parameters. It is your job to
-parse this response and call the appropriate function with the provided input and call
-the LLM again with the output of the function.
+The big question is, when and where should you use tools?
 
-Remember from [#s](#llm-function-calling) that Semantic Kernel comes with standard code
-that takes care of calling functions for you. It even attempts to use multiple tools if
-necessary. So that's one less thing you need to worry about. Although sometimes you
-might want to control the process yourself.
+## When and where to use tools
 
-Functions in Semantic Kernel are usually part of a plugin. Plugins group related
-functions together to make it easier to package them as a separate library to maximize
-their reuse across various applications within your organization. For me, plugins are
-part of what makes Semantic Kernel useful in an enterprise environment. 
+I've found that tools are a great way to extend the capabilities of an LLM. But only so
+in a chat-based application. Here's why. You don't control in what order and when tools
+are called. This is perfect for chat applications because we don't know how the user
+will use the chatbot. They may ask for information in a different order than we expect.
 
-## Building a kernel function
+However, if you're building a workflow that has a fixed set of operations that need to
+happen in a specific order, you're better off not using tools at all. It's much more
+effective to call the database yourself, parse the data, and then call the LLM with the
+right information.
 
-We've already seen functions at work in previous chapters for generating content based
-on a prompt template. It's worth diving deeper into what makes a function and how to
-build more complicated functions.
+If you need to flow information from a response into the next prompt, you maybe
+wondering at this point how you're going to make that work with just a workflow. It's
+quite hard to parse information from a response in a structured way. As luck would have
+it, you can ask for structured responses. We'll discuss this in chapter 7 when we talk
+about using LLMs to create structured outputs.
 
-You can create functions in one of three ways:
+Let's take a look at building a tool using a kernel function.
 
-1. You can create a prompt file and load it as a function.
-2. You can write C# code to create a function.
-3. You can import an external HTTP based API through OpenAPI.
+## Building tools using a kernel function
 
-We'll cover all three possibilities in this chapter. Let's first go back to the prompt
-that we've been working on in the last chapter and turn it into a function that
-the kernel can use.
+Before we start building a tool in Semantic Kernel, it's good to know that tools are
+called functions in Semantic Kernel. The framework has an abstraction for tools in the
+form of `KernelFunction`. Every function you ever create will be based on this class.
+For the sake of consistency with Semantic Kernel, I'll use the term functions throughout
+the rest of this chapter.
 
-### Adding functions to the kernel
+There are many ways to build functions in Semantic Kernel:
 
-In the previous chapters we created a prompt using the following code:
+1. You can turn prompts into functions
+2. Functions in C# code can be used too
+3. Then there's also the possibility of using API endpoints as functions by importing
+   their OpenAPI specification
+4. Finally, you can even connect Azure Logic Apps as functions to Semantic Kernel
+   applications
+
+There's a lot to choose from here, so let's start by turning a prompt into a function.
+
+### Using prompt-based functions
+
+Now you maybe wondering, why start with prompts? You may have noticed that when building
+our first prompts, especially with the YAML format in [#s](#yaml-based-prompts), we
+already used functions for a bit. When you load a prompt from a YAML file, you're
+creating a prompt-based kernel function. This is a function that the LLM can call,
+however we haven't used the function as a tool yet.
+
+To use a prompt-based function as a tool, all we need to do is add it to the kernel as
+the following code demonstrates:
+
+```csharp
+var kernelBuilder = Kernel.CreateBuilder()
+    .AddAzureOpenAIChatCompletion(
+        deploymentName: configuration["LanguageModel:DeploymentName"]!,
+        endpoint: configuration["LanguageModel:Endpoint"]!,
+        apiKey: configuration["LanguageModel:ApiKey"]!
+    );
+
+var kernel = kernelBuilder.Build();
+
+kernel.Plugins.AddFromFunctions("ghost_writer", [
+    kernel.CreateFunctionFromPromptYaml(
+        EmbeddedResource.Read("generate-outline.yml"), 
+        new HandlebarsPromptTemplateFactory()
+    )
+]);
+```
+
+This code performs the following steps:
+
+1. First, we create a new kernel based on configuration in the application.
+2. Next, we create a new plugin `ghost_writer` with a single function loaded from YAML.
+
+The YAML file used in the sample looks like this:
 
 ```yaml
-
-
+name: generate_outline
+description: Generates an outline for a blogpost based on a topic that you provide.
+template: |
+  Generate an outline for a blogpost about {{ topic }}.
+  Output the outline as a list of bullet points.
+  
+  Outline:
+template_format: handlebars
+input_variables:
+  - name: topic
+    description: The topic you want to discuss in the blogpost.
+    is_required: true
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 1200
 ```
 
-We could then load that prompt into the application using the following C# code:
+When you call the LLM with the prompt `generate an outline for a blogpost about AI`, the
+LLM will call the function `generate_outline` with the input variable `topic` set to
+`AI`. The function will then generate an outline for a blogpost about AI. This output is
+then returned to the LLM, which will use it to generate a final response to the user.
+This all happens thanks to the function calling loop as shown in
+[#s](#function-calling-loop-reminder).
+
+{#function-calling-loop-reminder} ![Function calling loop](function-calling-loop.png)
+
+This function calling loop is not part of the LLM, but something that Semantic Kernel
+provides. It works like this:
+
+1. We call the LLM with one or more messages and a set of tools that the LLM can use. 
+2. Next, the LLM will detect that it needs to call a tool to generate a proper response
+   resulting in a tool_call response.
+3. Then, Semantic Kernel parses the response and calls the tool with the data provided
+   by the LLM.
+4. After, the output of the tool is added to the chat history, and the whole thing is
+   sent back into the LLM.
+5. Finally, if the LLM is satisfied and doesn't need to call more tools, it will
+   generate a final response.
+
+Note that the loop can be repeated multiple times. The LLM can call multiple tools
+within the scope of processing a prompt. This works the same for functions that call
+prompts as well as for other functions such as code-based functions.
+
+### Creating a kernel function in C#
+
+Not all functions should be built with prompts, because you may need to do other things
+that you can't do with prompts. It's good to know you can also create functions in C#
+code. Here's an example of a very basic function that returns the current date/time.
 
 ```csharp
-
+public class TimePlugin
+{
+    [KernelFunction("get_current_time")]
+    [Description("Get the current date and time.")]
+    public string GetCurrentTime()
+    {
+        return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+}
 ```
 
-This code produces a `KernelFunction` object that we can call directly if we like. But
-you can also provide it to the kernel as an optional function to call when the kernel
-generates a response. The following code adds the loaded prompt as a function into the
-kernel:
+This code does the following:
+
+1. First, we create a plugin class `TimePlugin` that contains a single function
+   `GetCurrentTime`.
+2. Next, we add the `KernelFunction` attribute to the function to tell Semantic Kernel
+   that this is a function that it can use.
+3. Finally, we add the `Description` attribute to provide a description of what the
+   function does.
+
+Notice the name of the function `get_current_time`. You would expect me to use
+`GetCurrentTime` as the name of the function, because that is what the function is
+called in C#. However, I learned that functions are detected much better if you use
+snake casing. This comes from the fact that all LLMs are trained mostly on Python code
+and are much better at detecting snake case because of this.
+
+To add the function to the kernel, you can use the following code:
 
 ```csharp
+var kernelBuilder = Kernel.CreateBuilder()
+    .AddAzureOpenAIChatCompletion(
+        deploymentName: configuration["LanguageModel:DeploymentName"]!,
+        endpoint: configuration["LanguageModel:Endpoint"]!,
+        apiKey: configuration["LanguageModel:ApiKey"]!
+    );
 
+kernelBuilder.Plugins.AddFromType<TimePlugin>();
+
+var kernel = kernelBuilder.Build();
+
+var chatCompletionService =
+    kernel.Services.GetRequiredService<IChatCompletionService>();
+
+var history = new ChatHistory();
+history.AddSystemMessage("You're a digital assistant");
+history.AddUserMessage("What time is it?");
+
+var executionSettings = new AzureOpenAIPromptExecutionSettings
+{
+    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+};
+
+var response = await chatCompletionService.GetChatMessageContentAsync(
+    history, executionSettings, kernel);
+
+Console.WriteLine(response.ToString());
 ```
 
-### Authoring code-based functions
+In this code we perform the following steps:
 
-- Explain how to build plugin classes with one or more functions.
-- Explain how to use the plugins with semantic kernel
+1. First, we create a new kernel builder object to construct a kernel with GPT-4o as the
+   model based on configuration.
+2. Next, we configure a plugin based on a C# type, and use our class `TimePlugin`.
+3. Then, we create a new kernel and ask for the current time by sending a message to the
+   LLM.
 
-### Advanced configuration patterns
+We have to tell Semantic Kernel that it is allowed to call functions. If you don't do
+this, the tools available in the kernel aren't provided to the LLM. A great safety
+measure to prevent the LLM from calling all sorts of functions that you never intended
+it to call.
 
-- Explain the importance of controlling what functions are available to the kernel at one time.
-- Explain where to configure plugins and functions in a project to control what's available to the kernel.
+The first argument for the `FunctionChoiceBehavior.Auto()` is a list of functions that
+the LLM can call. By providing this a list of functions you control what's available at
+what point to the LLM. If you don't provide this argument, all registered functions in
+the kernel are available.
+
+Try to change [the sample code][CODE_BASED_FUNCTIONS_SAMPLE] and remove the function
+choice behavior to see what happens. The LLM will still provide a response, but will not
+be able to reproduce the current date and time.
+
+There's another use for the function choice behavior setting. You can also force the LLM
+to call functions instead of generating a response by setting the
+`FunctionChoiceBehavior` to `FunctionChoiceBehavior.Required()`. This setting allows you
+to set a list of functions too, but this time the list should contain functions that the
+LLM must call. The required setting is mostly useful when working with structured output
+that we'll discuss in chapter 7.
+
+### Providing functions to the kernel
+
+You may notice that the samples use different spots to introduce functions to the
+kernel. When creating the prompt-based functions, we added the plugin with the functions
+to a kernel instance. In the second sample with the C# based time function, we added the
+function to the kernel builder.
+
+You'll want to create kernel instances often and throw them away after you're done.
+Kernel instances contain state information in relation to the operation you're
+executing, so it's best to create a new one for every request that enters your
+application.
+
+By creating a new kernel instance for every request, you also have more control over
+what functions are available to the LLM. And that's important because if you provide too
+many functions to the LLM, it will have a hard time detecting the right tool and using
+it correctly.
+
+Semantic Kernel is flexible in how you provide plugins. When you provide a plugin in the
+kernel builder you're saying: I want this plugin to be available to every single kernel
+instance in the application. The upside to this approach is that you have just one spot
+to define the plugin. The downside is that the functions from the plugin are always
+there.
+
+Adding a function to a kernel instance is like saying: At this point in the
+conversation, you're allowed to use this tool. It limits the scope of what the LLM can
+do, and consequently what users can do. Remember, there are two kinds of users here that
+I'm referring to: your friendly colleague, and the maybe less friendly hacker that's
+going to use your application too if they get the chance.
 
 ## Sharing functions across applications with OpenAPI
 
-- Explain why you would share plugins and functions.
-- Explain how to use the OpenAPI specification to share plugins across languages and frameworks.
-
 ## Applying filters to functions
-
-- Explain what filters are, the types of filters available, and how to apply filters.
-- Show an example of a filter that modifies the output of a function.
 
 ## Using function transformations
 
@@ -167,3 +323,5 @@ kernel:
 ## Summary
 
 ## Further reading
+
+[CODE_BASED_FUNCTIONS_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-06/csharp/Chapter6.CodeBasedFunctions
