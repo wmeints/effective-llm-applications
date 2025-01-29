@@ -348,19 +348,20 @@ var kernelBuilder = Kernel.CreateBuilder()
         apiKey: configuration["LanguageModel:ApiKey"]!
     );
 
+kernelBuilder.Services.AddScoped<ApplicationDbContext>();
 kernelBuilder.Plugins.AddFromType<MyPlugin>();
 ```
 
-This way the kernel will automatically locate the dependencies from the
-dependency injection container in your application. In the case of console
-applications you need to provide the `ApplicationDbContext` and other services
-by adding them to the `kernelBuilder.Services` collection. For ASP.NET Core it's
-enough to add them to the services collection of the application builder
-instance in the startup of your web project.
+This way the kernel will automatically locate the dependencies from the dependency
+injection container in your application. In the case of console applications you need to
+provide the `ApplicationDbContext` and other services by adding them to the
+`kernelBuilder.Services` collection as shown in the sample. For ASP.NET Core it's enough
+to add them to the services collection of the application builder instance in the
+startup of your web project.
 
 Next to providing dependencies on plugin level, you can also ask for certain
-services in the function itself. There following limited set of services can be
-provided to your function:
+services in the function itself. There following limited set of services you can ask
+for by adding a parameter of the corresponding type to your function:
 
 - `Kernel` - Useful when you need to access parts of the kernel in your function.
 - `KernelArguments` - The raw arguments provided when executing the function.
