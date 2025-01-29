@@ -291,7 +291,7 @@ LLM will force it to use a tool, otherwise we'd end up with an endless loop.
 
 ### Providing functions to the kernel
 
-You may notice that the samples in the previous sections use different spots to
+You may have noticed that the samples in the previous sections use different spots to
 introduce functions to the kernel. When creating the prompt-based functions, we added
 the plugin with the functions to a kernel instance. In the second sample with the C#
 based time function, we added the function to the kernel builder.
@@ -320,9 +320,9 @@ going to use your application too if they get the chance.
 
 ### Dependency injection in kernel functions
 
-A time plugin doesn't need any external dependencies, but a plugin that interacts
-with a database does need access to a database. This is where it becomes useful to
-inject dependencies into your plugin.
+A time plugin doesn't need any external dependencies, but a plugin that needs to lookup
+pieces of a manual will need access to a database or a search engine. This is where it
+becomes useful to inject dependencies into your plugin.
 
 There are two levels at which you can define dependencies. First, there's the plugin
 level. You can define dependencies in the constructor of your plugin class like so:
