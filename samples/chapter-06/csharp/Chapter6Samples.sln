@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter6.PromptBasedFunctions", "Chapter6.PromptBasedFunctions\Chapter6.PromptBasedFunctions.csproj", "{7C504D9C-534C-4196-9C4B-8DD659B91E63}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter6.CodeBasedFunctions", "Chapter6.CodeBasedFunctions\Chapter6.CodeBasedFunctions.csproj", "{7D60E3DF-1EB8-4A2C-90EF-95D6BC5F3F11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{7C504D9C-534C-4196-9C4B-8DD659B91E63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C504D9C-534C-4196-9C4B-8DD659B91E63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C504D9C-534C-4196-9C4B-8DD659B91E63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D60E3DF-1EB8-4A2C-90EF-95D6BC5F3F11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D60E3DF-1EB8-4A2C-90EF-95D6BC5F3F11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D60E3DF-1EB8-4A2C-90EF-95D6BC5F3F11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D60E3DF-1EB8-4A2C-90EF-95D6BC5F3F11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
