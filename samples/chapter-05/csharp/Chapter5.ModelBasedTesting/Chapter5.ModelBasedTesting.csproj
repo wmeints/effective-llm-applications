@@ -23,9 +23,9 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.1" />
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.33.0" />
-    <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.33.0" />
-    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.33.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.35.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.35.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.35.0" />
   </ItemGroup>
 
   <ItemGroup>
