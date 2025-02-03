@@ -2,7 +2,7 @@
 # Enhancing LLMs with tools
 
 In [#s](#the-art-and-nonsense-of-prompt-engineering) and
-[#s](prompt-testing-and-monitoring), we focused on using prompts to build LLM-based
+[#s](#prompt-testing-and-monitoring), we focused on using prompts to build LLM-based
 applications. While powerful, prompts aren't going to solve every problem. LLMs don't
 have access to the internet, can't generate images (surprise!), and can't interact with
 your business information. They can, however, call tools that can do all of these
@@ -173,7 +173,8 @@ then returned to the LLM, which will use it to generate a final response to the 
 This all happens thanks to the function calling loop as shown in
 [#s](#function-calling-loop-reminder).
 
-{#function-calling-loop-reminder} ![Function calling loop](function-calling-loop.png)
+{#function-calling-loop-reminder}
+![Function calling loop](function-calling-loop.png)
 
 This function calling loop is not part of the LLM, but something that Semantic Kernel
 provides. It works like this:
