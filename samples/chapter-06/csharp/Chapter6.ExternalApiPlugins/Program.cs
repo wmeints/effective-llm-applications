@@ -17,7 +17,6 @@ var kernelBuilder = Kernel.CreateBuilder()
 var kernel = kernelBuilder.Build();
 
 await kernel.ImportPluginFromOpenApiAsync("time", new Uri("http://localhost:5019/openapi/v1.json"));
-await kernel.ImportPluginFromOpenApiAsync("test", )
 
 var arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings()
 {
