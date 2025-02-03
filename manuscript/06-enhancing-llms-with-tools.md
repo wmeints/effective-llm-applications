@@ -684,5 +684,5 @@ your organization's internal information to generate useful responses to questio
 users.
 
 [CODE_BASED_FUNCTIONS_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-06/csharp/Chapter6.CodeBasedFunctions
-[OPENAPI_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-06/csharp/
+[OPENAPI_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-06/csharp/Chapter6.ExternalApiPlugins
 [LOGIC_APPS]: https://learn.microsoft.com/en-us/semantic-kernel/concepts/plugins/adding-logic-apps-as-plugins
