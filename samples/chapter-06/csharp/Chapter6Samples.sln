@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter6.TimeApi", "Chapter
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter6.ExternalApiPlugins", "Chapter6.ExternalApiPlugins\Chapter6.ExternalApiPlugins.csproj", "{0331B18B-93E7-4580-8854-200585BA6ADC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter6.FunctionFilters", "Chapter6.FunctionFilters\Chapter6.FunctionFilters.csproj", "{0D95722F-4C5E-419B-A21D-685D55163EB1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{0331B18B-93E7-4580-8854-200585BA6ADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0331B18B-93E7-4580-8854-200585BA6ADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0331B18B-93E7-4580-8854-200585BA6ADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D95722F-4C5E-419B-A21D-685D55163EB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D95722F-4C5E-419B-A21D-685D55163EB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D95722F-4C5E-419B-A21D-685D55163EB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D95722F-4C5E-419B-A21D-685D55163EB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
