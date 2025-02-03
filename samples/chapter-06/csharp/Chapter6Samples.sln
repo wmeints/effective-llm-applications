@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter6.PromptBasedFunctio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter6.CodeBasedFunctions", "Chapter6.CodeBasedFunctions\Chapter6.CodeBasedFunctions.csproj", "{7D60E3DF-1EB8-4A2C-90EF-95D6BC5F3F11}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter6.TimeApi", "Chapter6.TimeApi\Chapter6.TimeApi.csproj", "{DDBB579A-91B4-4185-B55B-DBE8FE880AC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter6.ExternalApiPlugins", "Chapter6.ExternalApiPlugins\Chapter6.ExternalApiPlugins.csproj", "{0331B18B-93E7-4580-8854-200585BA6ADC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{7D60E3DF-1EB8-4A2C-90EF-95D6BC5F3F11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D60E3DF-1EB8-4A2C-90EF-95D6BC5F3F11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D60E3DF-1EB8-4A2C-90EF-95D6BC5F3F11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDBB579A-91B4-4185-B55B-DBE8FE880AC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDBB579A-91B4-4185-B55B-DBE8FE880AC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDBB579A-91B4-4185-B55B-DBE8FE880AC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDBB579A-91B4-4185-B55B-DBE8FE880AC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0331B18B-93E7-4580-8854-200585BA6ADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0331B18B-93E7-4580-8854-200585BA6ADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0331B18B-93E7-4580-8854-200585BA6ADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0331B18B-93E7-4580-8854-200585BA6ADC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

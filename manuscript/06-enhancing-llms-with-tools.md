@@ -194,6 +194,7 @@ Note that the loop can be repeated multiple times. The LLM can call multiple too
 within the scope of processing a prompt. This works the same for functions that call
 prompts as well as for other functions such as code-based functions.
 
+{#calling-functions}
 ### Creating a kernel function in C#
 
 Not all functions should be built with prompts, because you may need to do other things
@@ -389,13 +390,13 @@ how your application behaves.
 ### Architecting with plugins
 
 As long as you're building a small to medium-sized LLM-based applications, I recommend
-building one or at least very few plugin classes in C#. It will make it easier to manage
+building one or at least very few plugin classes. It will make it easier to manage
 the structure of your application this way.
 
 There's a growth path though from smaller to bigger LLM-based application when it comes
-to using functions and plugins. As your application grows, you'll need to build more
-plugins. It can be useful to move the plugins into separate libraries to make it easier
-to navigate the code base.
+to using functions and plugins. As your application grows, you'll want to refactor the
+functions and move them into separate plugins. It can be useful to move the plugins into
+separate libraries to make it easier to navigate the code base.
 
 As soon as you find that you need to work on an application with multiple teams, it can
 be beneficial to split plugins into separate microservice style applications and use
@@ -403,6 +404,163 @@ OpenAPI to link the plugins to your main application. That's what we'll discuss 
 next section.
 
 ## Sharing functions across applications with OpenAPI
+
+In most cases you're going to be fine building plugins for Semantic Kernel in C#.
+However, I like to explore working with external plugins through OpenAPI because it's a
+great way to make it easier for your organization to explore generative AI use cases.
+
+Integrating plugins through OpenAPI requires a two step process:
+
+1. First, you need to write a web API that exposes functions for the LLM to use.
+2. Next, you need to integrate the external API into the main LLM-based project.
+
+Before we dive into the code, let's first discuss why you'd want to go through this
+process.
+
+### Why use external API projects as plugins
+
+Building functions into separate external API projects is a great way to share functions
+across teams. It's also more complicated because you have to account for additional
+build and deployment steps. And to be honest, I haven't had a case where my application
+became so big I had to move plugins into separate libraries.
+
+There is another reason why you might consider using this pattern though. I see many
+organizations are considering building internal chat bots similar to ChatGPT to help
+their employees with all sorts of productivity challenges. They're building custom
+solutions because they fear that OpenAI or other LLM providers may use their internal
+data for training purposes. So far I haven't seen anything in the terms of service or
+privacy statement to suggest that OpenAI is doing this. It is still a good idea to have
+more control over your data and the user interface, but it will come at a cost.
+
+It's quite hard to build one chat bot for all use cases in your organization. But
+rebuilding the user interface and general control flow is a lot of work too. Being able
+to inject API based applications into Semantic Kernel makes it possible to have a shared
+core chat bot solution with configurable plugins for different use cases.
+
+Let's explore how to build an OpenAPI based plugin for Semantic Kernel.
+
+### Setting up an API as a plugin
+
+You can use any technology to build an API you want to connect to Semantic Kernel as long
+as it has an OpenAPI specification. OpenAPI is one of the most well-known methods to describe
+the structure of a web-based API. It's available in almost any language that supports hosting
+a website. For the purpose of this book, I'm going to stick to building one in ASP.NET Core.
+
+To create a web api project in ASP.NET Core you can use the following terminal command:
+
+```bash
+dotnet new web -n TimeApi
+```
+
+This command creates a new web project in a folder called `TimeApi`. Next, you'll need to
+add a package to configure the OpenAPI specification for the project:
+
+```bash
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddOpenApi();
+
+var app = builder.Build();
+
+app.MapOpenApi();
+
+app.MapGet(
+        "/api/time", 
+        () => DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+    )
+    .WithDescription("Gets the current date/time.")
+    .WithName("get_time")
+    .WithTags("time");
+
+app.Run();
+```
+
+This code performs the following steps:
+
+1. First, we create a new builder for the web application.
+2. Next, we add the OpenApi services to the service collection.
+3. Then, we build the application and map the OpenAPI specification to
+   `/openapi/v1.json`.
+4. After that, we add an operation that we want to include in the application.
+
+When you're mapping an operation to an endpoint in ASP.NET Core it's automatically
+included in the OpenAPI specification so you don't need to do anything special. However,
+by default the operation follows the C# naming convention and that doesn't work well
+with LLMs as we discussed in [#s](#calling-functions). To help the LLM make sense of the
+operation, we need to add `WithName` to the operation mapping. Also, make sure to
+include `WithDescription` to help the LLM better understand the operation.
+
+Building an external plugin is much the same as building a regular REST API in ASP.NET
+Core. Now all we need to do is integrate the API into the main LLM-based application.
+
+### Integrating the API into your main project
+
+To integrate an external API into Semantic Kernel, we'll need to add an additional
+package `Microsoft.SemanticKernel.Plugins.OpenAPI` to the main LLM-based project. You
+can do this through your favorite package manager or via the terminal using the
+following command:
+
+```bash
+dotnet add package Microsoft.SemanticKernel.Plugins.OpenApi --prerelease
+```
+
+Note the `--prerelease` flag in the command. Using OpenAPI based plugins is still in
+preview at the time of writing, so expect changes to how the code to register a plugin
+works in the future.
+
+You can link an external plugin using the following code:
+
+```csharp
+var kernelBuilder = Kernel.CreateBuilder()
+    .AddAzureOpenAIChatCompletion(
+        deploymentName: configuration["LanguageModel:DeploymentName"]!,
+        endpoint: configuration["LanguageModel:Endpoint"]!,
+        apiKey: configuration["LanguageModel:ApiKey"]!
+    );
+
+var kernel = kernelBuilder.Build();
+
+await kernel.ImportPluginFromOpenApiAsync(
+   "time", new Uri("http://localhost:5019/openapi/v1.json"));
+
+var arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings()
+{
+    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+});
+
+var response = await kernel.InvokePromptAsync(
+   "Can you tell me what time it is?", arguments);
+
+Console.WriteLine(response.ToString());
+```
+
+This code does the following:
+
+1. First, we create a new kernel instance with the `KernelBuilder` that we've seen in
+   previous samples.
+2. Next, we import a plugin from an OpenAPI specification. We give the plugin the name
+   `time` and point it to a local instance of the time plugin we just made.
+3. Then, We create a new set of arguments for the prompt, telling Semantic Kernel that
+   it's allowed to run functions.
+4. Finally, we run a prompt asking for the current time with the arguments we just
+   created.
+
+The combination of the external API with the main LLM-based application is a bit more
+complex. Before running this sample, you'll need to make sure you have a copy of
+`Chapter6.TimeApi` running on your local machine. Once you've started the API, you can
+run `Chapter6.ExternalApiPlugins` to see the outcome of the code sample.
+
+When you run [the sample code from the Github repository][OPENAPI_SAMPLE], you'll see
+that the response contains the current date/time. You can verify that the external API
+is used by checking the terminal output in the API project. I've added HTTP logging to
+the sample code so it's easier to see when the API is called.
+
+In previous samples, we used the `KernelBuilder` to make sure that plugins are available
+to all instances of the kernel in your application. This is not possible for external
+plugins. You need to import the plugin every time you create a new instance of the
+kernel. This is because the OpenAPI specification is only available at runtime and you
+don't want your application to crash if an external API is not available to you during
+startup.
 
 ## Applying filters to functions
 
@@ -416,3 +574,4 @@ next section.
 ## Further reading
 
 [CODE_BASED_FUNCTIONS_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-06/csharp/Chapter6.CodeBasedFunctions
+[OPENAPI_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-06/csharp/
