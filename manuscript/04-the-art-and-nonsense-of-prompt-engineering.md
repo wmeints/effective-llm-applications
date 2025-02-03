@@ -752,7 +752,7 @@ In the sample we store the function in a `prompt` variable. In production code y
 store the prompt as a private variable of a class that serves as a wrapper around the
 Semantic Kernel code.
 
-In chapter 6, we'll explore other patterns to efficiently make reusable prompts
+In [#s](#enhancing-llms-with-tools), we'll explore other patterns to efficiently make reusable prompts
 available to your application.
 
 I've made sure that the code for building a kernel function is available in the [GitHub
@@ -1063,8 +1063,8 @@ as a good starting point to implement truncation logic in your application.
 
 Working with a chat history is a bit more complex than working with a single prompt. But
 it's essential when you're building an assistant-like use case. It's good to know that
-you can mix and match prompts and chat in such a scenario. We'll explore this in the
-chapter 6 when we look at using functions with Semantic Kernel.
+you can mix and match prompts and chat in such a scenario. We'll explore this in
+#[s](#enhancing-llms-with-tools) when we look at using functions with Semantic Kernel.
 
 Prompt engineering is an art, and it can be dangerous if you're not careful. Let's
 look at how you can protect your prompts from abuse.
@@ -1092,9 +1092,9 @@ output of a prompt as code to be executed in the context of your application you
 be aware that it can't be trusted. I wouldn't do it at all, but if you have to, be sure
 to limit what that code has access to.
 
-Keep in mind that filtering the input and output of the LLM is an important step, but 
-will not be enough to protect your application. We'll cover more steps in chapter 6 as
-we look at using functions with Semantic Kernel.
+Keep in mind that filtering the input and output of the LLM is an important step, but
+will not be enough to protect your application. We'll cover more steps in
+[#s](#enhancing-llms-with-tools) as we look at using functions with Semantic Kernel.
 
 Fully understanding just how dangerous prompt injection is requires a deep dive into the
 security and is beyond the scope of the book. However, I recommend reading the [MITRE

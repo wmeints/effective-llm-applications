@@ -125,9 +125,10 @@ detail:
 
 - In [#s](#the-art-and-nonsense-of-prompt-engineering), we'll look at how to use prompt
   testing as a form of unit-testing for your prompts.
-- In chapter 5, we'll use integration testing to validate that the LLM can make tool
+- In [#s](#prompt-testing-and-monitoring), we'll use integration testing to validate that the LLM can make tool
   calls by applying integration tests.
-- In chapter 6, we dive into integration tests for a combination of search and an LLM.
+- In [#s](#enhancing-llms-with-tools), we dive into integration tests for a combination
+  of search and an LLM.
 
 {#llmops-monitoring}
 ## Monitoring and evaluation of your application
@@ -153,8 +154,8 @@ responses. You could call this data drift.
 We'll cover monitoring in greater deal as we go through the remaining chapters in this book:
 
 - In [#s](#the-art-and-nonsense-of-prompt-engineering), we use monitoring to collect data needed to iterate on your prompts.
-- In chapter 5, we cover how to monitor calls to tools connected to the LLM.
-- In chapter 6, we'll look at how to monitor the interaction between the LLM and a search engine.
+- In [#s](#prompt-testing-and-monitoring), we cover how to monitor calls to tools connected to the LLM.
+- In [#s](#enhancing-llms-with-tools), we'll look at how to monitor the interaction between the LLM and a search engine.
 
 Monitoring interactions is essential to keep your LLM-based application running smoothly in production.
 And while your setting up monitoring, I recommend including monitoring costs as well. 
