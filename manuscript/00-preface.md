@@ -50,7 +50,7 @@ enough in a more enterprise-oriented language like C#.
   understand the importance of testing and monitoring prompts to make sure your
   application remains operational in the long run.
 
-- **[#s, #](#enhancing-llms-with-tools), explores how to enhance LLMs by giving them
+- **[#s, #t](#enhancing-llms-with-tools)**, explores how to enhance LLMs by giving them
   access to external tools, showing you how to build custom tools, integrate APIs, and
   manage memory and context to create more capable AI systems. LLMs become dramatically
   more powerful when they can interact with external tools and data - understanding
