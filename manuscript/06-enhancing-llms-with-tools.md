@@ -650,7 +650,6 @@ For example, you can access the `Arguments` property on the `FunctionInvocationC
 to modify the function's input. You can also modify the `Result` property to change the
 function's output.
 
-
 Finally, you can decide not to let the LLM call the function. If you don't call the
 `next` function, it's required to provide a value for `Result`. Otherwise, the
 application will throw an exception.
@@ -659,6 +658,9 @@ Filters work best in the following cases:
 
 1. When you can't change the logic in the function itself.
 2. When you need to apply a transformation on all functions in the application.
+
+Functions and filters are what make Semantic Kernel powerful. With these two constructs
+on top of the kernel, you can build all the patterns from the upcoming chapters.
 
 ## Summary
 
