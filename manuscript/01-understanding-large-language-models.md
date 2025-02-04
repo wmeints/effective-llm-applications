@@ -795,4 +795,11 @@ interesting article exploring some of the math behind LLMs in an attempt to unde
 - [Attention is all you need](https://arxiv.org/abs/1706.03762) - The original paper
 that sparked the transformer revolution.
 
-[OPENAI_MODELS]: https://platform.openai.com/docs/models#models-overview [HUGGINGFACE_LLAMA]: https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct [HUGGINGFACE_MISTRAL]: https://huggingface.co/mistralai/Mistral-Nemo-Instruct-2407 [HUGGINGFACE_GEMMA2]: https://huggingface.co/blog/gemma2 [PHI4_ANNOUNCEMENT]: https://techcommunity.microsoft.com/blog/aiplatformblog/introducing-phi-4-microsoft%E2%80%99s-newest-small-language-model-specializing-in-comple/4357090 [PHI4_BENCHMARKS]: https://www.microsoft.com/en-us/research/uploads/prod/2024/12/P4TechReport.pdf [PARAMETER_EXPLANATION]: https://medium.com/@albert_88839/large-language-model-settings-temperature-top-p-and-max-tokens-1a0b54dcb25e [UNDERSTANDING_TRANSFORMERS]: https://poloclub.github.io/transformer-explainer/
+[OPENAI_MODELS]: https://platform.openai.com/docs/models#models-overview
+[HUGGINGFACE_LLAMA]: https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
+[HUGGINGFACE_MISTRAL]: https://huggingface.co/mistralai/Mistral-Nemo-Instruct-2407
+[HUGGINGFACE_GEMMA2]: https://huggingface.co/blog/gemma2 
+[PHI4_ANNOUNCEMENT]: https://techcommunity.microsoft.com/blog/aiplatformblog/introducing-phi-4-microsoft%E2%80%99s-newest-small-language-model-specializing-in-comple/4357090 
+[PHI4_BENCHMARKS]: https://www.microsoft.com/en-us/research/uploads/prod/2024/12/P4TechReport.pdf 
+[PARAMETER_EXPLANATION]: https://medium.com/@albert_88839/large-language-model-settings-temperature-top-p-and-max-tokens-1a0b54dcb25e 
+[UNDERSTANDING_TRANSFORMERS]: https://poloclub.github.io/transformer-explainer/
