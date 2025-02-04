@@ -1,0 +1,8 @@
+This file contains the original theme settings for leanpub, because I want to keep them around in case I want to go back and restore the original settings.
+
+Spacing between list items
+--------------------------
+Top-level lists: -0.7
+First level nested lists: 0
+Second level nested lists: 0
+Third level nested lists: 0
