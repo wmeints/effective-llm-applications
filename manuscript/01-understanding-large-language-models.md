@@ -378,10 +378,12 @@ Having said that, I've had great experiences with these models:
   purposes, as long as you have an instruction-based use case.
 
 
+
 - **Mistral:** The Mistral model by the identically named company is a fast open-source
   LLM mostly used for chat purposes. This model is generally less capable than the LLaMA
   model variants, but its speed makes up for that. This model is also hosted on
   [HuggingFace][HUGGINGFACE_MISTRAL] and has many fine-tuned variants.
+
 
 
 - **Gemma2:** Google published this model in February 2024 and trained it using a
@@ -390,11 +392,13 @@ Having said that, I've had great experiences with these models:
   other models in the open-source space.
 
 
+
 - **Phi 4:** Is a new model that was [introduced by Microsoft in December
   2024][PHI4_ANNOUNCEMENT]. It is similar to the Mistral and Gemma2 models, 14 billion
   parameters, but shows higher performance in [the benchmarks][PHI4_BENCHMARKS]. While
   this doesn't tell the whole story, it's worth trying this model for a smaller
   open-source model.
+
 
 
 - **DeepSeek** is another new model that's showing great promise. The R1 variant of
