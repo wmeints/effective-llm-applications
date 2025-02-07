@@ -193,7 +193,7 @@ languages in the enterprise space. However, you should be aware that support for
 and C# is the furthest along. Microsoft is still working on properly supporting all Java
 features.
 
-The [language support matrix] [LANGUAGE_SUPPORT] contains a complete list of supported
+The [language support matrix][LANGUAGE_SUPPORT] contains a complete list of supported
 features for each language. The matrix tells you which features are supported in each
 language and what connectors are available for each.
 
@@ -282,10 +282,14 @@ dotnet add package Azure.Identity
 This command will install the Semantic Kernel package that has references to the
 following packages:
 
-- `Microsoft.SemanticKernel.Core` Contains the core components we discussed in [#s](#core-concepts-and-architecture)
-- `Microsoft.SemanticKernel.Abstractions` Contains the base layer for various types of connectors.
-- `Microsoft.SemanticKernel.Connectors.AzureOpenAI` Contains the connector to Azure OpenAI.
-- `Microsoft.SemanticKernel.Connectors.OpenAI` Contains the connector to OpenAI
+- `Microsoft.SemanticKernel.Core`\
+  Contains the core components we discussed in [#s](#core-concepts-and-architecture)
+- `Microsoft.SemanticKernel.Abstractions`\
+  Contains the base layer for various types of connectors.
+- `Microsoft.SemanticKernel.Connectors.AzureOpenAI`\
+  Contains the connector to Azure OpenAI.
+- `Microsoft.SemanticKernel.Connectors.OpenAI`\
+  Contains the connector to OpenAI
 
 The Semantic Kernel package provides convenience if you don't want to worry about
 finding the individual packages. If you care about the size of your application, you can
@@ -549,6 +553,7 @@ application.
 [SEMANTIC_KERNEL_DOCS]: https://learn.microsoft.com/en-us/semantic-kernel/ 
 [LANGUAGE_SUPPORT]: https://learn.microsoft.com/en-us/semantic-kernel/get-started/supported-languages 
 [DOTNET_ASPIRE]: https://learn.microsoft.com/en-us/dotnet/aspire/get-started/aspire-overview 
-[USER_SECRETS]: https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-9.0&tabs=windows 
-[OTHER_LLM_PROVIDER]: https://learn.microsoft.com/en-us/semantic-kernel/concepts/ai-services/chat-completion/?tabs=csharp-other%2Cpython-AzureOpenAI%2Cjava-AzureOpenAI&pivots=programming-language-csharp#adding-directly-to-the-kernel [AZURE_CLI]: https://learn.microsoft.com/en-us/cli/azure/install-azure-cli
+[USER_SECRETS]: https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-9.0&tabs=windows
+[OTHER_LLM_PROVIDER]: https://learn.microsoft.com/en-us/semantic-kernel/concepts/ai-services/chat-completion/?tabs=csharp-other%2Cpython-AzureOpenAI%2Cjava-AzureOpenAI&pivots=programming-language-csharp#adding-directly-to-the-kernel 
+[AZURE_CLI]: https://learn.microsoft.com/en-us/cli/azure/install-azure-cli
 [SAMPLE_CODE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-03/csharp
