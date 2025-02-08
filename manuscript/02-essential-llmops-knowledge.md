@@ -4,8 +4,9 @@
 In [#s](#understanding-llms), we explored the basic concepts and terminology around LLMS
 and briefly touched on the essentials for building and operating LLMs. In this chapter,
 we'll examine the essentials of operating LLMs in more detail before we dive into
-working with Semantic Kernel. Consider this chapter the moment when we start planning
-the LLM-based applications we're building in the upcoming chapters.
+working with Semantic Kernel.
+
+By the end of this chapter you'll have a good understanding of the LLMOps concepts needed to get started building LLM-based applications.
 
 I thought of showing your Semantic Kernel before talking about operating LLMs. However,
 the knowledge in this chapter is essential to learn first because it's easy to get lost
@@ -13,9 +14,6 @@ in the details of implementing various patterns with an LLM and lose sight of th
 picture. You must plan some things out for yourself before you start building. Learning
 how to send a prompt to an LLM is one thing, but knowing how to manage the lifecycle of
 an LLM-based application is another. And you need both to be successful.
-
-This chapter will help you understand the basic operations of building and hosting
-LLM-based applications in greater detail.
 
 We'll cover the following topics:
 
@@ -29,8 +27,7 @@ We'll cover the following topics:
 - Security and privacy concerns
 - Considerations when looking for tools
 
-Let's first cover what LLMOps is compared to the other types of Ops approaches out
-there.
+Let's first cover what LLMOps is compared to DevOps, and MLOps.
 
 ## What is LLMOps?
 
@@ -83,7 +80,7 @@ operating LLM-based applications:
 6. Failover strategies
 7. Security and privacy in an LLM-based application
 
-Let's dive into each of these aspects in more detail.
+Let's dive into each of these aspects in more detail to understand what they mean for your LLM-based application starting with testing LLM-based applications.
 
 ## Testing LLM-based applications
 
@@ -101,14 +98,9 @@ working.
 
 Where unit and integration tests should already be standard practice, you must apply one
 extra layer of tests for LLM-based applications. LLM-based applications need
-non-deterministic tests. This sounds weird because why would you want a test for which
-you aren't getting a yes or no? It will be hard to avoid [flaky tests][FLAKY_TESTS].
+tests that verify the structure of the LLMs output.
 
-The reason is that you're not looking for an absolute answer; you won't get it. Instead,
-you want the correct answer most of the time. We're trying to lower our solution's risk
-as much as possible. We need to accept that, just like regular software, the system
-sometimes fails for unknown reasons. But we have a good idea of where the problem is
-coming from for an LLM-based application.
+Verifying the structure of the LLM output is challenging because the output is non-deterministic. You won't get the same answer every time you run the test. So, instead of testing for hard results, you want the correct answer most of the time. We're trying to lower our solution's risk as much as possible. We must accept that, just like regular software, the system sometimes fails for unknown reasons. But we have a good idea of where the problem is coming from for an LLM-based application.
 
 One testing strategy that works great in an LLM-based is running multiple samples
 through the application and then having the test cast a majority vote to determine if
@@ -119,21 +111,15 @@ is within acceptable limits for your chosen metric.
 
 I can imagine that knowing just these rules for testing LLM-based applications generates
 more questions than answers. For now, it's essential to understand that you need to
-change your perspective on testing. Throughout the remaining chapters of this book, I'll
-show you how to test LLM-based applications in more detail:
-
-- In [#s](#the-art-and-nonsense-of-prompt-engineering), we'll look at how to use prompt
-testing as a form of unit testing for your prompts.
-- In [#s](#prompt-testing-and-monitoring), we'll use integration testing to validate that the LLM can make tool
-calls by applying integration tests.
-- In [#s](#enhancing-llms-with-tools), we dive into integration tests for a search and an LLM combination.
-
-{#llmops-monitoring}
-## Monitoring and evaluation of your application
+change your perspective on testing. In [#s](#prompt-testing-and-monitoring) we'll cover
+how to test prompts in more detail.
 
 You can consider testing as a way to ensure you have a safety net to catch problems
 before they happen in production. Monitoring is the second safety net you need to catch
 problems while running in production.
+
+{#llmops-monitoring}
+## Monitoring and evaluation of your application
 
 There are two essential aspects to monitoring LLM solutions. Unsurprisingly, you must
 monitor for any infrastructure and technical problems with your code. This is more of a
@@ -149,11 +135,7 @@ between the LLM and external data sources is essential. As information changes i
 data sources, the LLM may generate less accurate responses, which you could call data
 drift.
 
-We'll cover monitoring in greater detail as we go through the remaining chapters in this book:
-
-- In [#s](#the-art-and-nonsense-of-prompt-engineering), we use monitoring to collect data needed to iterate on your prompts.
-- In [#s](#prompt-testing-and-monitoring), we cover how to monitor calls to tools connected to the LLM.
-- In [#s](#enhancing-llms-with-tools), we'll look at how to monitor the interaction between the LLM and a search engine.
+We'll cover monitoring in greater detail in [#s](#prompt-testing-and-monitoring).
 
 Monitoring interactions is essential to keeping your LLM-based application running smoothly in production. When setting up monitoring, I recommend including monitoring costs as well.
 
@@ -237,10 +219,11 @@ the lower the bill. However, too many retries can lead to a bad user experience.
 In [#s](#the-art-and-nonsense-of-prompt-engineering), we'll cover configuring parameters
 for your prompt to maximize your quota.
 
+Rate limiting can have a significant impact on the performance of your application. However, there are sources of performance issues that we need to cover.
+
 ## LLM performance and the user experience of your application
 
-I mentioned performance in the previous section, and it's a thing for LLM-based
-applications. LLMs are very slow, and you need to think about how to work around that
+LLMs are very slow, and you need to think about how to work around that
 limitation because you can't speed them up yourself. You can increase rate limits to
 speed things up a little, but that's about it.
 
@@ -265,7 +248,7 @@ LLM to be fast; otherwise, you're just adding to the problem. I've found that if
 rest of the application is nice and fast, users are more forgiving about the LLM being
 slow.
 
-{#llomops-failover-strategies} 
+{#llomops-failover-strategies}
 ## Failover strategies
 
 As if performance wasn't hard enough, we got another nice present from the LLM
