@@ -821,8 +821,7 @@ In the next chapter, we'll look at testing and monitoring prompts in your LLM-ba
 
 ## Running the samples in this chapter
 
-Make sure to check out the samples for this chapter in the [Github repository][GH_SAMPLE_DIR]. You can find the system requirements, as well as instructions for each
-sample in the repository.
+Check out the samples for this chapter in the [Github repository][GH_SAMPLE_DIR]. Each sample has a README file containing system requirements and instructions on how to run the sample.
 
 [CONTEXT_WINDOW_PAPER]: https://arxiv.org/abs/2307.03172
 [LLM_ALIGNMENT]: https://medium.com/@madalina.lupu.d/align-llms-with-reinforcement-learning-from-human-feedback-595d61f160d5
