@@ -53,7 +53,8 @@ While you can reuse prompts over time, you'll have to account for the fact that 
 
 Some people will tell you to write complicated prompts to get better results. But you will often get better results by splitting complex tasks into smaller tasks and running them separately. This is because of how the context window of the LLM works. From [this paper][CONTEXT_WINDOW_PAPER], we can learn that LLMs have an attention span that isn't exactly what you'd expect from a machine. Although the models have been updated since the paper's release, I still see this behavior in our production applications. [#s](#context-window-curve) shows the attention span of a typical LLM. Input at the start and end of a prompt is likely to get picked up better by the LLM than content in the middle of the prompt.
 
-{#context-window-curve} ![Context window attention curve](context-window-curve.png)
+{#context-window-curve} 
+![Context window attention curve](context-window-curve.png)
 
 Longer and more complicated prompts can work, but if the LLM doesn't give you the desired response, it's essential to understand the context window curve and adjust your application accordingly.
 
@@ -787,7 +788,7 @@ public class PIIFilter: IPromptRenderFilter
         
         // Replace the original prompt with the filtered prompt.
         context.RenderedPrompt = renderedPrompt; 
-        
+
         await next(context);
     }
 }
