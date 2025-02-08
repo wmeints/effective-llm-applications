@@ -20,7 +20,7 @@ public class RecipeGenerationTests
 
         _kernel = Kernel.CreateBuilder()
             .AddAzureOpenAIChatCompletion(
-                configuration["LanguageModel:DeploymentName"]!,
+                deploymentName: configuration["LanguageModel:DeploymentName"]!,
                 endpoint: configuration["LanguageModel:Endpoint"]!,
                 apiKey: configuration["LanguageModel:ApiKey"]!
             ).Build();
