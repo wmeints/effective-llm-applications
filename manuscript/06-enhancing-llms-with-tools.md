@@ -683,6 +683,11 @@ Retrieval Augmented Generation (RAG) to build intelligent chat applications that
 your organization's internal information to generate useful responses to questions of
 users.
 
+## Running the samples in this chapter
+
+Check out the samples for this chapter in the [Github repository][GH_SAMPLE_DIR]. Each sample has a README file containing system requirements and instructions on how to run the sample.
+
 [CODE_BASED_FUNCTIONS_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-06/csharp/Chapter6.CodeBasedFunctions
 [OPENAPI_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-06/csharp/Chapter6.ExternalApiPlugins
 [LOGIC_APPS]: https://learn.microsoft.com/en-us/semantic-kernel/concepts/plugins/adding-logic-apps-as-plugins
+[GH_SAMPLE_DIR]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-06/
