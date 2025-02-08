@@ -1,4 +1,4 @@
-# Getting started with Semantic Kernel in Python
+# Using chat completions in Python
 
 This sample demonstrates how to use chat history with the chat completion service
 to generate a chat-like interface with Azure OpenAI in Semantic Kernel.

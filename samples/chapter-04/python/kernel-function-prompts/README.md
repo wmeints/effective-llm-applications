@@ -1,4 +1,4 @@
-# Getting started with Semantic Kernel in Python
+# Using prompts as kernel functions in Python
 
 This sample demonstrates how to use prompts as kernel functions in Python.
 

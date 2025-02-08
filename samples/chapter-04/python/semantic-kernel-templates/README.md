@@ -1,4 +1,4 @@
-# Getting started with Semantic Kernel in Python
+# Using the Semantic Kernel template language in Python
 
 This sample demonstrates how to use the Semantic Kernel template language in Python.
 

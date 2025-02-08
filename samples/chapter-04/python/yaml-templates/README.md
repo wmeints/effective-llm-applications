@@ -1,4 +1,4 @@
-# Getting started with Semantic Kernel in Python
+# Using yaml-based prompts with Semantic Kernel in Python
 
 This sample demonstrates how to use YAML based prompt templates with Semantic Kernel.
 

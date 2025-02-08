@@ -1,4 +1,4 @@
-# Getting started with Semantic Kernel in Python
+# Using handlebars templates in Python
 
 This sample demonstrates how to use handlebars-based templates in Semantic Kernel.
 
