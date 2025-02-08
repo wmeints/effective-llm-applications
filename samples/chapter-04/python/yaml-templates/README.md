@@ -1,7 +1,6 @@
 # Getting started with Semantic Kernel in Python
 
-This sample demonstrates how to set up Semantic Kernel in Python.
-Please follow the instructions below to get started.
+This sample demonstrates how to use YAML based prompt templates with Semantic Kernel.
 
 ## System requirements
 
