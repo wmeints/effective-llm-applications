@@ -1,0 +1,5 @@
+Help me cook something nice, give me a recipe for {{ dish }}. Use the ingredients I have in the fridge: 
+
+{{#each ingredients}}
+    {{ . }}
+{{/each}}
