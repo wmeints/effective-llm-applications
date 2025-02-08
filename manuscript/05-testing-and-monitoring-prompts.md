@@ -3,7 +3,9 @@
 
 In the [#s](#the-art-and-nonsense-of-prompt-engineering), we covered how to use prompt engineering to get results from an LLM. Despite all the prompt engineering techniques available, you'll find that building an LLM-based application is complex. The response will be different every time you use your prompt. There is only one way to ensure your application works reasonably well: to test and continuously improve it.
 
-In this chapter, we'll talk about testing and monitoring prompts. We'll cover the following topics:
+In this chapter, we'll talk about testing and monitoring prompts. By the end of this chapter you'll understand how to test prompts and how to use production data to improve your prompt tests.
+
+We'll cover the following topics in this chapter:
 
 - Establishing a good test strategy for prompts
 - Using deterministic testing methods to validate prompts
@@ -755,12 +757,16 @@ Given these limitations, I understand that expanding your test set will take eff
 
 In this chapter, we've looked at how you can test and monitor your LLM-based application. We started by looking at how to test prompts in a controlled environment. We then covered how to add monitoring, build a dashboard, and collect data from the monitoring environment to improve the tests.
 
-In the next chapter, we'll use what we've learned to expand the LLM with functions and data from external sources.
+In the next chapter, we'll expand the basic LLM functionality with custom tools. Learning about using tools finalizes the fundamentals of building an LLM-based application before looking at design patterns.
 
 ## Further reading
 
 - [GPTScore: Evaluate as you desire](https://arxiv.org/abs/2302.04166)
 - [G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment](https://arxiv.org/abs/2303.16634)
+
+## Running the samples in this chapter
+
+Check out the samples for this chapter in the [Github repository][GH_SAMPLE_DIR]. Each sample has a README file containing system requirements and instructions on how to run the sample.
 
 [XUNIT_DATA_DRIVEN_TESTS]: https://hamidmosalla.com/2017/02/25/xunit-theory-working-with-inlinedata-memberdata-classdata/
 [G_EVAL]: https://arxiv.org/abs/2303.16634
@@ -778,3 +784,4 @@ In the next chapter, we'll use what we've learned to expand the LLM with functio
 [MODEL_BASED_TEST_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/csharp/Chapter5.ModelBasedTesting
 [OTEL_METRICS]: https://opentelemetry.io/docs/concepts/signals/metrics/
 [OTEL_ASPNET]: https://medium.com/@jepozdemir/configuring-opentelemetry-tracing-for-asp-net-core-114c2c9cf557
+[GH_SAMPLE_DIR]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/
