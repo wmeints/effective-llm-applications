@@ -20,7 +20,7 @@ I'm writing this book as you read this, and I'm at **35% completion**.
 | 3. Getting started with Semantic Kernel       | Complete    |
 | 4. The art and nonsense of prompt engineering | Complete    |
 | 5. Testing and monitoring prompts             | Complete    |
-| 6. Enhancing LLMs with functions              | In progress |
+| 6. Enhancing LLMs with functions              | Complete    |
 | 7. Retrieval Augmented Generation (RAG)       | Not started |
 | 8. Working with structured output             | Not started |
 | 9. Prompt chaining workflows                  | Not started |
@@ -109,10 +109,8 @@ ripen, or marinate if you will. This helps me to get a fresh perspective on the 
 I'll then go through the text and make sure that everything makes sense and that the
 text still conveys what I wanted to tell you.
 
-I perform a final spell check using LanguageTool. I prefer to use [Silviof's Docker
-container](https://hub.docker.com/r/silviof/docker-languagetool) for this. In
-combination with a VSCode extension called LanguageTool Linter. This helps me to catch
-most if not all the spelling and grammar mistakes.
+I perform a final spell check using Grammarly, an online tool that helps me catch mistakes
+in grammar, spelling, and style.
 
 ### Formatting and layout
 
