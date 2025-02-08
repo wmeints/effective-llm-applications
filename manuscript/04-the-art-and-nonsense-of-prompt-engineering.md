@@ -811,13 +811,18 @@ Note that I haven't included any actual PII filtering code in the filter. If you
 2. [Google de-identification][GA_PII_DETECTION]
 3. [AWS PII detection][AWS_PII_DETECTION]
 
-I recommend getting rid of PII as soon as it enters the application. The sooner you remove it, the less likely it is to leak anywhere. Sadly, I can't tell you how to apply for these services specifically because I'm not building your application.
+I recommend getting rid of PII as soon as it enters the application. The sooner you remove it, the less likely it is to leak anywhere.
 
 ## Summary
 
-In this chapter, we've examined the art and nonsense of prompt engineering. We discussed the important role prompts play in LLM-based applications and how to write effective prompts. We also covered the importance of testing and monitoring your prompts so you can ensure that your application will still work in six months.
+In this chapter, we've examined the art and nonsense of prompt engineering. We discussed the important role prompts play in LLM-based applications and how to write effective and safe prompts.
 
 In the next chapter, we'll look at testing and monitoring prompts in your LLM-based application.
+
+## Running the samples in this chapter
+
+Make sure to check out the samples for this chapter in the [Github repository][GH_SAMPLE_DIR]. You can find the system requirements, as well as instructions for each
+sample in the repository.
 
 [CONTEXT_WINDOW_PAPER]: https://arxiv.org/abs/2307.03172
 [LLM_ALIGNMENT]: https://medium.com/@madalina.lupu.d/align-llms-with-reinforcement-learning-from-human-feedback-595d61f160d5
@@ -833,3 +838,4 @@ In the next chapter, we'll look at testing and monitoring prompts in your LLM-ba
 [AWS_PII_DETECTION]: https://docs.aws.amazon.com/comprehend/latest/dg/how-pii.html
 [OWASP_LLM]: https://owasp.org/www-project-top-10-for-large-language-model-applications/
 [MITRE]: https://atlas.mitre.org/matrices/ATLAS/
+[GH_SAMPLE_DIR]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/
