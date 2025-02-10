@@ -155,6 +155,7 @@ While this looks like an excellent way of working with LLMs in use cases outside
 
 Next, let's look at how you can help the model with samples.
 
+{#few-shot-learning}
 ### Add samples to the prompt
 
 Any LLM can reproduce patterns learned from the large body of text on which it was trained. But that body of text hopefully doesn't contain internal documents of the client or company you work for. So, if you need to answer questions about internal information, you must tell the LLM about the information.
