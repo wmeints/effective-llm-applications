@@ -49,6 +49,7 @@ I want to address a few common misconceptions about prompts before we discuss th
 
 While you can reuse prompts over time, you'll have to account for the fact that LLMs get updated and retrained periodically. A prompt that worked before will likely break because the LLM was updated. Prompts that may have worked with Claude will produce different results with GPT-4o because they used a different training set.
 
+{#context-window-limits}
 #### Complicated prompts yield better results
 
 Some people will tell you to write complicated prompts to get better results. But you will often get better results by splitting complex tasks into smaller tasks and running them separately. This is because of how the context window of the LLM works. From [this paper][CONTEXT_WINDOW_PAPER], we can learn that LLMs have an attention span that isn't exactly what you'd expect from a machine. Although the models have been updated since the paper's release, I still see this behavior in our production applications. [#s](#context-window-curve) shows the attention span of a typical LLM. Input at the start and end of a prompt is likely to get picked up better by the LLM than content in the middle of the prompt.
