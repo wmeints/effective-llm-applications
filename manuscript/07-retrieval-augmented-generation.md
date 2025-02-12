@@ -110,18 +110,20 @@ Let's look at how to put the theory into practice with Semantic Kernel by buildi
 {#end-to-end-rag-pipeline-implementation}
 ## Building an end-to-end RAG pipeline with Semantic Kernel
 
-There are a lot of solutions for implementing RAG systems online, and it's easy to get confused by the fancy implementations that are out there. But the basics of the RAG pattern are straighforward. To implement one in Semantic Kernel we'll need to integrate a few components as shown in [#s](#end-to-end-rag-pipeline).
+There are a lot of solutions for implementing RAG systems online, and it's easy to get confused by the fancy implementations that are out there. But the basics of the RAG pattern are straighforward. To show you how the theory from the previous section fits together, we'll build a RAG implementation for the content of this book. Since I wrote the content for the book in markdown, it's a great example on how to process content into a sensible format for answering questions.
+
+To implement the RAG pattern in Semantic Kernel we'll need to integrate a few components as shown in [#s](#end-to-end-rag-pipeline).
 
 {#end-to-end-rag-pipeline}
 ![End-to-end RAG pipeline in Semantic Kernel](end-to-end-rag-pipeline.png)
 
 We'll need to configure the following pieces:
 
-1. First, we need to build a data model for the data we want retrieve.
-2. Next, we need to connect a vector store to house the data.
-3. Then, we need to build a workflow that uses the vector store.
+1. First, we need to build a data model `TextUnit` for the data we want retrieve.
+2. Then, we need to build `ContextIndexer` that will process raw content into the `TextUnit` instances and store them in a `IVectorStore`.
+3. Finally, we need to build the `QuestionAnsweringTool` that uses the `IVectorStore` in combination with the `Kernel` to answer questions.
 
-We'll use a basic workflow to explore the RAG pattern. Many of the components in the workflow are the same for chat-based scenarios. We'll discuss how to use the RAG pattern with a chatbot after the initial setup.
+We'll use a straightforward workflow with a single prompt to explore the RAG pattern to help you understand the basics. Many of the components in the workflow are the same for chat-based scenarios. We'll discuss how to use many of the components in the basic RAG pattern implementation with a chatbot after the initial setup.
 
 Let's take a look at the project structure for RAG first.
 
@@ -137,11 +139,11 @@ Next we need to add a few packages by running the following commands from the pr
 
 ```bash
 dotnet add package Microsoft.SemanticKernel
-dotnet add package Microsoft.SemanticKernel.Connectors.Postgres --prerelease
+dotnet add package Microsoft.SemanticKernel.Connectors.Qdrant --prerelease
 ```
 
 The first package adds the basic components for Semantic Kernel to the web application.
-The second package adds vector store support based on a Postgres database. You can include other connectors as well, but for now, we'll stick to the PostgreSQL one as most people are familiar with using a relational database such as PostgresSQL.
+The second package adds vector store support based on a Postgres database. You can include other connectors as well, but for now, we'll stick to Qdrant as one of the more common vector stores.
 
 After setting up the packages, we'll need to modify the `Program.cs` file in the project to include basic configuration for Semantic Kernel. The file should look like this:
 
@@ -156,9 +158,17 @@ This code configures Semantic Kernel with a new vector store. It performs the fo
 3. Then, we configure the vector store for the application.
 4. Finally, we build the web application and map a basic endpoint.
 
+At this point, you can verify the application by starting it by running the following command in a terminal from the project directory:
+
+```bash
+dotnet run
+```
+
+You should see a notification that the web application is listening on a specific port. The port is choosen at random when you create the web application.
+
+Now that we have the basic structure of the application, let's move on to the next step, creating the data model for the text data.
+
 ### Building a data model for retrieval
-
-
 
 ### Connecting a vector store
 
