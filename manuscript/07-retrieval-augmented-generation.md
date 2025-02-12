@@ -18,6 +18,7 @@ Let's get started by discussing what Retrieval Augmented Generation (RAG) is and
 
 Retrieval Augmented Generation is a pattern where you use information from an external source as extra context information when generating a response to a prompt. You're likely going to use RAG to answer questions from users. [#s](#rag-pattern-architecture) shows the structure of the RAG pattern.
 
+{#rag-pattern-architecture}
 ![RAG pattern architecture](rag-pattern-architecture.png)
 
 The RAG pattern has two main components:
@@ -33,11 +34,12 @@ Let's take a closer look at the retrieval component of the RAG pattern to unders
 
 To retrieve information we'll need to build a retrieval component. The retrieval component of the RAG pattern is usually made out of two subcomponents. You need a method to process information into a format that's easy for an LLM to answer questions with, and you need a method for the application to retrieve the preprocessed information. [#s](#retrieval-architecture) shows the details of the retrieval portion of the RAG pattern.
 
+{#retrieval-architecture}
 ![Retrieval component of the RAG pattern](retrieval-architecture.png)
 
 The retrieval component of the RAG pattern is best described with a practical use case. Imagine you need to explain to how to dissamble a washing machine to a mechanic. You could give the whole manual to the mechanic and let them read it. But that's not efficient because it takes quite a long time. It's nicer when the mechanic can ask a question like: "How do I remove the electrical board from the front of the Miele W1 washing machine?" And have the LLM answer that question with specific instructions on how to do that, but nothing more.
 
-We could give the LLM the full manual of the washing machine and let it figure out the answer. But that doesn't work very well, it might be even worse than the mechanic reading the manual. First, the manual might not fit in the context window of the LLM. Next, the LLM might not be able to grab the right information, because of the limitations in what the LLM can focus on within its context window as we discussed in [#s](context-window-limits).
+We could give the LLM the full manual of the washing machine and let it figure out the answer. But that doesn't work very well, it might be even worse than the mechanic reading the manual. First, the manual might not fit in the context window of the LLM. Next, the LLM might not be able to grab the right information, because of the limitations in what the LLM can focus on within its context window as we discussed in [#s](#context-window-limits).
 
 If you want a clear answer, it's important to give the LLM focused information that matches the question as closely as possible. And this is what you should solve in the retrieval portion of the RAG pattern.
 
@@ -57,6 +59,7 @@ That's why you will find that most people will use a vector database to store ch
 
 A vector database turns the chunks into embedding vectors storing them alongside the original data. When you send a search query the vector database translates the query into an embedding vector too and matches it against the embedding vectors of the documents in the database. The documents whose vectors are closest to the query vector are returned by the search engine. Vector search uses cosine similarity to determine how close vectors are to each other. Imagine an arrow for the document and another for the query. The cosine similarity is the angle between the two arrows. [#s](#cosine-similarity) demonstrates this principle.
 
+{#cosine-similarity}
 ![Cosine similarity](cosine-similarity.png)
 
 The advantage of the vector based search method is that you can have spelling mistakes, use synonyms, or even use different words to describe the same thing. As long as the text in the document is similar to the test in the query, the vector search will find it, because the embedding vectors will be similar.
@@ -83,7 +86,7 @@ In chatbot scenarios, you'll want to implement the RAG pattern as a tool, and in
 
 For example, one of the chatbots I built can answer questions from a knowledge base for building software. It can also generate pieces of text for marketing purposes. It would be strange to mix the technical information about building software with general marketing content. Unless of course you're writing marketing content about building software. It's nice that by using a tool we have the flexibility to consider marketing on its own or combine it with technical information.
 
-In non-chat scenarios, you'll want to create a specialized prompt to help guide the LLM in the right direction. The pattern here is to use few-shot learning to help the LLM generate the right response as we discussed in [#s](#few-shot-learning). A typical prompt for answering question looks like this:
+In non-chat scenarios, you'll want to create a specialized prompt to help guide the LLM in the right direction. The trick here is to use few-shot learning to help the LLM generate the right response as we discussed in [#s](#few-shot-learning). A typical prompt for answering question looks like this:
 
 ```text
 You're answering questions about washing machines for technical support. 
@@ -99,15 +102,16 @@ If you don't know the answer, just say so. Don't make up answers.
 {{question}}
 ```
 
-In this prompt, you can inject the relevant chunks you found in the database and the question from the user. 
+In this prompt, you can inject the relevant chunks you found in the database and the question from the user. The output of the LLM will be a response to the question with possibly some extra information. The extra information is usually not a problem, but if it is, you can add one extra line: `## Answer` that will help the LLM focus on just the answer.
 
 Let's look at how to put the theory into practice with Semantic Kernel by building an end-to-end pipeline.
 
 {#end-to-end-rag-pipeline-implementation}
 ## Building an end-to-end RAG pipeline with Semantic Kernel
 
-There's a lot of theory surrounding RAG online, and it's easy to get confused by the fancy implementations that are out there. But the basics of the RAG pattern are straighforward. To implement one in Semantic Kernel we'll need to integrate a few components as shown in [#s](#end-to-end-rag-pipeline).
+There are a lot of solutions for implementing RAG systems online, and it's easy to get confused by the fancy implementations that are out there. But the basics of the RAG pattern are straighforward. To implement one in Semantic Kernel we'll need to integrate a few components as shown in [#s](#end-to-end-rag-pipeline).
 
+{#end-to-end-rag-pipeline}
 ![End-to-end RAG pipeline in Semantic Kernel](end-to-end-rag-pipeline.png)
 
 We'll need to configure the following pieces:
@@ -116,12 +120,13 @@ We'll need to configure the following pieces:
 2. Next, we need to connect a vector store to house the data.
 3. Then, we need to build a workflow that uses the vector store.
 
-The scenario in this section will cover the basic RAG pattern with a single prompt. We'll discuss integrating the same components into a chat-based solution after discussing the basic pattern implementation.
+We'll use a basic workflow to explore the RAG pattern. Many of the components in the workflow are the same for chat-based scenarios. We'll discuss how to use the RAG pattern with a chatbot after the initial setup.
+
+Let's take a look at the project structure for RAG first.
 
 ### Setting up the project structure
 
-Let's start by setting up the project structure. For the scenarion in this chapter, we'll assume you're building a web application. You can create a new web application 
-using the following command:
+Let's start by setting up the project structure. For the scenarion in this chapter, we'll assume you're building a web application. You can create a new web application using the following command:
 
 ```bash
 dotnet new web -n Chapter7.RetrievalAugmentedGeneration
