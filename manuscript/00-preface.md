@@ -57,7 +57,7 @@ enough in a more enterprise-oriented language like C#.
   these patterns will let you build AI assistants that can take actual actions and work
   with real-world data.
 
-- **Chapter 7, "Retrieval Augmented Generation (RAG)"**, shows you how to improve your LLM
+- **[#s, #t](#retrieval-augmented-generation)**, shows you how to improve your LLM
   applications by grounding the responses in your own data using Retrieval Augmented
   Generation (RAG), going from basic vector embeddings all the way to building a working
   domain-specific chatbot. If you want your LLM applications to give accurate responses

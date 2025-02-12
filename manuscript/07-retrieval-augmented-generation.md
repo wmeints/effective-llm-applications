@@ -1,3 +1,4 @@
+{#retrieval-augmented-generation}
 # Retrieval augmented generation
 
 In previous chapters we focused on learning the basic building blocks of an LLM-based application. We covered prompting, the basics of LLMs, testing, and using tools. It's time to move on to more advanced topics. In this chapter and the ones after this chapter we'll shift our focus towards common patterns that you can use to build more elaborate LLM-based applications.

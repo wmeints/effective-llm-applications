@@ -6,3 +6,4 @@ mainmatter.txt
 04-the-art-and-nonsense-of-prompt-engineering.md
 05-testing-and-monitoring-prompts.md
 06-enhancing-llms-with-tools.md
+07-retrieval-augmented-generation.md
