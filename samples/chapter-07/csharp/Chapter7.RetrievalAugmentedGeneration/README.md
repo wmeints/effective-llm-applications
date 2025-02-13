@@ -17,12 +17,12 @@ download the markdown files to the `Content` directory in the project.
 
 Next, make sure you have the following user secrets configured:
 
-| Secret Name | Description |
-| ----------- | ----------- |
-| `LanguageModel:ApiKey` | The API Key for the Azure OpenAI resource |
-| `LanguageModel:Endpoint` | The endpoint for the Azure OpenAI resource |
-| `LanguageModel:CompletionModel` | The name of a `GPT-4o` deployment in your Azure OpenAI environment |
-| `LanguageModel:EmbeddingModel` | The name of a `text-embedding-3-small` deployment in your Azure OpenAI environment |
+| Secret Name                     | Description                                                                        |
+| ------------------------------- | ---------------------------------------------------------------------------------- |
+| `LanguageModel:ApiKey`          | The API Key for the Azure OpenAI resource                                          |
+| `LanguageModel:Endpoint`        | The endpoint for the Azure OpenAI resource                                         |
+| `LanguageModel:CompletionModel` | The name of a `GPT-4o` deployment in your Azure OpenAI environment                 |
+| `LanguageModel:EmbeddingModel`  | The name of a `text-embedding-3-small` deployment in your Azure OpenAI environment |
 
 You can configure the secrets by using the following command:
 
