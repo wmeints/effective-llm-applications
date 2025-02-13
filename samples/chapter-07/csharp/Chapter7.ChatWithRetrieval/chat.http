@@ -1,0 +1,7 @@
+POST http://localhost:5249/chat
+Content-Type: application/json
+Accept: text/plain
+
+{
+    "Prompt": "What topics are covered about LLMOps in the book?"
+}
