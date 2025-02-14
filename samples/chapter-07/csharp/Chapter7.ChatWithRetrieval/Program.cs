@@ -23,12 +23,12 @@ var kernelBuilder = builder.Services.AddKernel()
 builder.Services.AddSingleton<IVectorStore>(
     sp => new QdrantVectorStore(new QdrantClient("localhost")));
 
-builder.Services.AddTransient<CompletionService>();
+builder.Services.AddTransient<QuestionAnsweringBot>();
 builder.Services.AddSingleton<ContentIndexer>();
 
 var app = builder.Build();
 
-app.MapPost("/chat", async ([FromServices] CompletionService completions, ChatInputForm form) =>
+app.MapPost("/chat", async ([FromServices] QuestionAnsweringBot completions, ChatInputForm form) =>
 {
     return await completions.GenerateResponse(form.Prompt);
 });
@@ -36,6 +36,6 @@ app.MapPost("/chat", async ([FromServices] CompletionService completions, ChatIn
 var scope = app.Services.CreateScope();
 var indexer = scope.ServiceProvider.GetRequiredService<ContentIndexer>();
 
-await indexer.ProcessContentAsync();
+// await indexer.ProcessContentAsync();
 
 await app.RunAsync();

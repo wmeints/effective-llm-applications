@@ -12,7 +12,7 @@ This sample demonstrates how to use Retrieval Augmented Generation with a basic 
 ## Setting up the sample
 
 Before you can run the sample, you need to make sure you have the content that you want to use for the RAG solution.
-You can use [the chapters of the book ](../../../../manuscript/) as the content. To use the content from the book,
+You can use [the chapters of the book](../../../../manuscript/) as the content. To use the content from the book,
 download the markdown files to the `Content` directory in the project.
 
 Next, make sure you have the following user secrets configured:

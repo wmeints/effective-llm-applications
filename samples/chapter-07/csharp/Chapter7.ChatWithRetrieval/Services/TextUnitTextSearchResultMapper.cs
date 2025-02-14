@@ -9,7 +9,11 @@ public class TextUnitTextSearchResultMapper : ITextSearchResultMapper
     {
         if (result is TextUnit textUnit)
         {
-            return new TextSearchResult(value: textUnit.Content);
+            return new TextSearchResult(value: textUnit.Content)
+            {
+                Link = textUnit.OriginalFileName,
+                Name = textUnit.Id.ToString()
+            };
         }
 
         throw new ArgumentException("Invalid result object");

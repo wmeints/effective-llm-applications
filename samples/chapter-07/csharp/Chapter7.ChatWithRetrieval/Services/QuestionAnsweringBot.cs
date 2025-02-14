@@ -8,27 +8,35 @@ using Microsoft.SemanticKernel.Embeddings;
 
 namespace Chapter7.ChatWithRetrieval.Services;
 
-public class CompletionService(
+public class QuestionAnsweringBot(
     Kernel kernel, IVectorStore vectorStore,
     ITextEmbeddingGenerationService embeddingGenerator,
     IChatCompletionService chatCompletions)
 {
     public async Task<string> GenerateResponse(string prompt)
     {
+        var citationsFilter = new CitationCapturingFilter();
         var textCollection = vectorStore.GetCollection<ulong, TextUnit>("content");
 
         var textSearch = new VectorStoreTextSearch<TextUnit>(
             textCollection,
             embeddingGenerator,
-            new TextUnitStringMapper(),
+            new CitationsTextUnitStringMapper(),
             new TextUnitTextSearchResultMapper());
 
         var searchFunction = textSearch.CreateGetTextSearchResults();
 
         kernel.Plugins.AddFromFunctions("SearchPlugin", [searchFunction]);
+        kernel.FunctionInvocationFilters.Add(citationsFilter);
 
         var chatHistory = new ChatHistory();
-        chatHistory.AddSystemMessage("You're a friendly assistant. Your name is Ricardo");
+
+        chatHistory.AddSystemMessage(
+            "You're a friendly assistant. Your name is " +
+            "Ricardo. When answering questions, include " +
+            "citations to the relevant information where " +
+            "it is referenced in the response.");
+
         chatHistory.AddUserMessage(prompt);
 
         var executionSettings = new AzureOpenAIPromptExecutionSettings
