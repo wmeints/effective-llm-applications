@@ -288,13 +288,366 @@ Now that we have the content indexer, let's finish up the RAG pipeline by buildi
 
 ### Using the vector store with a prompt
 
+The generation component of the RAG pattern implementation we're working on is formed by the `QuestionAnsweringTool`. This class is a C# class that looks like this:
+
+```csharp
+public class QuestionAnsweringTool(
+    Kernel kernel, IVectorStore vectorStore,
+    ITextEmbeddingGenerationService embeddingGenerator)
+{
+    public async Task<string> AnswerAsync(string question)
+    {
+        // Content for the method
+    }
+}
+```
+
+Let's go over this code step by step:
+
+1. First, we're creating a class that depends on the vector store we used earlier, the embedding generator, and the kernel we need to use for generating output.
+2. Next, we create a new method `AnswerAsync` that takes a question as input and produces an answer as output.
+
+The code for the `AnswerAsync` method looks like this:
+
+```csharp
+var collection = vectorStore.GetCollection<ulong, TextUnit>("content");
+
+var questionEmbedding = await embeddingGenerator.GenerateEmbeddingAsync(
+    question);
+
+var searchOptions = new VectorSearchOptions
+{
+    Top = 3,
+};
+
+var searchResponse = await collection.VectorizedSearchAsync(
+    questionEmbedding, searchOptions);
+
+var fragments = new List<TextUnit>();
+
+await foreach (var fragment in searchResponse.Results)
+{
+    fragments.Add(fragment.Record);
+}
+
+var promptTemplateContent = File.ReadAllText("Prompts/answer-question.yaml");
+
+var promptTemplate = kernel.CreateFunctionFromPromptYaml(
+    promptTemplateContent, new HandlebarsPromptTemplateFactory());
+
+var response = await promptTemplate.InvokeAsync(kernel, new KernelArguments
+{
+    ["question"] = question,
+    ["fragments"] = fragments
+});
+
+return response.GetValue<string>()!;
+```
+
+In the method we're performing the following steps:
+
+1. First, we'll lookup the collection containing the preprocessed text units in the vector store. We'll use this collection to search for relevant text units.
+2. Next, we generate an embedding vector for the question using the same embedding model we used to generate embedding vectors for the text units.
+3. Then, we perform a cosine similarity search to find the most relevant text units for the question. We'll ask for three text units to be returned.
+4. Next, we process the results into a list of text units to be inserted into the prompt.
+5. Then, we load up the answer-question.yaml prompt from the file system.
+6. Finally, we execute the prompt with the retrieved text and the user question and return the output.
+
+You may be wondering, what does the prompt look like? The prompt is stored in a YAML file following the structure we discussed earlier in [#s](#prompt-templates). The content of the `answer-question.yaml` file looks like this:
+
+```yaml
+name: answer_question
+template: |
+  You're a helpful assistant supporting me by answering questions 
+  about the book building effective llm-based applications with
+  semantic kernel. Answer the question using the provided context.
+  If you don't know the answer, say so, don't make up 
+  answers.
+
+  ## Context
+
+  {{#each fragments}}
+  {{ .Content }}
+
+  {{/each}}
+
+  ## Question
+
+  {{question}}
+template_format: handlebars
+input_variables:
+  - name: fragments
+    description: The topic you want to discuss in the blogpost.
+    is_required: true
+  - name: question
+    description: The question you want to ask about the topic.
+    is_required: true  
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 1200
+```
+
+In this prompt we're telling the LLM that we're answering questions about this book. WE then provide the fragments using a foreach loop rendering the `Content` property of the `TextUnit` class. Finally, we provide the question that we need an answer to.
+
+The rest of the file lists the input variables for the prompt and the execution settings for the LLM.
+
+To use the question answering tool, we can hook up the required components in the `Program.cs` file of the project:
+
+```csharp
+// Setup logic for semantic kernel
+
+builder.Services.AddTransient<ContentIndexer>();
+builder.Services.AddTransient<QuestionAnsweringTool>();
+
+var app = builder.Build();
+
+app.MapGet("/answer", async ([FromServices] QuestionAnsweringTool tool, [FromQuery] string question) =>
+{
+    return await tool.AnswerAsync(question);
+});
+
+var scope = app.Services.CreateScope();
+var indexer = scope.ServiceProvider.GetRequiredService<ContentIndexer>();
+
+await indexer.ProcessContentAsync();
+
+// The rest of Program.cs
+```
+
+The code in this fragment needs to be added right after you're configuring the kernel in the service collection. The code performs the following steps:
+
+1. First, we register the content indexer and answering tool so we can use both.
+2. Next, we build the web application and map a new endpoint `/answer` that takes a query parameter `question`. The endpoint uses the `QuestionAnsweringTool` to generate a response to the question.
+3. Then, we create a new scope to get the content indexer from the service provider.
+4. Finally, we process the content to store it in the vector store.
+
+The rest of the `Program.cs` file remains the same.
+
+You can now run the application and ask a question from the browser by navigating to
+`http://localhost:<port>/answer?question=What+is+the+RAG+pattern`. Make sure to check the port matches the one shown in the terminal when you start the application.
+
+The application should return a response to the question you asked based on the content of the book.
+
+As this is one of the bigger samples in this book, I recommend checking out the [complete source code][SAMPLE_SOURCE_1] on GitHub. It contains all the instructions required to configure the project and run it on your machine. I've included an extra [Bicep](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/) script to help you configure Azure OpenAI for the project.
+
+Using the RAG pattern with a prompt is one of the easiest ways to get started with prototyping a solution on your business content. But most of you will probably build a chatbot on top of internal business content, so let's explore how to apply the RAG pattern in the context of a chat solution as well.
+
 ### Using the vector store as a tool
+
+Applying the RAG pattern in a chat solution follows many of the same steps involved in implementing the RAG pattern with a prompt, so I'm not going to repeat all the steps.
+
+The major difference is that in the context of a chatbot you'll want to connect the retrieval component as a tool for the LLM. This way you let the LLM decide if it's necessary to look up information needed to generate a proper response.
+
+You can implement the RAG pattern as a tool using the following code:
+
+```csharp
+public class QuestionAnsweringBot(
+    Kernel kernel, IVectorStore vectorStore,
+    ITextEmbeddingGenerationService embeddingGenerator,
+    IChatCompletionService chatCompletions)
+{
+    public async Task<string> GenerateResponse(string prompt)
+    {
+        var textCollection = vectorStore.GetCollection<ulong, TextUnit>("content");
+
+        var textSearch = new VectorStoreTextSearch<TextUnit>(
+            textCollection,
+            embeddingGenerator,
+            new TextUnitStringMapper(),
+            new TextUnitTextSearchResultMapper());
+
+        var searchFunction = textSearch.CreateGetTextSearchResults();
+
+        kernel.Plugins.AddFromFunctions("SearchPlugin", [searchFunction]);
+
+        var chatHistory = new ChatHistory();
+        
+        chatHistory.AddSystemMessage(
+            "You're a friendly assistant. Your name is Ricardo");
+
+        chatHistory.AddUserMessage(prompt);
+
+        var executionSettings = new AzureOpenAIPromptExecutionSettings
+        {
+            Temperature = 0.6,
+            FrequencyPenalty = 0.0,
+            PresencePenalty = 0.0,
+            MaxTokens = 2500,
+            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+        };
+
+        var response = await chatCompletions.GetChatMessageContentAsync(
+            chatHistory, executionSettings, kernel);
+
+        return response.Content!;
+    }
+}
+```
+
+You can consider the `QuestionAnsweringBot` class to be the central service for the chatbot. It uses the vector store, embedding generation service, and the kernel to generate responses. The class performs the following steps:
+
+1. First, we retrieve the collection of preprocessed text units from the vector store.
+2. Next, we create a new `VectorTextSearch` instance that connects the collection with two essential components, a string mapper `TextUnitStringMapper` and a search result mapper `TextUnitTextSearchResultMapper`.
+3. After that, we connect the vector search component to the kernel as a plugin with a single function, `CreateGetTextSearchResults`.
+
+The rest of the code is similar to the code we used earlier in [#s](#working-with-chat-completion). We'll create a new chat history object with the necessary messages and ask Semantic Kernel to generate a response. If you ask a question, it's highly likely that the LLM will use the search plugin to find the answer to the question. Make sure you set the right function invocation settings or the search is never performed.
+
+We need to discuss an important detail about this setup. In the previous section we manually translated `TextUnit` instances to strings in the prompt. This time we need a different solution for this. This is where the `TextUnitStringMapper` plays an important role.
+
+When you use the `VectorStoreTextSearch` class as a tool, you need to provide a way to inject search results into the chat history of the conversation as a string. The `TextUnitStringMapper` class is responsible for this translation. The class looks like this:
+
+```csharp
+public class TextUnitStringMapper : ITextSearchStringMapper
+{
+    public string MapFromResultToString(object result)
+    {
+        if (result is TextUnit textUnit)
+        {
+            return textUnit.Content;
+        }
+
+        throw new ArgumentException("Invalid result object");
+    }
+}
+```
+
+The mapping class in this sample is very basic returning the content of the retrieved text unit. However, you can extend the class to do much more. For example, you can return a structure that's going to help the LLM generate citations for the found sources. For example, you can create an implementation like this:
+
+```csharp
+public class CitationsTextUnitStringMapper : ITextSearchStringMapper
+{
+    public string MapFromResultToString(object result)
+    {
+        if (result is TextUnit textUnit)
+        {
+            var outputBuilder = new StringBuilder();
+
+            outputBuilder.AppendLine($"Name: {textUnit.Id}");
+            outputBuilder.AppendLine($"Value: {textUnit.Content}");
+            outputBuilder.AppendLine($"Link: {textUnit.OriginalFileName}");
+
+            return outputBuilder.ToString();
+        }
+
+        throw new ArgumentException("Invalid result object");
+    }
+}
+```
+
+The `CitationsTextUnitStringMapper` class returns a string with the name, value, and link to the original file for the text unit. If you change the system message to tell the LLM to generate citations, you can use this mapper to generate the citations for the found sources. For example, you can change the content of the `AddSystemMessage` call to include this system message.
+
+```text
+You're a friendly assistant. When answering questions, include citations to the relevant information where it is referenced in the response.
+```
+
+Keep in mind that instructions like this one aren't going to force the LLM to do the right thing. You may end up with citations that aren't really citations. It's important to test the system and see if it's generating the right content. If it's not you may need to adjust the system message.
+
+As an alternative to generating citations through instructions you can also use a `IFunctionInvocationFilter` to capture the output of the search tool and display links to the found sources in the user interface separately. The following code demonstrates how to build such a filter:
+
+```csharp
+public class CitationCapturingFilter : IFunctionInvocationFilter
+{
+    public List<TextSearchResult> Captures { get; } = new();
+
+    public async Task OnFunctionInvocationAsync(
+        FunctionInvocationContext context,
+        Func<FunctionInvocationContext, Task> next)
+    {
+        await next(context);
+
+        if (context.Function.PluginName == "SearchPlugin")
+        {
+            var results = context.Result.GetValue<List<TextSearchResult>>()!;
+            Captures.AddRange(results);
+        }
+    }
+}
+```
+
+This function filter performs the following steps:
+
+1. First, it invokes the function as usual.
+2. Then, when it detects that the search plugin is invoked, it captures the search results and stores them in the `Captures` list.
+
+You can integrate this filter into the bot using the following code:
+
+```csharp
+public class QuestionAnsweringBot(
+    Kernel kernel, IVectorStore vectorStore,
+    ITextEmbeddingGenerationService embeddingGenerator,
+    IChatCompletionService chatCompletions)
+{
+    public async Task<string> GenerateResponse(string prompt)
+    {
+        var textCollection = vectorStore.GetCollection<ulong, TextUnit>("content");
+
+        var textSearch = new VectorStoreTextSearch<TextUnit>(
+            textCollection,
+            embeddingGenerator,
+            new TextUnitStringMapper(),
+            new TextUnitTextSearchResultMapper());
+
+        var searchFunction = textSearch.CreateGetTextSearchResults();
+
+        kernel.Plugins.AddFromFunctions("SearchPlugin", [searchFunction]);
+  
+        var citationsFilter = new CitationCapturingFilter();
+        kernel.FunctionInvocationFilters.Add(citationsFilter);
+
+        // ... Rest of the code
+    }
+}
+```
+
+Let's go over the code to understand the modifications compared to the original
+version of this code: The start of the method is the same as before, but we've added a new filter right after configuring the text search plugin.
+
+In previous code fragments we already were using the `TextUnitTextSearchResultMapper`. Let's discuss what this mapper does, because it's necessary here to make the function filter work. The class looks like this:
+
+```csharp
+public class TextUnitTextSearchResultMapper : ITextSearchResultMapper
+{
+    public TextSearchResult MapFromResultToTextSearchResult(object result)
+    {
+        if (result is TextUnit textUnit)
+        {
+            return new TextSearchResult(value: textUnit.Content)
+            {
+                Link = textUnit.OriginalFileName,
+                Name = textUnit.Id.ToString()
+            };
+        }
+
+        throw new ArgumentException("Invalid result object");
+    }
+}
+```
+
+In this class we perform the following steps:
+
+1. First, we implement the `ISearchResultMapper` interface creating the `MapFromResultToTextSearchResult` method.
+2. Then, in the method we check if the result is a `TextUnit` instance.
+3. Next, we create a new `TextSearchResult` instance with the content of the text unit including the identifier, link, and value for the search result.
+
+With the additional filter you can be sure that you're capturing the search results that were found by the vector search instead of relying on the LLM to choose whether something was used in the response. You may get some false positives still, because the LLM may not actually use a result that you retrieved.
+
+Implementing a RAG pattern takes effort to get right, and it's not going to be 100% perfect all the time. You have to make a choice here, do you want to have a response where the LLM hallucinates sources? Or do you want to have a response with a separate set of citations that may not be included in the actual response.
+
+Whatever you choose, I highly recommend spending time testing the various parts of your RAG implementation. Let's discuss how to approach this in the next section.
 
 ## Testing the RAG pipeline
 
 ## Optimizing retrieval for RAG
 
+## Putting the RAG pattern into production
+
 ## Variations on the RAG pattern
 
 - Using graphs for retrieval (graphrag: https://microsoft.github.io/graphrag/)
 - Reranking
+
+[SAMPLE_SOURCE_1]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.RetrievalAugmentedGeneration/
