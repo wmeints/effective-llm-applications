@@ -32,19 +32,27 @@ I'm writing this book as you read this, and I'm at **43% completion**.
 
 ## Working with the examples
 
-This book features useful examples that demonstrate how to implement various patterns
-with Semantic Kernel. To use the examples you'll need:
-
-- [.NET 9](https://dot.net/)
-- [Visual Studio Code](https://code.visualstudio.com)
-- Access to the OpenAI API or Azure OpenAI
-- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+This book features examples in multiple languages to demonstrate how to implement various patterns
+with Semantic Kernel.
 
 You can open the solutions in the `samples` directory to browse through them.
 Follow the instructions provided with each example to run the example.
 
-**Important:** I haven't started writing the python and Java samples yet. I'll update
-the samples directory in between writing the chapters of the book.
+### Requirements for the C# samples
+
+- [.NET 9](https://dot.net/)
+- [Visual Studio Code](https://code.visualstudio.com)
+- Access to the OpenAI API or Azure OpenAI
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+
+### Requirements for the Python samples
+
+- [Python 3.12](https://www.python.org/downloads/)
+- [Visual Studio Code](https://code.visualstudio.com)
+- Access to the OpenAI API or Azure OpenAI
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 
 ## Sponsor me
 
