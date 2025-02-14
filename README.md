@@ -21,7 +21,7 @@ I'm writing this book as you read this, and I'm at **43% completion**.
 | 4. The art and nonsense of prompt engineering | Complete    | C#, Python |
 | 5. Testing and monitoring prompts             | Complete    | C#         |
 | 6. Enhancing LLMs with functions              | Complete    | C#         |
-| 7. Retrieval Augmented Generation (RAG)       | Not started |            |
+| 7. Retrieval Augmented Generation (RAG)       | In progress | C#         |
 | 8. Working with structured output             | Not started |            |
 | 9. Prompt chaining workflows                  | Not started |            |
 | 10. Intelligent request routing workflows     | Not started |            |
