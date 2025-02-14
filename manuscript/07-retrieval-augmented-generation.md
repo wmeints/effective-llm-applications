@@ -31,6 +31,7 @@ The basics of the RAG pattern aren't overly involved but you can find a lot of v
 
 Let's take a closer look at the retrieval component of the RAG pattern to understand how to approach retrieving information to answer questions.
 
+{#retrieval-component-architecture}
 ### Retrieval component architecture
 
 To retrieve information we'll need to build a retrieval component. The retrieval component of the RAG pattern is usually made out of two subcomponents. You need a method to process information into a format that's easy for an LLM to answer questions with, and you need a method for the application to retrieve the preprocessed information. [#s](#retrieval-architecture) shows the details of the retrieval portion of the RAG pattern.
@@ -83,14 +84,14 @@ In general, the generation component of the RAG pattern is straightforward. You 
 
 However, based on the kind of solution you're building, you'll need a different approach to get the information into the prompt.
 
-In chatbot scenarios, you'll want to implement the RAG pattern as a tool, and include the output of the tool in the chat history as a tool response. Using a tool gives the LLM-based application the flexibility to just give a straight answer without considering extra content from an external source. 
+In chatbot scenarios, you'll want to implement the RAG pattern as a tool, and include the output of the tool in the chat history as a tool response. Using a tool gives the LLM-based application the flexibility to just give a straight answer without considering extra content from an external source.
 
 For example, one of the chatbots I built can answer questions from a knowledge base for building software. It can also generate pieces of text for marketing purposes. It would be strange to mix the technical information about building software with general marketing content. Unless of course you're writing marketing content about building software. It's nice that by using a tool we have the flexibility to consider marketing on its own or combine it with technical information.
 
 In non-chat scenarios, you'll want to create a specialized prompt to help guide the LLM in the right direction. The trick here is to use few-shot learning to help the LLM generate the right response as we discussed in [#s](#few-shot-learning). A typical prompt for answering question looks like this:
 
 ```text
-You're answering questions about washing machines for technical support. 
+You're answering questions about washing machines for technical support.
 Please use the information in the context section to answer the question.
 If you don't know the answer, just say so. Don't make up answers.
 
@@ -148,7 +149,31 @@ The second package adds vector store support based on a Postgres database. You c
 After setting up the packages, we'll need to modify the `Program.cs` file in the project to include basic configuration for Semantic Kernel. The file should look like this:
 
 ```csharp
+var builder = WebApplication.CreateBuilder(args);
 
+var kernelBuilder = builder.Services.AddKernel()
+    .AddAzureOpenAIChatCompletion(
+        deploymentName: builder.Configuration["LanguageModel:CompletionModel"]!,
+        endpoint: builder.Configuration["LanguageModel:Endpoint"]!,
+        apiKey: builder.Configuration["LanguageModel:ApiKey"]!
+    )
+    .AddAzureOpenAITextEmbeddingGeneration(
+        deploymentName: builder.Configuration["LanguageModel:EmbeddingModel"]!,
+        endpoint: builder.Configuration["LanguageModel:Endpoint"]!,
+        apiKey: builder.Configuration["LanguageModel:ApiKey"]!
+    );
+
+builder.Services.AddSingleton<IVectorStore>(
+    sp => new QdrantVectorStore(new QdrantClient("localhost")));
+
+builder.Services.AddTransient<ContentIndexer>();
+builder.Services.AddTransient<QuestionAnsweringTool>();
+
+var app = builder.Build();
+
+app.MapGet("/", () => "Hello world!");
+
+app.Run();
 ```
 
 This code configures Semantic Kernel with a new vector store. It performs the following steps:
@@ -156,7 +181,8 @@ This code configures Semantic Kernel with a new vector store. It performs the fo
 1. First, we create a new web application builder.
 2. Next, we configure the `Kernel` service with the Azure OpenAI connector.
 3. Then, we configure the vector store for the application.
-4. Finally, we build the web application and map a basic endpoint.
+4. After that, we configure the content indexer and question answering tool.
+5. Next, we build the web application and map a basic endpoint.
 
 At this point, you can verify the application by starting it by running the following command in a terminal from the project directory:
 
@@ -164,13 +190,101 @@ At this point, you can verify the application by starting it by running the foll
 dotnet run
 ```
 
-You should see a notification that the web application is listening on a specific port. The port is choosen at random when you create the web application.
+You should see a notification that the web application is running. The terminal also lists the HTTP port the server is listening on. You can verify that the application works by navigating to the URL mentioned in the terminal output.
 
 Now that we have the basic structure of the application, let's move on to the next step, creating the data model for the text data.
 
 ### Building a data model for retrieval
 
-### Connecting a vector store
+Many of the vector databases you can use with Semantic Kernel have a very basic structure to them. You can usually store a record that's identified by a key storing an embedding vector and some additional metadata.
+
+In Semantic Kernel, you'll need to create a specific class to represent data you're storing in a vector store. Semantic Kernel uses the term vector store to represent what is a database that can store vector data. This can be a pure vector database or a relational database with support for storing vector data. If you're planning on using a regular database to store vector data you need to be aware that you can't combine the data structures offered by Semantic Kernel with otehr relational data although the database may support it.
+
+The data model for our RAG implemention that we're building is formed by the `TextUnit` class. A text unit in our application represents a chunked fragment of content extracted from a markdown file. The code sample shows the structure of the class:
+
+```csharp
+using Microsoft.Extensions.VectorData;
+
+public class TextUnit
+{
+    [VectorStoreRecordKey]
+    public ulong Id { get; set; }
+
+    [VectorStoreRecordData]
+    public string OriginalFileName { get; set; } = default!;
+
+    [VectorStoreRecordData(IsFullTextSearchable = true)]
+    public string Content { get; set; } = default!;
+
+    [VectorStoreRecordVector(1536)]
+    public ReadOnlyMemory<float> Embedding { get; set; }
+}
+```
+
+A vector store record in Semantic Kernel requires a unique key and a vector data field. The identifier for the `TextUnit` is a unique number, marked with the `[VectorStoreRecordKey]` attribute. The vector data field has to be of type `ReadOnlyMemory<float>` and is marked with the `[VectorStoreRecordVector]` attribute. Depending on the kind of embedding model you're going to use to generate embeddings, you need to specify a different value for the embedding size. We're using the `text-embedding-v3-small` model by OpenAI which has an embedding size of 1536. Which means that each piece of text is represented by a vector with 1536 dimensions.
+
+The embedding size is usually found in the manual of the LLM provider that offers the embedding model you're using. Although it's smart to use an embedding model from the LLM provider that you're using for the LLM, it's not required. Using an embedding model from another provider or using an open-source embedding model does require extra maintenance while it may not add extra value in terms of higher quality search results.
+
+Let's move on to the next step, building the content indexer.
+
+### Preprocessing content into vector data
+
+The content indexer is responsible for preprocessing raw content into vector store records. As we discussed in [#s](#retrieval-component-architecture), we can preprocess content in any way we wish, but for the sample, we need to keep things pragmatic, because we're working with a book that's long form content. We could try to process the content in a chapter per section, but we could end up with chunks that are either very long or very short.
+
+To keep things simple, we'll split the content into chunks of 1000 tokens each. This way we can be sure that we have a good balance between the size of the chunks and the amount of chunks we have. The code sample shows the structure of the `ContentIndexer` class:
+
+```csharp
+public class ContentIndexer(
+    IVectorStore vectorStore,
+    ITextEmbeddingGenerationService embeddingGenerator,
+{
+    public async Task ProcessContentAsync()
+    {
+        ulong currentIdentifier = 1L;
+        var files = Directory.GetFiles("Content", "*.md", SearchOption.AllDirectories);
+
+        var collection = vectorStore.GetCollection<ulong, TextUnit>("content");
+        await collection.CreateCollectionIfNotExistsAsync();
+
+        foreach (var file in files)
+        {
+            var lines = await File.ReadAllLinesAsync(file);
+
+            var chunks = TextChunker.SplitMarkdownParagraphs(
+                lines, maxTokensPerParagraph: 1000);
+
+            foreach (var chunk in chunks)
+            {
+                var embedding = await embeddingGenerator.GenerateEmbeddingAsync(chunk);
+
+                var textUnit = new TextUnit
+                {
+                    Content = chunk,
+                    Embedding = embedding,
+                    OriginalFileName = file,
+                    Id = currentIdentifier++
+                };
+
+                await collection.UpsertAsync(textUnit);
+            }
+        }
+    }
+}
+```
+
+There's a lot going on in the `ContentIndexer` class, so let's break it down:
+
+1. First, we create a new class `ContentIndexer` with dependencies on the vector store and the embedding generator.
+2. Next, we create a new method to process content called `ProcessContentAsync`.
+3. Then, we list all markdown files in the `Content` directory.
+4. After that, we ensure we have a collection called `content` to store the processed `TextUnit` instances in.
+5. Next, we loop over all markdown files and create chunks of 1000 tokens each.
+6. Then, we generate an embedding vector for the chunks.
+7. After, we create a new `TextUnit` instance and store it in the vector store.
+
+The `ContentIndexer` class is a basic implementation of a content processing tool. I highly recommend looking at applying a retry mechanism for the embedding generation. You'll also want to make sure that you can reprocess a file if you're running into a transient error. Nothing worse than having to start over the whole indexing process because of a single failure.
+
+Now that we have the content indexer, let's finish up the RAG pipeline by building the question answering tool.
 
 ### Using the vector store with a prompt
 
@@ -183,4 +297,4 @@ Now that we have the basic structure of the application, let's move on to the ne
 ## Variations on the RAG pattern
 
 - Using graphs for retrieval (graphrag: https://microsoft.github.io/graphrag/)
-- Reranking 
+- Reranking
