@@ -465,7 +465,7 @@ public class QuestionAnsweringBot(
         kernel.Plugins.AddFromFunctions("SearchPlugin", [searchFunction]);
 
         var chatHistory = new ChatHistory();
-        
+
         chatHistory.AddSystemMessage(
             "You're a friendly assistant. Your name is Ricardo");
 
@@ -559,7 +559,8 @@ public class CitationCapturingFilter : IFunctionInvocationFilter
     {
         await next(context);
 
-        if (context.Function.PluginName == "SearchPlugin")
+        if (context.Function.PluginName == "SearchPlugin" &&
+            context.Function.Name == "GetTextSearchResults")
         {
             var results = context.Result.GetValue<List<TextSearchResult>>()!;
             Captures.AddRange(results);
