@@ -661,6 +661,7 @@ Working with multiple LLM providers is experimental at the time of writing. You 
 </PropertyGroup>
 ```
 
+{#working-with-chat-completion}
 ## Using the chat history to your advantage
 
 In [#s](#prompt-templates), we discussed using single prompts with Semantic Kernel. While this is useful for non-chat-based scenarios, I think it's important to also discuss chat-based scenarios. When talking about chat-based scenarios, you have to keep in mind that you don't necessarily need a chat user interface. We're strictly talking about a list of prompts and responses that form a conversation.
