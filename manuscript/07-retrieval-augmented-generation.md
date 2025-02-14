@@ -241,7 +241,9 @@ public class ContentIndexer(
     public async Task ProcessContentAsync()
     {
         ulong currentIdentifier = 1L;
-        var files = Directory.GetFiles("Content", "*.md", SearchOption.AllDirectories);
+        
+        var files = Directory.GetFiles(
+            "Content", "*.md", SearchOption.AllDirectories);
 
         var collection = vectorStore.GetCollection<ulong, TextUnit>("content");
         await collection.CreateCollectionIfNotExistsAsync();
@@ -255,7 +257,8 @@ public class ContentIndexer(
 
             foreach (var chunk in chunks)
             {
-                var embedding = await embeddingGenerator.GenerateEmbeddingAsync(chunk);
+                var embedding = 
+                    await embeddingGenerator.GenerateEmbeddingAsync(chunk);
 
                 var textUnit = new TextUnit
                 {
@@ -405,7 +408,8 @@ builder.Services.AddTransient<QuestionAnsweringTool>();
 
 var app = builder.Build();
 
-app.MapGet("/answer", async ([FromServices] QuestionAnsweringTool tool, [FromQuery] string question) =>
+app.MapGet("/answer", async (
+    [FromServices] QuestionAnsweringTool tool, [FromQuery] string question) =>
 {
     return await tool.AnswerAsync(question);
 });
@@ -636,15 +640,13 @@ In this class we perform the following steps:
 
 With the additional filter you can be sure that you're capturing the search results that were found by the vector search instead of relying on the LLM to choose whether something was used in the response. You may get some false positives still, because the LLM may not actually use a result that you retrieved.
 
-Implementing a RAG pattern takes effort to get right, and it's not going to be 100% perfect all the time. You have to make a choice here, do you want to have a response where the LLM hallucinates sources? Or do you want to have a response with a separate set of citations that may not be included in the actual response.
+Implementing a RAG pattern takes effort to get right, and it's not going to be 100% perfect all the time. You have to make a choice here, do you want to have a response where the LLM makes up sources? Or do you want to have a response with a separate set of citations that may not be included in the actual response.
 
-Whatever you choose, I highly recommend spending time testing the various parts of your RAG implementation. Let's discuss how to approach this in the next section.
+Whatever you choose, I recommend testing the various parts of your RAG implementation to make sure you achieve the highest possible quality. Let's discuss how to approach testing the RAG pattern in the next section.
 
 ## Testing the RAG pipeline
 
 ## Optimizing retrieval for RAG
-
-## Putting the RAG pattern into production
 
 ## Variations on the RAG pattern
 
