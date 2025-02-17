@@ -644,9 +644,18 @@ With the additional filter, you can be sure that you're capturing the search res
 
 Implementing a RAG pattern takes effort to get right, and it will not always be 100% perfect. You have to make a choice here: Do you want to have a response where the LLM makes up sources? Or do you want to have a response with a separate set of citations that may not be included in the actual response?
 
-Whatever you choose, I recommend testing the various parts of your RAG implementation to ensure the highest possible quality. In the next section, we will discuss how to approach testing the RAG pattern.
+Whatever you choose, I recommend spending some time to establish a good test strategy for the various parts of your RAG implementation to ensure the highest possible quality. In the next section, we will discuss how to approach testing the RAG pattern.
 
-## Testing the RAG pipeline
+## Testing and monitoring the RAG pipeline
+
+Testing the RAG pattern involves multiple quality controls that you can apply.
+
+{#rag-quality-assurance}
+![RAG pattern evaluation controls](rag-evaluation-controls.png)
+
+[#s](#rag-evaluation-controls) shows the various aspects of the RAG pattern we discussed and the quality controls that are available. Let's go over each of the quality controls to understand how they work.
+
+### 
 
 ## Optimizing retrieval for RAG
 
