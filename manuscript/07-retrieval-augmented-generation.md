@@ -648,12 +648,10 @@ Whatever you choose, I recommend spending some time to establish a good test str
 
 ## Testing and monitoring the RAG pipeline
 
-Testing the RAG pattern involves multiple quality controls that you can apply.
+Testing the RAG pattern involves multiple quality controls that you can apply. [#s](#rag-evaluation-controls) shows the various aspects of the RAG pattern we discussed and the quality controls that are available. Let's go over each of the quality controls to understand how they work.
 
-{#rag-quality-assurance}
+{#rag-evaluation-controls}
 ![RAG pattern evaluation controls](rag-evaluation-controls.png)
-
-[#s](#rag-evaluation-controls) shows the various aspects of the RAG pattern we discussed and the quality controls that are available. Let's go over each of the quality controls to understand how they work.
 
 ### Evaluating and optimizing chunking quality
 
