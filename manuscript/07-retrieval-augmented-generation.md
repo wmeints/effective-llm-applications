@@ -655,13 +655,25 @@ Testing the RAG pattern involves multiple quality controls that you can apply.
 
 [#s](#rag-evaluation-controls) shows the various aspects of the RAG pattern we discussed and the quality controls that are available. Let's go over each of the quality controls to understand how they work.
 
-### 
+### Evaluating and optimizing chunking quality
 
-## Optimizing retrieval for RAG
+### Evaluating and optimizing embedding quality
+
+### Evaluating and optimizing prompt enrichment
+
+### Evaluating and optimizing search results
+
+### Evaluating and optimizing groundedness
 
 ## Variations on the RAG pattern
 
 - Using graphs for retrieval (graphrag: https://microsoft.github.io/graphrag/)
 - Reranking
+
+## Summary
+
+In this chapter we covered a lot around the RAG pattern, one of the first design patterns we'll discuss in the book. We talked about the components involved in the RAG pattern and how to implement an end-to-end RAG pattern. We also covered how to test various parts of the RAG pattern with a mix of unit-tests, manual tests, and model-based tests. Finally, we talked about about variations on the regular RAG pattern with including how you can use tools and a regular database to quickly find relevant information to base a response on.
+
+The next chapter we'll shift our focus towards using LLMs to generate structured output. It will be less involved than implementing a RAG pattern, I promise, but it will still be fun, and essential if you want to build more complicated workflows as we continue working towards chapter 9 and 10 of the book.
 
 [SAMPLE_SOURCE_1]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.RetrievalAugmentedGeneration/
