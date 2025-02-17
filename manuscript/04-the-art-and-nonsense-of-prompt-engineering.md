@@ -179,9 +179,9 @@ provided as context.
 <The employee question>
 ```
 
-You can consider the context heading in the prompt as samples that the model can use to generate a helpful response. Because of the talking parrot effect, the LLM will likely reproduce the content you provided.
+You can consider the context heading in the prompt as samples that the model can use to generate a helpful response. Because of the talking parrot effect, the LLM will likely reproduce the content you provided. The model is "learning" from information in the context. This is often called [in-context learning][INCONTEXT_LEARNING].
 
-If your sample is incorrect, vague, or non-existent, then the LLM can't match the pattern, and you'll get an answer that doesn't make much sense or is plain misleading. So it's essential to ensure you only inject safe and sensible information.
+If the information in the context is incorrect, vague, or non-existent, then the LLM can't match the pattern, and you'll get an answer that doesn't make much sense or is plain misleading. So it's essential to ensure you only inject safe and sensible information.
 
 Adding samples to a prompt helps establish a good pattern for the LLM. You'll see many people add examples of their desired results to a prompt. Adding examples to your prompt is called one-shot learning or few-shot learning if you add more than one example of the expected output. Let's look at an example to understand what that looks like:
 
@@ -841,3 +841,4 @@ Check out the samples for this chapter in the [Github repository][GH_SAMPLE_DIR]
 [OWASP_LLM]: https://owasp.org/www-project-top-10-for-large-language-model-applications/
 [MITRE]: https://atlas.mitre.org/matrices/ATLAS/
 [GH_SAMPLE_DIR]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/
+[INCONTEXT_LEARNING]: https://ai.stanford.edu/blog/understanding-incontext/
