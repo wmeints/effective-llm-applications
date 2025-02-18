@@ -513,7 +513,8 @@ I've made sure that the code for building a kernel function is available in the 
 
 Kernel functions are a nice step towards fully reusable prompts. But if you want to make your business logic more readable, there's one more step.
 
-{#yaml-based-prompts} ### Using YAML-based prompt configuration
+{#yaml-based-prompts} 
+### Using YAML-based prompt configuration
 
 As prompts come with additional settings, consider storing the prompt configuration with the prompt in a dedicated file. In Semantic Kernel, you can use YAML files. Let me demonstrate what the YAML format for a prompt looks like:
 
