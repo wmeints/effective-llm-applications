@@ -125,15 +125,15 @@ var kernelBuilder = Kernel.CreateBuilder()
         deploymentName: configuration["LanguageModel:DeploymentName"]!,
         endpoint: configuration["LanguageModel:Endpoint"]!,
         apiKey: configuration["LanguageModel:ApiKey"]!
-    );
+    );
 
 var kernel = kernelBuilder.Build();
 
 kernel.Plugins.AddFromFunctions("ghost_writer", [
     kernel.CreateFunctionFromPromptYaml(
         EmbeddedResource.Read("generate-outline.yml"), 
-        new HandlebarsPromptTemplateFactory()
-    )
+        new HandlebarsPromptTemplateFactory()
+    )
 ]);
 ```
 
