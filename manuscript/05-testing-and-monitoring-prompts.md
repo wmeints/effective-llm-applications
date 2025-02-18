@@ -134,6 +134,7 @@ Our sample covers just one test to validate that a prompt generates a useful res
 
 To validate the response's more complex properties, we'll use the LLM against itself. Let's look at how you can use model-based testing to validate the prompts' more complex properties.
 
+{#model-based-testing}
 ## Using model-based testing methods to validate prompts
 
 So far, we've only tested for simple patterns in the output. We've checked if the output contains specific keywords, and we could extend this to check for things like the number of items in a list or the number of words. But we can't check if instructions are consistent or if ingredients use the same kind of units of measurement.
