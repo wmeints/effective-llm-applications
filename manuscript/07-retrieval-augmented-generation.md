@@ -648,14 +648,66 @@ Whatever you choose, I recommend spending some time to establish a good test str
 
 ## Testing and monitoring the RAG pipeline
 
-Testing the RAG pattern involves multiple quality controls that you can apply. [#s](#rag-evaluation-controls) shows the various aspects of the RAG pattern we discussed and the quality controls that are available. Let's go over each of the quality controls to understand how they work.
+Testing the RAG pattern involves multiple quality controls that you can apply. [#s](#rag-evaluation-controls) shows the various aspects of the RAG pattern we discussed and the quality controls that are available to validate them.
 
 {#rag-evaluation-controls}
 ![RAG pattern evaluation controls](rag-evaluation-controls.png)
 
+Depending on what knowledge base you're working with you'll want different checks and balances to make sure that the RAG pipeline works and keeps workin in the future. Let's go over each of the quality controls to understand how they work.
+
 ### Evaluating and optimizing chunking quality
 
+One of the key factors that controls quality is the layout of the chunks. When a chunk contains the full answer to a question from a user you can expect the LLM to give you a high-quality response. In case you need to gather up information from multiple places in an document you want all the chunks make sense on their own. Each individual chunk doesn't need to provide the full answer, but at least you want them to give a useful description of part of the answer. If you're missing crucial information then the LLM has to make up for that and it will likely produce non-sensical answers.
+
+In my experience it's quite hard to apply automated testing to a problem like this because the model-based testing we discussed in [#s](#model-based-testing) doesn't quite work for validating if chunks make sense or not.
+
+My approach for validating chunk quality is to run the chunker and then pull up a random selection of chunks from the output to manually check them for problems. It's nearly impossible to go over all the chunks, but by validating a sample I can get a reasonable picture of the quality after chunking is complete.
+
+It's important to note here that if you want to get a sample from the output of the chunker, you're going to have to save the output somewhere. This is why I build the preprocessing job as a separate service in C# and store the intermediate results. This helps me with validating chunk quality as well as replayability of the preprocessing logic if something goes wrong.
+
+I'm not alone in my challenges with chunking strategies. [Stack Overflow][SO_BLOG] wrote about this challenge on their blog in 2024. They spend a lot of time trying various chunking strategies and ended up using a chunking approach that favors smaller chunks. They built a custom chunker that fits their data source well.
+
+Finding the right chunk size requires some experimentation so it's best to adopt an iterative approach here. I recommend also looking at the rest of the preprocessing such as the embeddings to find the best balance between chunking approach and the embedding model you use.
+
 ### Evaluating and optimizing embedding quality
+
+When it comes to generating embedding vectors for content there are a lot of options to choose from. First and foremost, you can choose between paid-for embedding models from OpenAI or you can use an open-source model. The only way to truly measure quality of embeddings is by writing an automated test suite for them.
+
+It takes a specific approach to testing embedding models. First, you'll need to come up with a good quality dataset containing document fragments and questions related to those fragments. You can create this dataset by grabbing monitoring data if you're already running in a test environment. You can also create a synthetic dataset for this.
+
+[#s](#qna-generation-process) shows an overview of a workflow to generate a synthetic QnA dataset for embedding validation. Let's go over the process to understand how you can implement this yourself.
+
+{#qna-generation-process}
+![Question and answer pair generation]()
+
+1. First, we'll chunk the original data with the chunker.
+2. Next, we take each chunk and generate question and answer pairs using a set of prompts.
+3. Finally, we store the questions and answers in the output dataset. Each pair gets a unique identifier to easily identify which fragment and question belong together.
+
+Let's take a look at one of the prompts for generating a question and answer pair:
+
+```text
+...
+```
+
+In this prompt we're asking the LLM to come up with true/false question and answer pairs. We're showing the LLM a few samples to help it generate the data structure we need.
+
+Make sure you store the question, answer, and the text fragment in the dataset. You'll need all three to properly validate the RAG implementation.
+
+It will take a bit of work to get the synthetic dataset, but it is well worth the effort because this dataset will not only help you choose the right embedding model, it will also help validate other properties of the RAG pattern implementation.
+
+Of course you need to manually check the output dataset, but it's a great starting point. You can replace this dataset with actual questions and answers from monitoring data or even combine real questions from production with the synthetic data.
+
+Once you have a dataset, you can run the validation workflow as shown in [#s](#embedding-validation-workflow).
+
+{#embedding-validation-workflow}
+![Embedding validation workflow](embedding-validation-workflow.png)
+
+In this workflow, we'll run the following steps:
+
+1. First, we take the data from the dataset we created and generate embedding vectors for the text fragments for each question/answer pair. We store those embeddings along with the identifier for each sample in the vector database.
+2. Next, we'll iterate over all the questions in the dataset and generate an embedding for each question. 
+3. Finally, we iterate over each embedded question, locate 5 entries in the vector database using cosine similarity search and then grade the results.
 
 ### Evaluating and optimizing prompt enrichment
 
@@ -675,3 +727,4 @@ In this chapter we covered a lot around the RAG pattern, one of the first design
 The next chapter we'll shift our focus towards using LLMs to generate structured output. It will be less involved than implementing a RAG pattern, I promise, but it will still be fun, and essential if you want to build more complicated workflows as we continue working towards chapter 9 and 10 of the book.
 
 [SAMPLE_SOURCE_1]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.RetrievalAugmentedGeneration/
+[SO_BLOG]: https://stackoverflow.blog/2024/12/27/breaking-up-is-hard-to-do-chunking-in-rag-applications/
