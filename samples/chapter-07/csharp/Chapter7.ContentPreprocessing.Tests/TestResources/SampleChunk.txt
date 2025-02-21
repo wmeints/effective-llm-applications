@@ -1,0 +1,35 @@
+﻿multi-agent teams, exploring how to coordinate multiple AI agents working together
+  with defined roles, communication protocols, and strategies for solving complex tasks.
+  Although the multi-agent pattern is still in its infancy, reading this chapter will
+  help you understand where current generative AI research is moving towards.
+
+## System requirements
+
+This book contains samples in C# to demonstrate various patterns. Please make sure you
+have the following tools available on your system:
+
+- [.NET SDK 9.0 or Higher](https://dot.net/)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) or a similar containerization tool.
+- [Visual Studio Code](https://code.visualstudio.com) or a similar code editing tool.
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) for working with Azure OpenAI.
+
+## Running the sample code in this book
+
+This book comes with samples on GitHub. You can find the repository at
+[https://github.com/wmeints/effective-llm-applications/](https://github.com/wmeints/effective-llm-applications/).
+You'll find the samples in the `samples` folder in the repository.
+
+Each sample comes with a README.md file that explains how to run the sample and the
+requirements for the sample. I've made sure you can run the sample with either Azure
+OpenAI or the regular OpenAI service when you follow the instrucitons in the included
+README.md file.
+
+As an added bonus, I've made sure to include samples for Java and Python too. So if you
+are reading this book but don't work with C#, you can still try out the samples.
+
+## Feedback and issues
+
+If you have any feedback or issues with the book, please create an issue in the [GitHub
+repository][BOOK_REPO]. I'll do my best to address the issue as soon as possible.
+
+[BOOK_REPO]: https://github.com/wmeints/effective-llm-applications/

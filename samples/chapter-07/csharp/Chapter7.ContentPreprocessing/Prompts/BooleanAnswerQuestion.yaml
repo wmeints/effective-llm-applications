@@ -1,0 +1,45 @@
+﻿name: generate_boolean_questions
+description: Generates boolean questions about a chunk of text.
+template: |
+  Help prepare true/false QnA pairs for a topic by extracting them from the given text.
+  Try to keep an even number of true statements and false statements.
+  Output must list the specified number of statements in JSON.
+
+  <|separator|>
+  Text:
+  <|text_start|>
+  LLMs are resource-intensive, both in terms of computing power and API costs. If you
+  don't need an LLM or can achieve the same result with a smaller model, I recommend doing
+  so. If you still decide to build an LLM-based application, I highly recommend monitoring
+  API usage and costs closely.
+  <|text_end|>
+  Output with 4 true/false QnA pairs:
+  <|separator|>
+  
+  [Q]: Are LLMs resource-intensive?
+  [A]: True
+  [Q]: Do you have to use an LLM all the time?
+  [A]: False
+  [Q]: Is it recommended to monitor API usage and costs closely?
+  [A]: True
+  [Q]: Are LLMs always the cheapest option?
+  [A]: False
+  <|separator|>
+  
+  Text:
+  <|text_start|>
+  {{context}}
+  <|text_end|>
+  Output with {{count}} true/false QnA pairs:  
+template_format: handlebars
+input_variables:
+  - name: context
+    description: The topic to generate QnA pairs for.
+    is_required: true
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 1200
