@@ -22,8 +22,10 @@ var logger = loggerFactory.CreateLogger<Program>();
 var chunkingProcessStep = new ChunkingProcessStep(logger);
 var createValidationDatasetProcessStep = new CreateValidationDatasetProcessStep(configuration, logger);
 var importChunksProcessStep = new ImportChunksProcessStep(configuration, logger);
+var validateEmbeddingProcessStep = new ValidateEmbeddingsProcessStep(configuration, logger);
 
 // await chunkingProcessStep.ProcessAsync("Content");
 // await createValidationDatasetProcessStep.ProcessAsync("Content");
+// await importChunksProcessStep.ProcessAsync("Content");
 
-await importChunksProcessStep.ProcessAsync("Content");
+await validateEmbeddingProcessStep.ProcessAsync("Content");

@@ -1,8 +1,11 @@
-﻿using System.Security.Cryptography;
+﻿using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Chapter7.ContentPreprocessing.QuestionGenerators;
 using Chapter7.ContentPreprocessing.Shared;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -16,7 +19,7 @@ public class CreateValidationDatasetProcessStep
     public CreateValidationDatasetProcessStep(IConfiguration configuration, ILogger logger)
     {
         _logger = logger;
-        
+
         var kernel = KernelFactory.CreateKernel(configuration);
 
         _questionGenerators =
@@ -43,25 +46,29 @@ public class CreateValidationDatasetProcessStep
                 _logger.LogWarning("Fragment {ChunkFile} could not be processed.", chunkFile);
                 continue;
             }
-            
+
             var questionAnswerPairs = await GenerateQuestionAnswerPairs(textUnit).ToListAsync();
-            
+
             _logger.LogInformation("Done generating samples for chunk {ChunkFile}.", chunkFile);
-            
+
             var validationRecords = questionAnswerPairs.Select(x => new ValidationDataRecord
             {
                 Id = GenerateHash(textUnit.Content),
-                OriginalFileName = textUnit.OriginalFileName,
                 FragmentId = textUnit.Id,
                 Answer = x.Answer,
                 Question = x.Question
             });
-            
+
             generatedValidationRecords.AddRange(validationRecords);
         }
 
-        await using var outputStream = File.OpenWrite(Path.Join(baseDirectory, "validation-dataset.json"));
-        await JsonSerializer.SerializeAsync(outputStream, generatedValidationRecords);
+        using var outputWriter = new StreamWriter(File.OpenWrite(Path.Join(baseDirectory, "validation-data.csv")));
+        using var csv = new CsvWriter(outputWriter, new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            NewLine = Environment.NewLine
+        });
+
+        csv.WriteRecords(generatedValidationRecords);
     }
 
     private async IAsyncEnumerable<QuestionAnswerPair> GenerateQuestionAnswerPairs(TextChunk textChunk)

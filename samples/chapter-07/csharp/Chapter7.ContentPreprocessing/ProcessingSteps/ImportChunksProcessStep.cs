@@ -18,13 +18,9 @@ public class ImportChunksProcessStep
 
     public ImportChunksProcessStep(IConfiguration configuration, ILogger logger)
     {
-        var vectorStoreConfiguration = configuration
-            .GetSection("VectorStore").Get<VectorStoreConfiguration>();
-        
         _kernel = KernelFactory.CreateKernel(configuration);
+        _vectorStore = VectorStoreFactory.CreateVectorStore(configuration);
         _logger = logger;
-
-        _vectorStore = new QdrantVectorStore(new QdrantClient(vectorStoreConfiguration!.HostName));
     }
 
     public async Task ProcessAsync(string baseDirectory)
@@ -33,12 +29,12 @@ public class ImportChunksProcessStep
         var collection = _vectorStore.GetCollection<ulong, TextUnit>("content");
 
         await collection.CreateCollectionIfNotExistsAsync();
-        
+
         var chunksDirectory = Path.Join(baseDirectory, "chunks");
         var chunkFiles = Directory.GetFiles(chunksDirectory, "*.json");
 
         ulong generatedId = 0L;
-        
+
         foreach (var chunkFile in chunkFiles)
         {
             await using var inputStream = File.OpenRead(chunkFile);
@@ -62,7 +58,7 @@ public class ImportChunksProcessStep
             };
 
             await collection.UpsertAsync(textUnit);
-            
+
             _logger.LogInformation("Imported chunk {ChunkFile}.", chunkFile);
         }
     }
