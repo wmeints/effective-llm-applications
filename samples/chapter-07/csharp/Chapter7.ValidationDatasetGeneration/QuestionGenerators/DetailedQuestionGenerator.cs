@@ -7,9 +7,9 @@ using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 
 namespace Chapter7.ContentPreprocessing.QuestionGenerators;
 
-public class DetailedQuestionGenerator(Kernel kernel): IQuestionGenerator
+public class DetailedQuestionGenerator(Kernel kernel) : IQuestionGenerator
 {
-    private KernelFunction _prompt =  kernel.CreateFunctionFromPromptYaml(
+    private KernelFunction _prompt = kernel.CreateFunctionFromPromptYaml(
         EmbeddedResource.Read("Prompts.LongAnswerQuestion.yaml"), new HandlebarsPromptTemplateFactory());
 
     public async IAsyncEnumerable<QuestionAnswerPair> GenerateQuestionsAsync(string content, int numberOfQuestions)
@@ -27,8 +27,8 @@ public class DetailedQuestionGenerator(Kernel kernel): IQuestionGenerator
 
         var responseData = JsonSerializer.Deserialize<QuestionGeneratorResult>(
             promptExecution.GetValue<string>()!);
-        
-        foreach(var item in responseData!.QuestionAnswerPairs)
+
+        foreach (var item in responseData!.QuestionAnswerPairs)
         {
             yield return item;
         }

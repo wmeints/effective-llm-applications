@@ -15,7 +15,7 @@ public class ChunkingProcessStep
     {
         _logger = logger;
     }
-    
+
     public async Task ProcessAsync(string baseDirectory)
     {
         var inputDirectory = Path.Join(baseDirectory, "input");
@@ -38,11 +38,11 @@ public class ChunkingProcessStep
         foreach (var filePath in sourceFiles)
         {
             _logger.LogInformation("Chunking {FilePath}", filePath);
-            
+
             var sourceLines = await File.ReadAllLinesAsync(filePath);
 
             var chunks = TextChunker.SplitMarkdownParagraphs(sourceLines,
-                maxTokensPerParagraph: 1000, overlapTokens: 200);
+                maxTokensPerParagraph: 500, overlapTokens: 0);
 
             var textUnits = chunks.Select(chunkContent => new TextChunk(
                 GenerateHash(chunkContent), chunkContent,
@@ -53,7 +53,7 @@ public class ChunkingProcessStep
                 await using var outputStream = File.OpenWrite(Path.Join(chunkDirectory, $"{textUnit.Id}.json"));
                 await JsonSerializer.SerializeAsync(outputStream, textUnit);
             }
-            
+
             _logger.LogInformation("Chunked {FilePath} into {ChunkCount} chunks", filePath, textUnits.Count);
         }
     }
