@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter7.ChatWithRetrieval"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter7.ValidationDatasetGeneration", "Chapter7.ValidationDatasetGeneration\Chapter7.ValidationDatasetGeneration.csproj", "{C9E12702-93BD-4262-8239-FDAF8414E958}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter7.TestSampleGeneration", "Chapter7.TestSampleGeneration\Chapter7.TestSampleGeneration.csproj", "{76C4222A-A6EE-41EF-B8E8-967299BD9161}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{C9E12702-93BD-4262-8239-FDAF8414E958}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9E12702-93BD-4262-8239-FDAF8414E958}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9E12702-93BD-4262-8239-FDAF8414E958}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76C4222A-A6EE-41EF-B8E8-967299BD9161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76C4222A-A6EE-41EF-B8E8-967299BD9161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76C4222A-A6EE-41EF-B8E8-967299BD9161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76C4222A-A6EE-41EF-B8E8-967299BD9161}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

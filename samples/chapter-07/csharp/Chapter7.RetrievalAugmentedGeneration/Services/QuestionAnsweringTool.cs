@@ -10,7 +10,7 @@ public class QuestionAnsweringTool(
     Kernel kernel, IVectorStore vectorStore,
     ITextEmbeddingGenerationService embeddingGenerator)
 {
-    public async Task<string> AnswerAsync(string question)
+    public async Task<QuestionAnsweringToolResult> AnswerAsync(string question)
     {
         var promptTemplateContent = File.ReadAllText("Prompts/answer-question.yaml");
 
@@ -34,8 +34,6 @@ public class QuestionAnsweringTool(
 
         await foreach (var fragment in searchResponse.Results)
         {
-            Console.WriteLine(fragment.Record.Content);
-
             fragments.Add(fragment.Record);
         }
 
@@ -45,6 +43,10 @@ public class QuestionAnsweringTool(
             ["fragments"] = fragments
         });
 
-        return response.GetValue<string>()!;
+        return new QuestionAnsweringToolResult
+        {
+            Response = response.GetValue<string>()!,
+            Context = fragments
+        };
     }
 }

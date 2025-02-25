@@ -29,7 +29,8 @@ var app = builder.Build();
 
 app.MapGet("/answer", async ([FromServices] QuestionAnsweringTool tool, [FromQuery] string question) =>
 {
-    return await tool.AnswerAsync(question);
+    var result = await tool.AnswerAsync(question);
+    return result.Response;
 });
 
 var scope = app.Services.CreateScope();
