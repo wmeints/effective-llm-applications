@@ -1,0 +1,32 @@
+name: answer_question
+description: Answers a question about the content of the book effective llm-based applications.
+template: |
+  You're a helpful assistant supporting me by answering questions about the book
+  building effective llm-based applications with semantic kernel. Answer the question
+  using the provided context. If you don't know the answer, say so, don't make up 
+  answers.
+
+  ## Context
+
+  {{#each fragments}}
+  {{ .Content }}
+  {{/each}}
+
+  ## Question
+
+  {{question}}
+template_format: handlebars
+input_variables:
+  - name: fragments
+    description: The topic you want to discuss in the blogpost.
+    is_required: true
+  - name: question
+    description: The question you want to ask about the topic.
+    is_required: true  
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 1200

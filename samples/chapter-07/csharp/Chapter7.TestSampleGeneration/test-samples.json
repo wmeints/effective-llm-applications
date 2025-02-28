@@ -1,0 +1,127 @@
+[
+  {
+    "Question": "How does a vector database store content in a usable format?",
+    "Answer": "A vector database stores content in a usable format by translating the content into **embedding vectors** that represent the semantic meaning of the content. These embedding vectors are generated using an embedding model, such as OpenAI\u0027s \u0060text-embedding-v3-small\u0060. Each embedding vector is a numerical representation of the text, with dimensions determined by the embedding model (e.g., 1536 dimensions for the mentioned model).\n\nOnce the embedding vector is created, it is stored in the vector database along with the original content and metadata. During retrieval, the vector database compares the embedding vector of a query (created using the same embedding model) with the stored embedding vectors. The database uses **cosine similarity** to measure how closely the query vector aligns with the stored vectors, allowing it to return the most semantically similar content.\n\nThis method is robust because it enables the system to handle spelling mistakes, synonyms, or different phrasing while still finding relevant content.",
+    "Context": ""
+  },
+  {
+    "Question": "What format of files is processed by the \u0027ContentIndexer\u0027 class?",
+    "Answer": "The \u0060ContentIndexer\u0060 class processes markdown (\u0060.md\u0060) files. It specifically lists all markdown files in the \u0060Content\u0060 directory using the following line of code:\n\n\u0060\u0060\u0060csharp\nvar files = Directory.GetFiles(\u0022Content\u0022, \u0022*.md\u0022, SearchOption.AllDirectories);\n\u0060\u0060\u0060",
+    "Context": ""
+  },
+  {
+    "Question": "What testing approach does this code use for varying input?",
+    "Answer": "The testing approach used in the code for varying input is **data-driven testing**. This is evident from the use of the \u0060[Theory]\u0060 attribute and \u0060[InlineData(...)]\u0060 in the test method. Data-driven testing allows you to run the same test logic with different input samples, enabling you to validate the behavior of the application across a variety of scenarios.\n\nFor example, in the test method \u0060TestGenerateRecipe_ContainsInstructions\u0060, the test is executed for each set of input data provided via \u0060[InlineData(\u0022pizza\u0022, new string[] { \u0022spinach\u0022, \u0022mozzarella\u0022 })]\u0060. The method takes the dish name and a list of ingredients as inputs, runs the prompt with these inputs, and asserts the expected conditions. This approach allows the test to be parameterized and reused for different input cases.",
+    "Context": ""
+  },
+  {
+    "Question": "What does \u0027Retrieval Augmented Generation\u0027 aim to provide?",
+    "Answer": "Retrieval Augmented Generation (RAG) aims to provide a mechanism for using external information as additional context when generating responses to prompts. It allows the application to answer questions or provide information that is not part of the LLM\u0027s pre-trained knowledge by retrieving relevant content from external sources (e.g., documents, databases) and incorporating it into the response. This approach ensures more accurate and contextually relevant answers, particularly for domain-specific or up-to-date information.",
+    "Context": ""
+  },
+  {
+    "Question": "What are the advantages of testing LLM outputs using sets of samples from files like CSV?",
+    "Answer": "The advantages of testing LLM outputs using sets of samples from files like CSV include:\n\n1. **Reproducibility**: By using predefined sets of inputs and expected outputs stored in files like CSV, you can consistently reproduce tests across different runs, ensuring that the testing process is reliable and repeatable.\n\n2. **Scalability**: Testing with a batch of samples allows you to evaluate the LLM\u0027s performance on a larger dataset, providing a broader understanding of how it performs across various scenarios.\n\n3. **Majority Voting for Validation**: As mentioned in the context, one effective strategy is running multiple samples through the application and using a majority vote to determine if the LLM\u0027s output is correct. Using CSV files simplifies managing and aggregating these samples.\n\n4. **Structured Data Storage**: CSV files provide a structured format to store inputs, expected outputs, and other metadata (e.g., test case names, categories, or metrics). This organization makes it easier to analyze and refine test cases.\n\n5. **Ease of Integration**: CSV files can be easily integrated into automated testing pipelines or frameworks. They allow for straightforward data ingestion and processing with programming languages or testing tools.\n\n6. **Coverage and Diversity**: By curating diverse samples in a CSV file, you can ensure that your test set covers a wide range of inputs, edge cases, and potential failure points, which helps evaluate the robustness of your LLM-based application.\n\n7. **Facilitates Iterative Improvement**: Collecting and storing test results alongside inputs in CSV files can help identify patterns in failures, enabling iterative improvements to prompts, model configurations, or application logic.\n\n8. **Collaborative Testing**: CSV files are easy to share among team members or stakeholders, allowing for collaborative development and review of test cases.\n\nOverall, using CSV files as a source for testing LLM outputs provides a practical, organized, and scalable way to validate the application\u0027s performance and identify areas for improvement.",
+    "Context": ""
+  },
+  {
+    "Question": "Does adding samples to a prompt help establish a good pattern for the LLM?",
+    "Answer": "Yes, adding samples to a prompt helps establish a good pattern for the LLM. This technique, referred to as one-shot learning (adding one example) or few-shot learning (adding more than one example), provides the model with a clear structure and style to follow. By including examples of the desired output, you help the LLM match the pattern and produce responses that align with your expectations. For instance, in the provided context, adding a JSON example for the apple pie recipe resulted in the LLM generating a response in the same format, demonstrating how effective this approach can be.",
+    "Context": ""
+  },
+  {
+    "Question": "Do LLMs work equally well with unclear input patterns?",
+    "Answer": "No, LLMs do not work equally well with unclear input patterns. According to the context provided, LLMs excel at tasks that involve clearly defined input patterns and target structures. The less clear the problem statement or input pattern is, the more issues you are likely to experience. This is because LLMs function as powerful pattern-matching engines, and their effectiveness depends on how well the input aligns with recognizable patterns.",
+    "Context": ""
+  },
+  {
+    "Question": "What method is called to create an IKernelBuilder?",
+    "Answer": "The method called to create an \u0060IKernelBuilder\u0060 is:\n\n\u0060\u0060\u0060csharp\nKernel.CreateBuilder()\n\u0060\u0060\u0060\n\nThis method initializes and returns an instance of \u0060IKernelBuilder\u0060 that you can use to configure the kernel\u0027s functions, filters, and LLM provider.",
+    "Context": ""
+  },
+  {
+    "Question": "What do Handlebars templates use to represent variables?",
+    "Answer": "In Handlebars templates, variables are represented using \u0060{{ variable_name }}\u0060.",
+    "Context": ""
+  },
+  {
+    "Question": "What tools and resources are recommended for setting up a Semantic Kernel development environment?",
+    "Answer": "To set up a Semantic Kernel development environment, the following tools and resources are recommended:\n\n1. **.NET SDK**:\n   - [.NET 9.0 SDK or later](https://dotnet.microsoft.com/download/dotnet/9.0)\n\n2. **IDE (Integrated Development Environment)**:\n   - [Visual Studio Code](https://code.visualstudio.com)\n   - [Rider 2024.3](https://www.jetbrains.com/rider/)\n   - [Visual Studio 2022](https://visualstudio.microsoft.com/)\n\n3. **Access to an LLM Provider**:\n   - [OpenAI API](https://openai.com/api/) or [Azure OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource?pivots=web-portal)\n\n4. **Azure CLI (if using Azure OpenAI)**:\n   - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)\n\nThese tools and resources will allow you to effectively develop applications using the Semantic Kernel framework.",
+    "Context": ""
+  },
+  {
+    "Question": "What is the purpose of adding a function through the dependency injection container in the context described?",
+    "Answer": "The purpose of adding a function through the dependency injection container in the described context is to allow the kernel to automatically locate and provide the required dependencies for the function. This approach is especially useful when a plugin function depends on external resources, such as databases or other services. By using dependency injection, you ensure that these dependencies are properly configured and made available to the function, streamlining the process of managing external dependencies in your application.",
+    "Context": ""
+  },
+  {
+    "Question": "What is the main topic of Chapter 9?",
+    "Answer": "The main topic of Chapter 9 is **\u0022using LLMs to generate structured output.\u0022**",
+    "Context": ""
+  },
+  {
+    "Question": "Does the text detail configuring algorithms using parameters such as \u0027temperature\u0027 and \u0027frequency_penalty\u0027?",
+    "Answer": "Yes, the text provides details about configuring algorithms using parameters such as \u0027temperature\u0027 and \u0027frequency_penalty\u0027. It explains how the \u0027temperature\u0027 parameter controls the shape of the probability distribution for token sampling, affecting creativity and determinism in the output. It also describes the \u0027frequency_penalty\u0027 parameter, which reduces the probability of tokens that frequently appear in the output, promoting diversity in responses. The text includes guidance on how to set these parameters depending on the task, such as coding, content creation, or general-purpose tasks.",
+    "Context": ""
+  },
+  {
+    "Question": "What measures are suggested for developers to protect users from the harmful content generated by an LLM?",
+    "Answer": "To protect users from harmful content generated by an LLM, the following measures are suggested in the provided context:\n\n1. **Output Sanitation**:  \n   Developers should apply output sanitation to detect and filter out malicious or harmful content generated by the LLM.\n\n2. **Content Moderation Tools**:  \n   Utilize tools offered by cloud providers to detect and filter harmful content:\n   - **Azure AI Content Safety**\n   - **Google Text Moderation**\n   - **AWS Content Moderation**\n\n3. **Adopt a Security-First Mindset**:  \n   Developers are encouraged to adopt a security-first approach to proactively consider and mitigate risks associated with harmful content.\n\n4. **Understand the LLM\u0027s Limitations**:  \n   Recognize that LLMs can generate harmful content because they are trained on large datasets that may include harmful data. This means that issues like hallucinations or parroting harmful content are inherent to the model\u0027s design.\n\nBy integrating these measures, developers can help safeguard users from harmful or misleading content generated by LLMs.",
+    "Context": ""
+  },
+  {
+    "Question": "What is the purpose of the method outlined in the text?",
+    "Answer": "The purpose of the method outlined in the text is to **validate and test the quality of a Retrieval-Augmented Generation (RAG) pipeline**. Specifically, it details a practical approach to evaluating the faithfulness and correctness of the responses generated by an LLM-based application that uses RAG. The method aims to ensure that the LLM provides accurate, consistent, and contextually relevant answers based on the source documents. \n\nThis is achieved through a series of steps:\n\n1. **Generating a validation dataset**: The dataset includes questions, answers, and the context used, allowing for systematic testing.\n2. **Generating test samples**: Using the RAG pipeline to produce outputs for the validation dataset and storing the results for further evaluation.\n3. **Measuring faithfulness**: Using tools like the Ragas library to quantitatively assess how well the LLM\u0027s outputs align with the source documents.\n4. **Using model-based testing**: Leveraging the LLM itself to evaluate more complex properties of the responses, like consistency, coherence, and logical correctness, by scoring them against specific metrics using structured test prompts.\n\nThe method emphasizes testing both simple and complex properties of the pipeline to ensure the highest possible quality of the LLM\u0027s responses, aiming for a balance between faithfulness to the source and usability of the output.",
+    "Context": ""
+  },
+  {
+    "Question": "What purpose does a \u0027System\u0027 message serve in a chat history?",
+    "Answer": "A \u0027System\u0027 message in a chat history serves the purpose of providing system-level instructions to guide the behavior of the language model (LLM). These instructions are not visible to the user and are typically used to define the application\u0027s goal, set the communication style, or specify things that the LLM should avoid in its responses. For example, a system message can instruct the LLM to act as a certain persona (e.g., a \u0022digital chef\u0022 named Flora) or ensure that responses align with the intended context or tone of the application.",
+    "Context": ""
+  },
+  {
+    "Question": "What is the context window in LLMs?",
+    "Answer": "The context window in LLMs refers to the amount of text (input and output) that a model can consider at once. It acts as the model\u0027s \u0022short-term memory.\u0022 The size of the context window varies depending on the model, and it determines how much text can be processed in a single interaction.\n\nModern commercial models typically support larger context windows, with ranges around **100K-250K input tokens** and approximately **4K output tokens**, which translates to roughly 100K words on average (equivalent to the size of a full book). Open-source models generally have smaller context windows due to limitations in the number of parameters in their neural networks.\n\nEffectively managing the context window is crucial when building LLM-based applications, as exceeding the window\u0027s limits can lead to truncated inputs or outputs.",
+    "Context": ""
+  },
+  {
+    "Question": "What main factor limits the use of open-source LLMs at home?",
+    "Answer": "The main factor limiting the use of open-source LLMs at home is the **need for sufficient technical expertise and hardware resources**, particularly a powerful GPU. For example, running models like Meta\u0027s LLaMA on your own machine requires a capable GPU, such as an RTX 4080.",
+    "Context": ""
+  },
+  {
+    "Question": "What is a prompt-based kernel function?",
+    "Answer": "A **prompt-based kernel function** in Semantic Kernel is a reusable C# function that is created from a prompt template. The purpose of these kernel functions is to encapsulate the logic of the prompt into a callable programmatic function, making it easier to reuse, version, and integrate into your application. \n\nInstead of invoking a prompt directly, you can compile it into a kernel function, store it in your program logic, and use it repeatedly across different parts of your application. \n\nHere are the key steps to create a prompt-based kernel function:\n\n1. **Load the Prompt Template**: The prompt is typically written in a file (e.g., \u0060prompt.txt\u0060) and loaded into the program.\n2. **Set Execution Settings**: Specify parameters like \u0060MaxTokens\u0060, \u0060Temperature\u0060, and others that control the behavior of the LLM.\n3. **Compile the Prompt into a Kernel Function**: Use the \u0060CreateFunctionFromPrompt\u0060 method to turn the prompt into a kernel function. This step includes defining the template, choosing a templating language (e.g., Handlebars, Semantic Kernel Templates, YAML), and passing the execution settings.\n4. **Invoke the Kernel Function**: Use the \u0060InvokeAsync\u0060 method to execute the function, passing the required arguments.\n\n### Example Code\nThe following example demonstrates creating and invoking a kernel function from a prompt:\n\n\u0060\u0060\u0060csharp\nvar promptTemplate = File.ReadAllText(\n    Path.Join(Directory.GetCurrentDirectory(), \u0022prompt.txt\u0022)\n);\n\nvar executionSettings = new AzureOpenAIPromptExecutionSettings\n{\n    MaxTokens = 1200,\n    Temperature = 0.5,\n    TopP = 1.0,\n    FrequencyPenalty = 0.0,\n    PresencePenalty = 0.0\n};\n\nvar prompt = kernel.CreateFunctionFromPrompt(\n    promptTemplate, templateFormat: \u0022handlebars\u0022,\n    promptTemplateFactory: new HandlebarsPromptTemplateFactory(),\n    executionSettings: executionSettings);\n\nvar result = await kernel.InvokeAsync(prompt, new KernelArguments\n{\n\u00A0 \u00A0 [\u0022dish\u0022] = \u0022pizza\u0022,\n\u00A0 \u00A0 [\u0022ingredients\u0022] = new List\u003Cstring\u003E\n\u00A0 \u00A0 {\n\u00A0 \u00A0 \u00A0 \u00A0 \u0022pepperoni\u0022,\n\u00A0 \u00A0 \u00A0 \u00A0 \u0022mozzarella\u0022,\n\u00A0 \u00A0 \u00A0 \u00A0 \u0022spinach\u0022\n\u00A0 \u00A0 }\n});\n\u0060\u0060\u0060\n\n### Benefits of Prompt-Based Kernel Functions\n- **Reusability**: Prompts are compiled into functions that can be reused across different parts of your application.\n- **Version Control**: Prompt templates can be stored in source control for easy versioning.\n- **Encapsulation**: Business logic becomes more readable and maintainable by encapsulating prompts into functions.\n- **Flexibility**: These functions allow you to integrate dynamic arguments and execution settings easily.\n\nIn summary, a prompt-based kernel function is a way to turn a prompt into a reusable, maintainable, and callable function in your application logic, enhancing the scalability and manageability of LLM-based workflows.",
+    "Context": ""
+  },
+  {
+    "Question": "Is it mandatory to define dependencies to create basic helpers?",
+    "Answer": "No, it is not mandatory to define dependencies to create basic helpers. According to the provided context, dependencies only need to be defined if you want to go beyond basic helpers to execute more complex function logic. For basic helpers, you can implement the functionality without injecting dependencies.",
+    "Context": ""
+  },
+  {
+    "Question": "What is noted about Google\u2019s PaLM API and Gemini models?",
+    "Answer": "The book notes the following about Google\u2019s PaLM API and Gemini models:\n\n- **Google\u2019s PaLM API and Gemini models** are described as interesting contenders in the LLM landscape, though the author has not had much personal experience with them.\n- They are considered great options if you are already in the Google ecosystem, with relatively easy configuration through their portal.\n- The documentation provided by Google for these models is noted as particularly developer-friendly.\n\nRegarding the Gemini models specifically:\n- **Gemini 1.5 Pro** is described as a powerful general-purpose model, focusing on reasoning tasks. It works well for tasks requiring output with specific constraints but is less suitable for generating creative content like blog posts or marketing materials.\n- **Gemini 2.0 Flash** is highlighted as the fastest model offered by Google. It is suitable for applications needing speed and basic question-answering capabilities but offers fewer reasoning capabilities compared to Gemini 1.5 Pro.\n\nThe book also mentions that the Gemini models are trained with a focus on instruction and constraint-solving tasks, scoring lower on creative writing and coding tasks.",
+    "Context": ""
+  },
+  {
+    "Question": "Do LLMOps tools evolve rapidly?",
+    "Answer": "Yes, LLMOps tools evolve rapidly. The provided context explicitly mentions that \u0022tools are evolving quickly,\u0022 and it notes that you will \u0022likely switch one or two times to a newer tool the following year.\u0022 This highlights the fast-paced evolution of these tools and the importance of selecting ones that allow for easy migration.",
+    "Context": ""
+  },
+  {
+    "Question": "What topic will be explored in the next chapter?",
+    "Answer": "The next chapter will explore expanding the basic LLM functionality with custom tools.",
+    "Context": ""
+  },
+  {
+    "Question": "What misconception about prompts is briefly mentioned in the text?",
+    "Answer": "The misconception briefly mentioned in the text is that **prompts are static**. The text explains that while prompts can be reused over time, they may break or produce different results as LLMs are updated or retrained.",
+    "Context": ""
+  },
+  {
+    "Question": "Where can you find sample code for extraction prompts?",
+    "Answer": "The context provided does not mention any specific sample code for extraction prompts. If you are looking for related examples, you might want to explore the [GitHub repository][GH_SAMPLE_DIR], as it contains samples for various topics discussed in the book. However, for extraction prompts specifically, the context does not provide explicit information or a direct reference.",
+    "Context": ""
+  }
+]
