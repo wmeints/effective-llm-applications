@@ -3,7 +3,7 @@ using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel.Connectors.Qdrant;
 using Qdrant.Client;
 
-namespace Chapter7.ContentPreprocessing.Shared;
+namespace Chapter7.ValidationDatasetGeneration.Shared;
 
 public class VectorStoreFactory
 {

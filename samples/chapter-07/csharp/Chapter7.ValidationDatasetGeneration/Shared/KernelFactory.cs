@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 
-namespace Chapter7.ContentPreprocessing.Shared;
+namespace Chapter7.ValidationDatasetGeneration.Shared;
 
 public class KernelFactory
 {
@@ -17,15 +17,15 @@ public class KernelFactory
                 "Can't find configuration for the language model. " +
                 "Please make sure you configured the required user-secrets");
         }
-        
+
         var kernel = Kernel.CreateBuilder()
             .AddAzureOpenAIChatCompletion(
-                deploymentName: languageModelConfig.ChatCompletionModel, 
+                deploymentName: languageModelConfig.ChatCompletionModel,
                 endpoint: languageModelConfig.Endpoint,
                 apiKey: languageModelConfig.ApiKey
             )
             .AddAzureOpenAITextEmbeddingGeneration(
-                deploymentName: languageModelConfig.TextEmbeddingModel, 
+                deploymentName: languageModelConfig.TextEmbeddingModel,
                 endpoint: languageModelConfig.Endpoint,
                 apiKey: languageModelConfig.ApiKey
             )

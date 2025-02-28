@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Chapter7.ContentPreprocessing.Shared;
+using Chapter7.ValidationDatasetGeneration.Shared;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.Text;
 

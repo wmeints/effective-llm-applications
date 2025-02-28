@@ -1,4 +1,4 @@
-﻿namespace Chapter7.ContentPreprocessing.Shared;
+﻿namespace Chapter7.ValidationDatasetGeneration.ProcessingSteps;
 
 public class ValidationDataRecord
 {

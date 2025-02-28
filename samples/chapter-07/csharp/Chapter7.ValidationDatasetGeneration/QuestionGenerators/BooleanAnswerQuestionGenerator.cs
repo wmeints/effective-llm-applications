@@ -1,36 +1,16 @@
-﻿using System.Text.Json;
-using Chapter7.ContentPreprocessing.ProcessingSteps;
-using Chapter7.ContentPreprocessing.Shared;
+﻿using Chapter7.ValidationDatasetGeneration.Shared;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 
-namespace Chapter7.ContentPreprocessing.QuestionGenerators;
+namespace Chapter7.ValidationDatasetGeneration.QuestionGenerators;
 
-public class BooleanAnswerQuestionGenerator(Kernel kernel): IQuestionGenerator
+public class BooleanAnswerQuestionGenerator(Kernel kernel, ILogger logger) : QuestionGeneratorBase(kernel, logger)
 {
-    private KernelFunction _prompt =  kernel.CreateFunctionFromPromptYaml(
-        EmbeddedResource.Read("Prompts.BooleanAnswerQuestion.yaml"), new HandlebarsPromptTemplateFactory());
-
-    public async IAsyncEnumerable<QuestionAnswerPair> GenerateQuestionsAsync(string content, int numberOfQuestions)
+    protected override KernelFunction GetPromptTemplate(Kernel kernel)
     {
-        var promptExecutionSettings = new OpenAIPromptExecutionSettings
-        {
-            ResponseFormat = typeof(QuestionGeneratorResult)
-        };
-
-        var promptExecution = await _prompt.InvokeAsync(kernel, new KernelArguments(promptExecutionSettings)
-        {
-            ["context"] = content,
-            ["count"] = numberOfQuestions
-        });
-
-        var responseData = JsonSerializer.Deserialize<QuestionGeneratorResult>(
-            promptExecution.GetValue<string>()!);
-        
-        foreach(var item in responseData.QuestionAnswerPairs)
-        {
-            yield return item;
-        }
+        return kernel.CreateFunctionFromPromptYaml(
+            EmbeddedResource.Read("Prompts.BooleanAnswerQuestion.yaml"),
+            new HandlebarsPromptTemplateFactory());
     }
 }

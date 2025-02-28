@@ -3,13 +3,14 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Chapter7.ContentPreprocessing.QuestionGenerators;
-using Chapter7.ContentPreprocessing.Shared;
+using Chapter7.ValidationDatasetGeneration.QuestionGenerators;
+using Chapter7.ValidationDatasetGeneration.Shared;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Chapter7.ContentPreprocessing.ProcessingSteps;
+namespace Chapter7.ValidationDatasetGeneration.ProcessingSteps;
 
 public class CreateValidationDatasetProcessStep
 {
@@ -24,9 +25,9 @@ public class CreateValidationDatasetProcessStep
 
         _questionGenerators =
         [
-            new ShortAnswerQuestionGenerator(kernel),
-            new DetailedQuestionGenerator(kernel),
-            new BooleanAnswerQuestionGenerator(kernel)
+            new ShortAnswerQuestionGenerator(kernel, logger),
+            new DetailedQuestionGenerator(kernel, logger),
+            new BooleanAnswerQuestionGenerator(kernel, logger)
         ];
     }
 
