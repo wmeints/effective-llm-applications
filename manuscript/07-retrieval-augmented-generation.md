@@ -3,14 +3,14 @@
 
 In previous chapters, we focused on learning the basic building blocks of an LLM-based application. We covered the basics of LLMs, prompting, testing, and using tools. Now, it's time to move on to more advanced topics. In this chapter and the ones after it, we'll focus on common patterns you can use to build more elaborate LLM-based applications. We'll use the knowledge learned in previous chapters to help implement the patterns.
 
-In this chapter, you'll learn how to use Retrieval Augmented Generation to answer questions based on internal knowledge that has not previously been trained in the LLM. You'll learn how to index documents for retrieval and use indexed Content in the LLMs response.
+In this chapter, you'll learn how to use Retrieval Augmented Generation to answer questions based on internal knowledge that has not previously been trained in the LLM. You'll learn how to index documents for retrieval and use indexed content in the LLMs response.
 
 We'll cover the following topics:
 
 - What is Retrieval Augmented Generation (RAG)
 - Building an end-to-end RAG pipeline with Semantic Kernel
 - A practical approach to validating the RAG pipeline
-- Evaluating the RAG pattern with user research sessions
+- Evaluating the RAG pattern with user research
 - Variations on the RAG pattern
 
 Let's start by discussing Retrieval Augmented Generation (RAG) and learning what components are involved in this pattern.
@@ -26,8 +26,8 @@ The RAG pattern is a form of in-context learning we discussed in [#s](#few-shot-
 
 The RAG pattern has two main components:
 
-1. the retrieval portion is responsible for finding relevant information based on the entered prompt.
-2. Next, there's the generation portion, responsible for generating the final response to the prompt.
+1. The retrieval portion is responsible for finding relevant information based on the entered prompt.
+2. The generation portion is responsible for generating the final response to the prompt.
 
 The basics of the RAG pattern aren't overly involved, but you can find many variants on the Internet. That's the beauty of the pattern: You can adapt and extend it to your needs.
 
@@ -49,17 +49,17 @@ If you want a clear answer, providing the LLM with more focused information that
 
 Ideally, you want to preprocess the washing machine manual to end up with chunks of information that clearly describe how to perform a specific task. That way, the LLM can almost copy-paste the information into the response. Remember that the LLM can only match patterns and generate tokens based on the pattern.
 
-Preprocessing content optimally takes a lot of effort. If you want perfection, you will need an army of people who enter the information by hand. That's not feasible for most projects, so you'll have to settle for a less ideal solution. But that's not a massive problem because, in many cases, you can get away with a less optimal solution.
+Preprocessing content optimally takes a lot of effort. If you want perfection, you will need an army of people who enter the information by hand. That's not feasible for most projects, so you'll have to settle for a less ideal solution. But that's not a massive problem because, in many cases, you can get away with a less optimal solution. Thanks to the tranformative power of the LLM.
 
 To preprocess content for retrieval, you can start by splitting the text in the input documents into chunks of reasonable size. For example, you can create chunks of around 1000 tokens each. You can then store those chunks in a suitable database for retrieval.
 
 ### Storing information for retrieval
 
-There are many options for storing the extracted content chunks. For example, you could store the searchable content using a regular search engine. Elastic Search is one of the most widely used search engines and does an excellent job finding documents based on a query.
+There are many options for storing the extracted content chunks. For example, you could store the searchable content using a regular search engine. [Elastic Search][ES] is one of the most widely used search engines and does an excellent job finding documents based on a query.
 
 Regular search engines will preprocess the chunks into a collection of search terms. They remove stopwords, lowercase the content, and split long words to increase the likelihood of a match during the search. When you send a query, it also gets preprocessed into search terms and matches those terms against the documents in the database. To find a document, one or more search terms must match the text in the document. If you use a synonym or make a spelling mistake, the search match will be less precise.
 
-That's why most people will use a vector database to store chunked Content: it provides better search capabilities than regular search engines.
+That's why most people will use a vector database to store chunked Content: it semantically matches the query against the documents which can handle things like synonyms, acronyms, and other hard to parse language constructs.
 
 A vector database stores chunks based on the embedding vector representations for the chunks. To store content in a vector database for search, you first translate the content into an embedding vector representing the semantic meaning of the content using an embedding model. After creating the embedding vector, you can store it with the original content and metadata in the vector database. When you want to search, you send an embedding vector made with the same embedding representing your query to the vector database and match it against the embedding vectors of the documents in the database. The vector database returns the documents with embedding vectors closest to the query embedding vector. Vector search uses cosine similarity to determine how close vectors are to each other. Imagine an arrow for the document and another for the query. The cosine similarity is the angle between the two arrows. [#s](#cosine-similarity) demonstrates this principle.
 
@@ -76,7 +76,7 @@ To generate a response, you'll need first to retrieve relevant information. You 
 
 It's also essential to make sure that chunks are coherent. For example, you don't want a chunk to contain half sentences or end with half a word. So, while splitting Content into chunks is a good solution, it's more complex than just slicing Content into pieces. In [#s](#end-to-end-rag-pipeline-implementation), we'll discuss how to implement chunking to ensure you end up with sensible chunks.
 
-Balancing the amount of chunks to retrieve, the size of the chunks, and general content quality will determine the success of your RAG implementation. The LLM you use to generate the final answer doesn't influence the quality of the answers as much as the retrieval approach you choose. If you're getting weird results from a RAG implementation, you're likely having issues with the data quality in the vector database or search engine.
+Balancing the amount of chunks to retrieve, the size of the chunks, and general content quality will determine the success of your RAG implementation. The LLM you use to generate the final answer doesn't influence the quality of the answers as much as the retrieval approach you choose. If you're getting weird results from a RAG implementation, you're likely having issues with the data quality in the vector database.
 
 Having said that, if you don't inject the retrieved information in the right spot, you'll still end up with bad-quality responses. So, it's essential to ensure you use the retrieved information correctly.
 
@@ -113,7 +113,7 @@ Let's look at how to implement the theory with Semantic Kernel by building an en
 {#end-to-end-rag-pipeline-implementation}
 ## Building an end-to-end RAG pipeline with Semantic Kernel
 
-There are a lot of solutions for implementing RAG systems online, and it's easy to get confused by the fancy implementations out there. But the basics of the RAG pattern are straightforward. To show you how the theory from the previous section fits together, we'll build an RAG implementation for the Content of this book. Since I wrote the content for the book in markdown, it's a great example of how to process content in a sensible format for answering questions.
+There are a lot of solutions for implementing the RAG pattern online, and it's easy to get confused by the fancy implementations out there. But the basics of the RAG pattern are straightforward. To show you how the theory from the previous section fits together, we'll build an RAG implementation for the content of this book. Since I wrote the content for the book in markdown, it's a great example of how to process content in a sensible format for answering questions.
 
 To implement the RAG pattern in Semantic Kernel, we'll need to integrate a few components, as shown in [#s](#end-to-end-rag-pipeline).
 
@@ -132,7 +132,7 @@ Let's first take a look at the RAG project structure.
 
 ### Setting up the project structure
 
-Let's start by setting up the project structure. For the scenario in this chapter, we'll assume you're building a web application. You can create a new web application using the following command:
+For the scenario in this chapter, we'll assume you're building a web application. You can create a new web application using the following command:
 
 ```bash
 dotnet new web -n Chapter7.RetrievalAugmentedGeneration
@@ -183,8 +183,8 @@ This code configures Semantic Kernel with a new vector store. It performs the fo
 1. First, we create a new web application builder.
 2. Next, we configure the `Kernel` service with the Azure OpenAI connector.
 3. Then, we configure the vector store for the application.
-4. After that, we configure the content indexer and question-answering tool.
-5. Next, we build the web application and map a basic endpoint.
+4. After, we configure the content indexer and question-answering tool.
+5. Finally, we build the web application and map a basic endpoint.
 
 At this point, you can verify the application by starting it by running the following command in a terminal from the project directory:
 
@@ -198,9 +198,9 @@ Now that we have the application's basic structure, let's move on to the next st
 
 ### Building a data model for retrieval
 
-Many vector databases you can use with Semantic Kernel have a fundamental structure. You can usually store a record identified by a key, which stores an embedding vector and some additional metadata that must be serializable to JSON.
+Many vector databases you can use with Semantic Kernel have a fundamental structure. You can usually store a record identified by a key. The record stores an embedding vector and some additional metadata that must be serializable to JSON.
 
-In Semantic Kernel, you must create a specific class to represent the data in a vector store. Semantic Kernel uses the term vector store to describe a database that can store vector data. This can be a pure vector database or a relational database with support for storing vector data. If you're planning on using a regular database to store vector data you need to be aware that you can't combine the data structures offered by Semantic Kernel with otehr relational data although the database may support it.
+In Semantic Kernel, you must create a specific class to represent the data in a vector store. Semantic Kernel uses the term vector store to describe a database that can store vector data. This can be a pure vector database or a relational database with support for storing vector data. If you're planning on using a regular database to store vector data you need to be aware that you can't combine the data structures offered by Semantic Kernel with other relational data processing such as Entity Framework Core although the database may support it.
 
 The `TextUnit` class forms the data model for our RAG implementation. A text unit in our application represents a chunked fragment of Content extracted from a markdown file. The code sample shows the structure of the class:
 
@@ -231,9 +231,9 @@ Let's move on to the next step, building the content indexer.
 
 ### Preprocessing Content into vector data
 
-The content indexer is responsible for preprocessing raw content into vector store records. As we discussed in [#s](#retrieval-component-architecture), we can preprocess content in any way we wish, but for the sample, we need to keep things pragmatic because we're working with a book that's long-form content. We could process the Content in a chapter per section, but we could end up with chunks that are either very long or very short.
+The content indexer is responsible for preprocessing raw content into vector store records. As we discussed in [#s](#retrieval-component-architecture), we can preprocess content in any way we wish, but for the sample, we need to keep things pragmatic because we're working with a book that's long-form content. We could process the content in a chapter per section, but we could end up with chunks that are either very long or very short.
 
-We'll split the Content into approximately 1000 tokens each to simplify things. This way, we can be sure that we have a good balance between the size of the chunks and the amount of chunks we have. The code sample shows the structure of the `ContentIndexer` class:
+We'll split the content into approximately 1000 tokens each to simplify things. This way, we can be sure that we have a good balance between the size of the chunks and the amount of chunks we have. The code sample shows the structure of the `ContentIndexer` class:
 
 ```csharp
 public class ContentIndexer(
@@ -319,11 +319,11 @@ The code for the `AnswerAsync` method looks like this:
 var collection = vectorStore.GetCollection<ulong, TextUnit>("Content");
 
 var questionEmbedding = await embeddingGenerator.GenerateEmbeddingAsync(
- question);
+    question);
 
 var searchOptions = new VectorSearchOptions
 {
- Top = 3,
+    Top = 3,
 };
 
 var searchResponse = await collection.VectorizedSearchAsync(
@@ -359,7 +359,7 @@ In the method, we're performing the following steps:
 5. Then, we load up the `answer-question.yaml` prompt from the file system.
 6. Finally, we execute the prompt with the retrieved text and the user question and return the output.
 
-You may be wondering what the prompt looks like. The prompt is stored in a YAML file following the structure discussed earlier in [#s](#prompt-templates). The Content of the `answer-question.yaml` file looks like this:
+You may be wondering what the prompt looks like. The prompt is stored in a YAML file following the structure discussed earlier in [#s](#prompt-templates). The content of the `answer-question.yaml` file looks like this:
 
 ```yaml
 name: answer_question
@@ -433,9 +433,9 @@ The code in this fragment must be added after configuring the kernel in the serv
 The rest of the `Program.cs` file remains the same.
 
 You can now run the application and ask a question from the browser by navigating to
-`http://localhost:<port>/answer?question=What+is+the+RAG+pattern`. Ensure the port matches the one shown in the terminal when you start the application.
+`http://localhost:<port>/answer?question=What+is+RAG`. Ensure the port matches the one shown in the terminal when you start the application.
 
-The application should return a response to the question you asked based on the Content of the book.
+The application should return a response to the question you asked based on the content of the book.
 
 As this is one of the bigger samples in this book, check out the [complete source code][SAMPLE_SOURCE_1] on GitHub. It contains all the instructions required to configure and run the project on your machine. I've included an extra [Bicep](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/) script to help you configure Azure OpenAI for the project.
 
@@ -443,7 +443,7 @@ Using the RAG pattern with a prompt is one of the easiest ways to get started wi
 
 ### Using the vector store as a tool
 
-Applying the RAG pattern in a chat solution follows many of the same steps involved in implementing it with a prompt, so I'm not going to repeat all the steps.
+Applying the RAG pattern in a chat solution follows many of the same steps involved in implementing it with a prompt, so let me focus on the steps that are different from a prompt-based RAG implementation.
 
 The major difference is that in the context of a chatbot, you'll want to connect the retrieval component as a tool for the LLM. This way, you let the LLM decide if it's necessary to look up information needed to generate a proper response.
 
@@ -520,7 +520,7 @@ public class TextUnitStringMapper : ITextSearchStringMapper
 }
 ```
 
-The mapping class in this sample is elementary, returning the Content of the retrieved text unit. However, you can extend the class to do much more. For example, you can return a structure that will help the LLM generate citations for the found sources. For example, you can create an implementation like this:
+The mapping class in this sample is elementary, returning the content of the retrieved text unit. However, you can extend the class to do much more. For example, you can return a structure that will help the LLM generate citations for the found sources. For example, you can create an implementation as shown in the following code:
 
 ```csharp
 public class CitationsTextUnitStringMapper : ITextSearchStringMapper
@@ -543,13 +543,14 @@ public class CitationsTextUnitStringMapper : ITextSearchStringMapper
 }
 ```
 
-The `CitationsTextUnitStringMapper` class returns a string with the name, value, and link to the original file for the text unit. If you change the system message to tell the LLM to generate citations, you can use this mapper to generate the citations for the found sources. For example, you can change the Content of the `AddSystemMessage` call to include this system message.
+The `CitationsTextUnitStringMapper` class returns a string with the name, value, and link to the original file for the text unit. If you change the system message to tell the LLM to generate citations, you can use this mapper to generate the citations for the found sources. For example, you can change the content of the `AddSystemMessage` call to include this system message.
 
 ```text
-You're a friendly assistant. When answering questions, include citations to the relevant information where it is referenced in the response.
+You're a friendly assistant. When answering questions, include citations 
+to the relevant information where it is referenced in the response.
 ```
 
-Remember that instructions like this don't force the LLM to do the right thing. You may end up with citations that aren't citations. Testing the system and seeing if it's generating the right Content is essential. If it's not, you may need to adjust the system message.
+Remember that instructions like this don't force the LLM to do the right thing. You may end up with citations that aren't citations. Testing the system and seeing if it's generating the right content is essential. If it's not, you may need to adjust the system message.
 
 As an alternative to generating citations through instructions you can also use a `IFunctionInvocationFilter` to capture the output of the search tool and display links to the found sources in the user interface. The following code demonstrates how to build such a filter:
 
@@ -659,7 +660,7 @@ In the next section, we'll look at a basic pipeline to evaluate the RAG pipeline
 
 ### Overview of the validation process
 
-When testing an RAG pipeline, I like measuring performance with one or two basic metrics. The LLM's final answer should make sense using as much content from the source documents as possible. We can measure this using the faithfulness metric.
+When testing an RAG pipeline, I like measuring performance with one or two metrics that matter the most to me. For example, I think it's important that the LLM's final answer usess as much content from the source documents as possible. We can measure this using the faithfulness metric.
 
 The people who made [Ragas][RAGAS_LIBRARY] invented the faithfulness metric. It's a model-based metric that measures whether an answer could have come from the information we retrieved from the vector database. It's a very interesting approach to validating a RAG system and, luckily, not too hard to implement.
 
@@ -706,11 +707,12 @@ var promptExecutionSettings =
         ResponseFormat = typeof(QuestionGeneratorResult)
     };
 
-var promptExecution = await prompt.InvokeAsync(kernel, new KernelArguments(promptExecutionSettings)
-{
-    ["context"] = content,
-    ["count"] = numberOfQuestions
-});
+var promptExecution = await prompt.InvokeAsync(
+    kernel, new KernelArguments(promptExecutionSettings)
+    {
+        ["context"] = content,
+        ["count"] = numberOfQuestions
+    });
 
 var responseData = JsonSerializer.Deserialize<QuestionGeneratorResult>(
     promptExecution.GetValue<string>()!);
@@ -806,7 +808,9 @@ The following fragment shows the code for measuring the faithfulness metric. It 
 
 ```csharp
 var inputStream = File.OpenRead("Input/test-samples.json");
-var records = await JsonSerializer.DeserializeAsync<List<TestSampleRecord>>(inputStream);
+
+var records = await JsonSerializer.DeserializeAsync<List<TestSampleRecord>(
+    inputStream);
 
 var promptTemplate = kernel.CreateFunctionFromPromptYaml(
     EmbeddedResource.Read("Prompts.faithfulness-metric.yaml"),
@@ -852,8 +856,9 @@ Let's look at the prompt used to calculate the faithfulness of an answer. It loo
 
 ```handlebars
 Your task is to judge whether the statement is faithful to the context provided. 
-You must respond with true if the statement can be directly inferred from the context
-or false when the statement can't be directly inferred from the context.
+You must respond with true if the statement can be directly inferred 
+from the context or false when the statement can't be directly inferred
+from the context.
 
 ## Context
 
@@ -878,7 +883,7 @@ Once you have validated the RAG pattern implementation with the faithfulness met
 
 I can imagine that validating with synthetic data doesn't sit quite right with many of you. So let me show you one more trick that will help you get a more realistic picture of the quality of your solution.
 
-## Evaluating the RAG pattern with user research sessions
+## Evaluating the RAG pattern with user research
 
 In the previous section, we validated the RAG pattern through automated testing using synthetic data. It's a great start to get the right quality. However, it doesn't always match how production will play out. But there's a great tool to solve this.
 
@@ -951,3 +956,4 @@ The next chapter we'll shift our focus towards using LLMs to generate structured
 [GH_FM_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.FaithfulnessMetric/
 [RAGAS_LIBRARY]: https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/
 [NEO4J]: https://neo4j.com/blog/news/graphrag-ecosystem-tools/
+[ES]: https://www.elastic.co/
