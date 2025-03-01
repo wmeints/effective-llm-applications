@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NoWarn>SKEXP0050;SKEXP0010;SKEXP0001</NoWarn>
+    <UserSecretsId>b12c6a10-aaae-41e9-a404-e1d48596c57b</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.2" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.37.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.38.0-preview" />
+    <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.37.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.37.0" />
+    <PackageReference Include="Polly" Version="8.5.2" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Prompts\faithfulness-metric.yaml" />
+  </ItemGroup>
+</Project>

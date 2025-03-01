@@ -6,15 +6,17 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <NoWarn>SKEXP0050;SKEXP0010;SKEXP0001</NoWarn>
-      <UserSecretsId>847b55e0-06de-4c63-b997-8585fd91de25</UserSecretsId>
-  </PropertyGroup>
+        <UserSecretsId>847b55e0-06de-4c63-b997-8585fd91de25</UserSecretsId>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="CsvHelper" Version="33.0.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.2" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.2" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.37.0" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.38.0-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.37.0" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant"
+            Version="1.38.0-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars"
+            Version="1.37.0" />
         <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.37.0" />
         <PackageReference Include="Polly" Version="8.5.2" />
         <PackageReference Include="System.Linq.Async" Version="6.0.1" />

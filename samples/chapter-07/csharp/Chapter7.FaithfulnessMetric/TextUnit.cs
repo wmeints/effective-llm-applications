@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.VectorData;
 
-namespace Chapter7.TestSampleGeneration;
+namespace Chapter7.FaithfulnessMetric;
 
 public class TextUnit
 {

@@ -1,0 +1,31 @@
+name: answer_question
+description: Answers a question about the content of the book effective llm-based applications.
+template: |
+  Your task is to judge whether the statement is faithful to the context provided. 
+  You must respond with true if the statement can be directly inferred from the context
+  or false when the statement can't be directly inferred from the context.
+
+  ## Context
+
+  {{#each context}}
+  {{ .Content }}
+  {{/each}}
+
+  ## Statement
+
+  {{statement}}
+template_format: handlebars
+input_variables:
+  - name: context
+    description: The context that the statement is being judged against.
+    is_required: true
+  - name: statement
+    description: The statement you want to judge.
+    is_required: true  
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.5
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 500

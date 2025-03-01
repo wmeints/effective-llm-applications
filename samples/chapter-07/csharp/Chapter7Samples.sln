@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter7.ValidationDatasetG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter7.TestSampleGeneration", "Chapter7.TestSampleGeneration\Chapter7.TestSampleGeneration.csproj", "{76C4222A-A6EE-41EF-B8E8-967299BD9161}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter7.FaithfulnessMetric", "Chapter7.FaithfulnessMetric\Chapter7.FaithfulnessMetric.csproj", "{CD8F4D77-DA23-4C56-A320-EFB682D733A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{76C4222A-A6EE-41EF-B8E8-967299BD9161}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76C4222A-A6EE-41EF-B8E8-967299BD9161}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76C4222A-A6EE-41EF-B8E8-967299BD9161}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD8F4D77-DA23-4C56-A320-EFB682D733A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD8F4D77-DA23-4C56-A320-EFB682D733A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD8F4D77-DA23-4C56-A320-EFB682D733A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD8F4D77-DA23-4C56-A320-EFB682D733A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
