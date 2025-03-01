@@ -11,7 +11,7 @@ Kernel](https://leanpub.com/effective-llm-applications-with-semantic-kernel)
 
 ## Progress
 
-I'm writing this book as you read this, and I'm at **43% completion**.
+I'm writing this book as you read this, and I'm at **50% completion**.
 
 | Chapter                                       | Status      | Samples    |
 | --------------------------------------------- | ----------- | ---------- |
