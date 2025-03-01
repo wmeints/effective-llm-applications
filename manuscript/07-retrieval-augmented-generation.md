@@ -10,14 +10,14 @@ We'll cover the following topics:
 - What is Retrieval Augmented Generation (RAG)
 - Building an end-to-end RAG pipeline with Semantic Kernel
 - A practical approach to validating the RAG pipeline
-- Optimizing retrieval for RAG
+- Evaluating the RAG pattern with user research sessions
 - Variations on the RAG pattern
 
 Let's start by discussing Retrieval Augmented Generation (RAG) and learning what components are involved in this pattern.
 
 ## What is Retrieval Augmented Generation (RAG)
 
-Retrieval Augmented Generation (RAG) is a pattern in which you use information from an external source as extra context information when generating a response to a prompt. 
+Retrieval Augmented Generation (RAG) is a pattern in which you use information from an external source as extra context information when generating a response to a prompt.
 
 The RAG pattern is a form of in-context learning we discussed in [#s](#few-shot-learning). You can use RAG for many scenarios. But you're most likely using RAG to answer users' questions. [#s](#rag-pattern-architecture) shows the structure of the RAG pattern.
 
@@ -647,36 +647,35 @@ Whatever you choose, I recommend spending some time to establish a good test str
 
 ## A practical approach to validating the RAG pipeline
 
-Testing the RAG pattern can be quite complicated. [#s](#rag-evaluation-controls) shows the various aspects of the RAG pattern we discussed and the quality controls that are available to validate them. It's a lot to get through.
+Testing the RAG pattern can be quite complicated. [#s](#rag-evaluation-controls) shows the various aspects of the RAG pattern we discussed and the quality controls available to validate them. It's a lot to get through.
 
 {#rag-evaluation-controls}
 ![RAG pattern evaluation controls](rag-evaluation-controls.png)
 
-I could go through this step-by-step explaining all the small details of how to validate each component in the RAG pipeline on its own. But I've found this to be very unpractical. I much rather leave you with a workflow that you can extend upon if you
+I could go through the process step-by-step, explaining all the small details of how to validate each component in the RAG pattern. But I've found this to be very unpractical. I would much rather leave you with a workflow that you can extend if you
 need a more detailed approach.
 
-In this section we'll look at a basic pipelien for evaluating the RAG pipeline we
-built earlier in the chapter. Let's get started with an overview of the validation process.
+In the next section, we'll look at a basic pipeline to evaluate the RAG pipeline we built earlier in the chapter. Let's get started with an overview of the validation process.
 
 ### Overview of the validation process
 
-When testing a RAG pipeline I like working with one or two basic metrics to measure performance. For a RAG pipeline it's important that the final answer given by the LLM makes sense using as content from the source documents as faithfully as possible.
+When testing an RAG pipeline, I like measuring performance with one or two basic metrics. The LLM's final answer should make sense using as much content from the source documents as possible. We can measure this using the faithfulness metric.
 
-The faithfulness metric was invented by the people who made [Ragas][RAGAS_LIBRARY].  It's a model-based metric that measures if an answer could have come from the information we retrieved from the vector database. It's a very interesting approach to validating a RAG system and luckily not too hard to implement.
+The people who made [Ragas][RAGAS_LIBRARY] invented the faithfulness metric. It's a model-based metric that measures whether an answer could have come from the information we retrieved from the vector database. It's a very interesting approach to validating a RAG system and, luckily, not too hard to implement.
 
 We need three steps to determine the faithfulness of the RAG pipeline.
 
-1. First, we need to create a validation dataset containing questions we can ask.
-2. Next, we need to generate output based on the validation questions recording the answer, the retrieved context information, and the question we asked.
+1. First, we must create a validation dataset containing questions we can ask.
+2. Next, we need to generate output based on the validation questions, recording the answer, the retrieved context information, and the question we asked.
 3. Finally, we can measure the faithfulness of the responses.
 
 Let's start by writing code to generate validation data for the RAG pipeline.
 
 ### Generating validation data
 
-I've found that generating synthetic data is a great way to get validation questions fast. You can of course gather questions from users or monitoring data but interviewing users takes up a lot of time, and gathering data from the monitoring system is only feasible if you're running in production.
+Generating synthetic data is a great way to get validation questions fast. You can gather questions from users or monitoring data, but interviewing users takes up a lot of time, and gathering data from the monitoring system is only feasible if you're running in production. I also found that gathering information from the monitoring system can take a lot of time because you must differentiate between random prompts and actual RAG-related questions. If you have more than 10 users, it will be tough to make this distinction.
 
-Let's look at how to generate synthetic questions to help you get started validating your RAG pipeline. To generate synthetic questions, you can use the following prompt:
+Let's look at how to generate synthetic questions to help you get started validating your RAG pipeline. To create synthetic questions, you can use the following prompt:
 
 ```text
 Help prepare QnA pairs with short answers for a topic by
@@ -692,7 +691,7 @@ Text:
 Output with {{count}} QnA pairs with detailed answers:  
 ```
 
-In this prompt we instruct the LLM to generate questions and answers for a given piece of context information. We then give it the context information we want to base the questions on and finally hint that we want a specific number of QnA pairs.
+In this prompt, we instruct the LLM to generate questions and answers for a given piece of context information. We then give it the context information we want to base the questions on and finally hint that we want a specific number of QnA pairs.
 
 The code to execute the prompt looks like this:
 
@@ -701,10 +700,11 @@ var prompt = kernel.CreateFunctionFromPromptYaml(
     EmbeddedResource.Read("Prompts.LongAnswerQuestion.yaml"), 
     new HandlebarsPromptTemplateFactory());
 
-var promptExecutionSettings = new OpenAIPromptExecutionSettings
-{
-    ResponseFormat = typeof(QuestionGeneratorResult)
-};
+var promptExecutionSettings = 
+    new OpenAIPromptExecutionSettings
+    {
+        ResponseFormat = typeof(QuestionGeneratorResult)
+    };
 
 var promptExecution = await prompt.InvokeAsync(kernel, new KernelArguments(promptExecutionSettings)
 {
@@ -716,10 +716,10 @@ var responseData = JsonSerializer.Deserialize<QuestionGeneratorResult>(
     promptExecution.GetValue<string>()!);
 ```
 
-In this code we perform the following steps:
+In this code, we perform the following steps:
 
 1. First, we load the prompt as a kernel function
-2. Next, we create a set of prompt execution settings in which I specify the structure of the answer I'm expecting from the LLM.
+2. Next, we create prompt execution settings to specify the answer structure we expect from the LLM.
 3. Then, we execute the prompt with a piece of context information and the number of questions we want generated.
 4. Finally, we deserialize the content using the JSON serializer into the question generator result.
 
@@ -738,22 +738,22 @@ public class QuestionAnswerPair
 }
 ```
 
-We haven't discussed structured output yet, but here's the important part. In the C# sample code we're setting the `ResponseFormat` property to the `QuestionGeneratorResult` class. This tells the LLM to generate JSON output in the shape of this class.
+We haven't discussed structured output yet, but here's the critical part. In the C# sample code, we're setting the `ResponseFormat` property to the `QuestionGeneratorResult` class. Setting the `ResponseFormat` property tells the LLM to generate specific JSON output that matches the configured class.
 
 The code that runs this prompt is part of a bigger program that performs a couple of steps:
 
-1. First, the program chunks the content as we would normally when indexing content in the vector database.
-2. Next, the program iterates over each generated chunk and run the prompt with the content of each chunk.
+1. First, the program chunks the content as we would typically when indexing content in the vector database.
+2. Next, the program iterates over each generated chunk and runs the prompt with each chunk's content.
 
 I recommend storing the used context, the question, and the answer in the dataset so you can verify the quality of the generated dataset later on.
 
-The full source code showing you how to generate the validation dataset is stored in the [GitHub repository][GEN_VAL_DATA_SAMPLE], feel free to take a look and use it for your own projects. In the sample code you'll find several variations on the question generation prompt. I've included one to generate true/false statements, and one to generate short answers.
+The full source code showing how to generate the validation dataset is stored in the [GitHub repository][GEN_VAL_DATA_SAMPLE]. Feel free to take a look and use it for your own projects. The sample code contains several variations on the question generation prompt. I've included one to generate true/false statements and one to generate short answers.
 
-Now that we have a validation dataset, let's take a look at generating responses that we can use to measure faithfulness of the RAG system.
+Now that we have a validation dataset let's generate responses that we can use to measure the RAG system's faithfulness.
 
 ### Generating test samples
 
-For this step in the evaluation workflow we'll take the code we wrote in [#s](#using-the-vector-store-with-a-prompt) to implement a sample RAG pipeline and use it with some modifications to generate test samples.
+For this step in the evaluation workflow, we'll use the code we wrote in [#s](#using-the-vector-store-with-a-prompt) to implement a sample RAG pipeline and generate test samples by modifying it.
 
 The main program code looks like this:
 
@@ -790,31 +790,23 @@ await JsonSerializer.SerializeAsync(
     });
 ```
 
-In this code we perform the following steps:
+In this code, we perform the following steps:
 
 1. First, we load the validation dataset we created earlier.
 2. Next, we use the `QuestionAnsweringTool` to generate a response for each question in the dataset.
 3. Finally, we store the question, the answer, and the used context in a JSON file.
 
-The code for this step of the validation workflow can also be found on [GitHub][GH_TEST_SAMPLES]. It includes a few more details related to setting up the kernel instance, and code to handle indexing of the content similar to how we did it in [#s](#using-the-vector-store-with-a-prompt).
+The code for this step of the validation workflow can also be found on [GitHub][GH_TEST_SAMPLES]. It includes more details about setting up the kernel instance and code to handle content indexing, similar to how we did it in [#s](#using-the-vector-store-with-a-prompt).
 
-With the test samples generated, we can move on to writing some Python code to measure the faithfulness of the RAG pipelines using Ragas.
+With the test samples generated, we can write some Python code to measure the faithfulness of the RAG pipelines using Ragas.
 
 ### Measuring faithfulness
 
-The following fragment shows the code for measuring the faithfulness. It is very similar to the code we used to generate the input for this fragment.
+The following fragment shows the code for measuring the faithfulness metric. It is very similar to the code we used to generate the input for this fragment.
 
 ```csharp
 var inputStream = File.OpenRead("Input/test-samples.json");
 var records = await JsonSerializer.DeserializeAsync<List<TestSampleRecord>>(inputStream);
-
-logger.LogInformation("Loaded {Count} test samples", records!.Count);
-
-// STEP 2: Run the samples through the faithfulness metric prompt.
-//
-// This step runs the samples through the faithfulness metric prompt.
-// The results are recorded to calculate the faithfulness metric.
-// ------------------------------------------------------------
 
 var promptTemplate = kernel.CreateFunctionFromPromptYaml(
     EmbeddedResource.Read("Prompts.faithfulness-metric.yaml"),
@@ -827,10 +819,8 @@ var promptExecutionSettings = new AzureOpenAIPromptExecutionSettings
 
 var results = new List<FaithfulnessMetricResult>();
 
-for (int index = 0; index < records.Count; index++)
+foreach (var record in records)
 {
-    var record = records[index];
-
     var result = await promptTemplate.InvokeAsync(
         kernel, new KernelArguments(promptExecutionSettings)
         {
@@ -850,15 +840,15 @@ var totalCount = results.Count;
 var percentage = (double)faithfulCount / totalCount * 100;
 ```
 
-In this code we perform the following steps:
+In this code, we perform the following steps:
 
 1. First, we load the test samples we generated earlier.
 2. Next, we use the `faithfulness-metric` prompt to measure the faithfulness of the RAG pipeline for each test sample found in the input file.
 3. Finally, we calculate the score for the faithfulness metric.
 
-The code for this step of the validation workflow can also be found on [GitHub][GH_FM_SAMPLE]. It includes a few more details related to setting up the kernel instance, and code to handle indexing of the content similar to how we did it in [#s](#using-the-vector-store-with-a-prompt).
+The code for this step of the validation workflow can also be found on [GitHub][GH_FM_SAMPLE]. It includes more details about setting up the faithfulness metric evaluation step, similar to how we did it in [#s](#using-the-vector-store-with-a-prompt).
 
-Let's take a look at the prompt used to calculate the faithfulness of an answer. It looks like this:
+Let's look at the prompt used to calculate the faithfulness of an answer. It looks like this:
 
 ```handlebars
 Your task is to judge whether the statement is faithful to the context provided. 
@@ -876,13 +866,77 @@ or false when the statement can't be directly inferred from the context.
 {{statement}}
 ```
 
-This prompt is very similar to the one we used to answer questions in [#s](#using-the-vector-store-with-a-prompt). It contains the context information retrieved from the vector database. In the question answering prompt we inserted the question from the user, however in the validation prompt we need to insert the answer that was given by the LLM.
+This prompt is similar to the one we used to answer questions in [#s](#using-the-vector-store-with-a-prompt). It contains the context information retrieved from the vector database. In the question-answering prompt, we inserted the question from the user; however, in the validation prompt, we need to insert the answer that the LLM gave to match that against the context information.
 
-The output of the prompt is either true when the response is faithful to the context or false when the LLM can't derive the statement from the context.
+The prompt's output is either true when the response is faithful to the context or false when the LLM can't derive the statement from the context.
 
-As with all model-based validations it's important to keep in mind that you don't always get a correct answer. The faithfulness validation may not work in all cases. 
+As with all model-based validations, it's important to remember that you don't always get a correct answer. The faithfulness validation may not work in all cases.
 
-If you're interested in how the faithfulness metric came to be, I recommend taking a look at the [Ragas][RAGAS] documentation for this metric. It outlines the formulas and general ideas behind the metric quite well.
+If you're interested in how the faithfulness metric came to be, I recommend looking at the [Ragas][RAGAS_LIBRARY] documentation for this metric. It outlines the formulas and general ideas behind the metric quite well.
+
+Once you have validated the RAG pattern implementation with the faithfulness metric, you'll be able to optimize it by tweaking the size of the chunks, the embedding model, and the number of fragments you retrieve to answer questions.
+
+I can imagine that validating with synthetic data doesn't sit quite right with many of you. So let me show you one more trick that will help you get a more realistic picture of the quality of your solution.
+
+## Evaluating the RAG pattern with user research sessions
+
+In the previous section, we validated the RAG pattern through automated testing using synthetic data. It's a great start to get the right quality. However, it doesn't always match how production will play out. But there's a great tool to solve this.
+
+At one of the projects I worked on, we used guerrilla-style user research sessions to gather (sometimes brutally honest) user feedback on the user experience of our product. We ran short sessions of around 15 minutes where we let users perform a task in our product. During the session, we recorded the face of the person performing the task and the computer screen they were working on. Afterward, we would sit down with the team and write down any problems we spotted. This approach helped us improve our product quickly and efficiently. And it was fun because we had a good laugh about many of the weird problems we produced.
+
+While our testing revolved around user experience, you can use a similar approach to gather focused data for the quality of your RAG system.
+
+First, make sure your application is up and running. You have monitoring that allows you to grab trace information, including the input, context, and generated answer for the RAG pattern implementation you're testing.
+
+Next, ask two or three people to join you for a 15-minute testing session. Let them use the system in a realistic scenario. You can ask them to bring along cases they want to try, or you can write down one or two scenarios you want the users to work through.
+
+Then, sit down with the users and let them work through the scenarios. Make sure the users understand what they're supposed to do, and be prepared to answer any UX-related questions to help them successfully complete the test.
+
+After the test, grab the recorded trace information and run the evaluation steps from the previous section using the question, context, and answer data you collected. It will give you a realistic picture of what the system does. You can use this data after you've made improvements to test if you've made noticeable improvements.
+
+The steps in this section and previous sections should get you toward a helpful RAG implementation. While the basic RAG pattern implementation is great for many scenarios, it's not a one-size-fits-all solution.
+
+With the basics in hand, I recommend checking out other variations of the RAG pattern to see if they're a good fit for your solution.
+
+## Variations on the RAG pattern
+
+I can fill a bookshelf with information about building RAG systems. As I'm writing this book, many variations are being developed, making it impossible to mention all the variations here.
+
+I want to mention a few ideas to inspire you if you want to try them out or if the basic pattern doesn't help as well as you'd hope.
+
+### Using a Graph RAG
+
+During the summer of 2024, I tried a new pattern called the Graph RAG. This approach to RAG involves building a graph out of concepts mentioned in the text and linking text fragments to those concepts.
+
+Once a graph links concepts to pieces of text, you can use a cosine similarity search like a traditional vector database to find an initial match to the user's question and link other important text fragments to the initial match by navigating the group via the related concepts.
+
+It's a powerful idea that can be helpful if you need to link multiple pieces of information about the same concept to answer user questions.
+
+The people at Neo4J did a great job describing the Graph RAG in greater detail on [their website][NEO4J]. I recommend looking since they describe the concept well and have a working solution.
+
+### Optimizing retrieval using reranking
+
+Graph RAG is a radically different approach to implementing the RAG pattern, so it may be hard to get right the first time. Fear not, though. There are other ways to improve your RAG implementation.
+
+You can, for example, choose to retrieve more fragments initially and then use reranking to reorder the items from most-relevant to least-relevant. Afterward, you can limit the final resultset to fewer pieces than initially retrieved. 
+
+Rerankers sort embedding vectors based on their relevance to the question. This sorting mechanism sounds similar to matching documents in a vector database where we use cosine similarity. The trick here is that rerankers use a neural network to sort, often resulting in a more precise ranking.
+
+I don't often use rerankers because they're almost as slow as a typical LLM. On top of that, rerankers usually are language-specific, so it's hard to use them in scenarios where you're dealing with multiple languages.
+
+If speed is not an issue, you can consider implementing a reranker to improve the precision of the retrieval results in your RAG implementation.
+
+### Differentiating matching and retrieval
+
+Another method that can help improve the accuracy of the responses in your RAG implementation is matching small fragments while retrieving bigger ones.
+
+The idea here is this: You can get a more precise match on embedding vectors covering a small text but a better response from a larger text because you can get a more detailed response.
+
+Remember that you have around 1500 numbers to describe the content of a piece of text. If you have to summarize a whole chapter with 1,500 words, it's harder to express what the text means than using the same 1,500 numbers to describe one paragraph.
+
+Retrieving slightly larger text pieces helps prevent made-up answers because the LLM can copy more from the original text.
+
+Whatever you choose, it's essential to ensure you have an evaluation pipeline running to measure what ideas help improve your RAG implementation.
 
 ## Summary
 
@@ -892,7 +946,8 @@ The next chapter we'll shift our focus towards using LLMs to generate structured
 
 [SAMPLE_SOURCE_1]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.RetrievalAugmentedGeneration/
 [SO_BLOG]: https://stackoverflow.blog/2024/12/27/breaking-up-is-hard-to-do-chunking-in-rag-applications/
-[VALIDATION_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.PipelineValidation/
+[GEN_VAL_DATA_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.ValidationDatasetGeneration/
 [GH_TEST_SAMPLES]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.TestSampleGeneration/
 [GH_FM_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.FaithfulnessMetric/
-[RAGAS]: https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/
+[RAGAS_LIBRARY]: https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/
+[NEO4J]: https://neo4j.com/blog/news/graphrag-ecosystem-tools/
