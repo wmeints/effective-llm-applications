@@ -1,7 +1,6 @@
-# Test sample generation for RAG validation
+# Measuring faithfulness for RAG validation
 
-This sample demonstrates how to run a set of synthetic questions through a RAG pipeline
-to obtain test data for validating the RAG pipeline.
+This sample demonstrates how to measure faithfulness in a RAG implementation.
 
 ## Check the other samples
 
@@ -22,16 +21,6 @@ Note that this sample is part of a series of samples:
 
 Make sure you have access to an Azure OpenAI resource with GPT-4o and text-embedding-small models deployed.
 You can learn how to set up Azure OpenAI in [this quickstart tutorial](https://learn.microsoft.com/en-us/azure/ai-services/openai/chatgpt-quickstart?tabs=command-line%2Ckeyless%2Ctypescript-keyless%2Cpython-new&pivots=programming-language-studio).
-
-This sample relies on the book content itself. You download the markdown
-files from [manuscript](../../../../manuscript/)
-and save them in the [Content](./Content/) directory of the project.
-
-You'll also need a Qdrant server running on your local machine. You can do this using the following command:
-
-```bash
-docker run -d --name qdrant -p 6333:6333 -p 6334:6334 qdrant/qdrant:latest
-```
 
 ## Running this sample
 

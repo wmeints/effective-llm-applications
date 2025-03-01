@@ -1,7 +1,6 @@
-# Test sample generation for RAG validation
+# Validation question generation for RAG validation
 
-This sample demonstrates how to run a set of synthetic questions through a RAG pipeline
-to obtain test data for validating the RAG pipeline.
+This sample demonstrates how to generate synthetic questions to validate a RAG implementation.
 
 ## Check the other samples
 
@@ -27,12 +26,6 @@ This sample relies on the book content itself. You download the markdown
 files from [manuscript](../../../../manuscript/)
 and save them in the [Content](./Content/) directory of the project.
 
-You'll also need a Qdrant server running on your local machine. You can do this using the following command:
-
-```bash
-docker run -d --name qdrant -p 6333:6333 -p 6334:6334 qdrant/qdrant:latest
-```
-
 ## Running this sample
 
 To run this sample you'll need to configure a number of user secrets by executing
@@ -51,7 +44,5 @@ After you've configured the user secrets you can run the sample using the follow
 dotnet run
 ```
 
-The application will process all samples from [./Input/validation-data.csv](./Input/validation-data.csv)
-to generate an answer based on the content in [Content](./Content).
-
-At the end of the program, the output is stored in `test-samples.json` in the project directory.
+The application will process content stored in the [Content](./Content) directory
+and generate a `validation-data.csv` file in the same [Content](./Content) directory.
