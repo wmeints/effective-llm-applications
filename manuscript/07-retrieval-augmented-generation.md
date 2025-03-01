@@ -945,9 +945,9 @@ Whatever you choose, it's essential to ensure you have an evaluation pipeline ru
 
 ## Summary
 
-In this chapter we covered a lot around the RAG pattern, one of the first design patterns we'll discuss in the book. We talked about the components involved in the RAG pattern and how to implement an end-to-end RAG pattern. We also covered how to test various parts of the RAG pattern with a mix of unit-tests, manual tests, and model-based tests. Finally, we talked about about variations on the regular RAG pattern with including how you can use tools and a regular database to quickly find relevant information to base a response on.
+In this chapter, we covered a lot about the RAG pattern, one of the first design patterns discussed in the book. We talked about the components involved in the RAG pattern and how to implement an end-to-end RAG pattern. We also covered how to test various parts of the RAG pattern using model-based tests and user research. Finally, we discussed variations on the regular RAG pattern, including how to use graphs and reranking and optimizing retrieval mechanisms to improve your RAG implementation.
 
-The next chapter we'll shift our focus towards using LLMs to generate structured output. It will be less involved than implementing a RAG pattern, I promise, but it will still be fun, and essential if you want to build more complicated workflows as we continue working towards chapter 9 and 10 of the book.
+In the next chapter, we'll shift our focus towards using LLMs to generate structured output. I promise it will be less involved than implementing a RAG pattern, but it will still be fun and essential if you want to build more complicated workflows as we continue working towards chapters 9 and 10 of the book.
 
 [SAMPLE_SOURCE_1]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.RetrievalAugmentedGeneration/
 [SO_BLOG]: https://stackoverflow.blog/2024/12/27/breaking-up-is-hard-to-do-chunking-in-rag-applications/
