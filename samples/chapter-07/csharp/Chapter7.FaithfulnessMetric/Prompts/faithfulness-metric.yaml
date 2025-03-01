@@ -1,19 +1,19 @@
 name: answer_question
 description: Answers a question about the content of the book effective llm-based applications.
 template: |
-  Your task is to judge whether the statement is faithful to the context provided. 
-  You must respond with true if the statement can be directly inferred from the context
-  or false when the statement can't be directly inferred from the context.
+Your task is to judge whether the statement is faithful to the context provided. 
+You must respond with true if the statement can be directly inferred from the context
+or false when the statement can't be directly inferred from the context.
 
-  ## Context
+## Context
 
-  {{#each context}}
-  {{ .Content }}
-  {{/each}}
+{{#each context}}
+{{ .Content }}
+{{/each}}
 
-  ## Statement
+## Statement
 
-  {{statement}}
+{{statement}}
 template_format: handlebars
 input_variables:
   - name: context

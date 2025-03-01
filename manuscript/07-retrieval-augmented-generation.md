@@ -92,7 +92,6 @@ For example, one of the chatbots I built can answer questions from a knowledge b
 
 In non-chat scenarios, you'll want to create a specialized prompt to help guide the LLM in the right direction. The trick here is to use in-context learning to help the LLM generate the correct response, as discussed earlier in [#s](#few-shot-learning). A typical prompt for answering a question looks like this:
 
-{#question-answering-prompt}
 ```text
 You're answering questions about washing machines for technical support.
 Please use the information in the context section to answer the question.
@@ -877,7 +876,7 @@ or false when the statement can't be directly inferred from the context.
 {{statement}}
 ```
 
-This prompt is very similar to the one we used to answer questions in [#s](#question-answering-prompt). It contains the context information retrieved from the vector database. In the question answering prompt we inserted the question from the user, however in the validation prompt we need to insert the answer that was given by the LLM.
+This prompt is very similar to the one we used to answer questions in [#s](#using-the-vector-store-with-a-prompt). It contains the context information retrieved from the vector database. In the question answering prompt we inserted the question from the user, however in the validation prompt we need to insert the answer that was given by the LLM.
 
 The output of the prompt is either true when the response is faithful to the context or false when the LLM can't derive the statement from the context.
 
