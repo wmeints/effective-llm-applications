@@ -531,12 +531,6 @@ line of shoes printed to the console. We'll see many more prompts and kernel
 interactions in the next chapter when we cover prompt engineering. So consider this your
 very first step into the world of LLM-based applications.
 
-## Running the examples
-
-You can find the complete source code for the console application and the web API in the
-GitHub repository:
-[https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-03/csharp][SAMPLE_CODE]
-
 ## Summary
 
 In this chapter, we covered the core concepts and architecture of Semantic Kernel. We

@@ -823,10 +823,6 @@ In this chapter, we've examined the art and nonsense of prompt engineering. We d
 
 In the next chapter, we'll look at testing and monitoring prompts in your LLM-based application.
 
-## Running the samples in this chapter
-
-Check out the samples for this chapter in the [Github repository][GH_SAMPLE_DIR]. Each sample has a README file containing system requirements and instructions on how to run the sample.
-
 [CONTEXT_WINDOW_PAPER]: https://arxiv.org/abs/2307.03172
 [LLM_ALIGNMENT]: https://medium.com/@madalina.lupu.d/align-llms-with-reinforcement-learning-from-human-feedback-595d61f160d5
 [TOP_P_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/notebooks
@@ -841,5 +837,4 @@ Check out the samples for this chapter in the [Github repository][GH_SAMPLE_DIR]
 [AWS_PII_DETECTION]: https://docs.aws.amazon.com/comprehend/latest/dg/how-pii.html
 [OWASP_LLM]: https://owasp.org/www-project-top-10-for-large-language-model-applications/
 [MITRE]: https://atlas.mitre.org/matrices/ATLAS/
-[GH_SAMPLE_DIR]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-04/
 [INCONTEXT_LEARNING]: https://ai.stanford.edu/blog/understanding-incontext/

@@ -276,12 +276,12 @@ OpenTelemetry is a set of APIs, libraries, and tools for instrumenting applicati
 
 Microsoft implements OpenTelemetry in .NET. Because the .NET stack is quite old, Microsoft hasn't adopted the same terminology as OpenTelemetry. The OpenTelemetry standard came after .NET was invented. That's why you'll find that the .NET stack uses different terminology for the same things. I made the following table to help you understand the differences:
 
-| Concept | .NET Equivalent | Description                                                               |
+| Concept | .NET Equivalent | Description                                                               |
 | ------- | --------------- | ------------------------------------------------------------------------- |
-| Span    | Activity        | A span is a unit of work in a trace. It has a start time and an end time. |
-| Tracer  | ActivitySource  | A span/activity is written to a tracer that processes it further          |
-| Event   | Log message     | An event with a description and attributes                                |
-| Metric  | Meter           | A metric is a value that changes over time.                               |
+| Span    | Activity        | A span is a unit of work in a trace. It has a start time and an end time. |
+| Tracer  | ActivitySource  | A span/activity is written to a tracer that processes it further          |
+| Event   | Log message     | An event with a description and attributes                                |
+| Metric  | Meter           | A metric is a value that changes over time.                               |
 
 Multiple spans will form a distributed trace in OpenTelemetry. So you can have calls to the LLM produce spans and other methods in your application. The spans are linked through a Trace ID. You can see related spans in a single trace when you write the traces to a monitoring application like Application Insights.
 
@@ -765,10 +765,6 @@ In the next chapter, we'll expand the basic LLM functionality with custom tools.
 - [GPTScore: Evaluate as you desire](https://arxiv.org/abs/2302.04166)
 - [G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment](https://arxiv.org/abs/2303.16634)
 
-## Running the samples in this chapter
-
-Check out the samples for this chapter in the [Github repository][GH_SAMPLE_DIR]. Each sample has a README file containing system requirements and instructions on how to run the sample.
-
 [XUNIT_DATA_DRIVEN_TESTS]: https://hamidmosalla.com/2017/02/25/xunit-theory-working-with-inlinedata-memberdata-classdata/
 [G_EVAL]: https://arxiv.org/abs/2303.16634
 [GPTSCORE]: https://arxiv.org/pdf/2302.04166
@@ -785,4 +781,3 @@ Check out the samples for this chapter in the [Github repository][GH_SAMPLE_DIR]
 [MODEL_BASED_TEST_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/csharp/Chapter5.ModelBasedTesting
 [OTEL_METRICS]: https://opentelemetry.io/docs/concepts/signals/metrics/
 [OTEL_ASPNET]: https://medium.com/@jepozdemir/configuring-opentelemetry-tracing-for-asp-net-core-114c2c9cf557
-[GH_SAMPLE_DIR]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-05/
