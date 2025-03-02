@@ -48,11 +48,25 @@ Now you may be wondering, how does the LLM do this?
 
 ## How does structured output work under the hood
 
-In [#s](#llm-output-sampling) we talked about output sampling, and how LLMs use this to sound more natural. This goes into the face of generating structured output, because we can't just sample anything we like if we want valid JSON output. LLMs use constrained output decoding to solve the problem. Here's how that works.
+In [#s](#llm-output-sampling) we talked about output sampling, and how LLMs use this to sound more natural. This goes into the face of generating structured output, because we can't just sample anything we like if we want valid JSON output. Depending on the kind of LLM you're using there are different ways in which models solve this problem.
+
+### Instruction-based JSON generation
+
+Some LLM providers like Claude and Gemini use instructions to help the LLM produce JSON output. If you tell the LLM to output JSON it will do so in some of the cases. It's not ideal at all.
+
+Claude, for example, produces valid JSON output in 86% of the cases according [to a test by Datachain.ai][JSON_OUTPUT_TEST]. Gemini produces valid JSON output in 10% of the cases they tested. I wouldn't call this reliable enough to build an application with.
+
+There is a way to fix this though. You can use tool calling like we discussed in [#s](#enhancing-llms-with-tools) to increase the odds of getting structured output. You can declare a tool with the LLM specifying a JSON schema of the output and then [force the LLM to call that tool][FORCE_TOOL_CALL]. The LLM will return a tool call result with the data structured according to the JSON schema you specified. It's nasty work, but it can be done.
+
+I like how OpenAI solves this problem much more though.
+
+### Constrained decoding based JSON generation
+
+OpenAI LLMs including Azure OpenAI use constrained output decoding to solve the problem. Here's how that works.
 
 Under normal circumstances when we're generating a response and we need to generate a token, we get to choose from the whole vocabulary subject to the Top-P setting and penalties. However, when applying constrained decoding we must overlay a grammar that marks only certain tokens from the vocabulary as valid. Only the valid tokens are passed through the sampling mechanism and will end up in the response.
 
-There's a reason why all LLM providers support JSON but not much else for generating a structured response. This has to do with the limitations of the LLM and how some more complex grammars work.
+There's a reason why OpenAI supports JSON but not much else for generating a structured response. This has to do with the limitations of the LLM and how some more complex grammars work.
 
 Let me take a step into compiler building for the moment. When you're building a parser for a language like JSON or C#, you need to determine at any point in the source code what a character means and if it's valid.
 
@@ -88,7 +102,7 @@ Constrained output decoding makes it so that LLMs are 100% accurate in following
 
 ## Getting structured output from the LLM
 
-To get structured output from an LLM we need to specify the output format using a JSON schema. Let's start by looking at what a JSON schema is and then move on to Semantic Kernel to understand how to configure it to render structured output.
+To get structured output from an OpenAI-based LLM we need to specify the output format using a JSON schema. Let's start by looking at what a JSON schema is and then move on to Semantic Kernel to understand how to configure it to render structured output.
 
 A JSON schema follows a specific structure specified in the [JSON schema standard][JSON_SCHEMA_STANDARD]. The following fragment shows a basic schema:
 
@@ -106,6 +120,7 @@ A JSON schema follows a specific structure specified in the [JSON schema standar
   },
   "required": ["content"]
 }
+```
 
 This schema defines an object with a content property. It's not that complicated, but JSON schemas support a lot of different constructions ranging from simple arrays to type unions. It's not the easiest format to work with.
 
@@ -117,17 +132,44 @@ As luck would have it, you don't have to use it when you're working with Semanti
 
 In the prompt execution settings we'll use a `typeof` statement to point Semantic Kernel to the C# output we expect to get from the LLM. Under the covers, the object type is parsed to a JSON schema and sent to the LLM as the expected output format.
 
+A> You can also load a JSON schema from disk and let Semantic Kernel use that, but I found that there's no good way to deserialize the data to a C# class if you do that. Unless of course you generate a C# class from the schema. But it feels like duplication of work. That's why I left it out. If you are interested in this functionality, you can find more about it [in this blogpost][JSON_SCHEMA_POST].
+
 Keep in mind that you can only specify objects as the response format. LLMs don't support arrays as output format and will raise an error if you try to specify an array or list. If you do need a list of items as output, you're going to have to nest it as a a property of the output object.
 
-Some LLMs don't automatically generate JSON output unless you tell it to. GPT-4o is known for this. If you want structured output from GPT-4o or any other OpenAI model, you'll have to say so in the prompt.
+It's important to tell the LLM that you expect JSON output, otherwise the API will generate an error. It's helpful to include one or two samples in the prompt as well to help the LLM what data should go where in the JSON structure. I find this especially helpful when creating more complicated output structures. For simple outputs I skip this step.
 
+Working with structured output has its limitations. Asking for JSON schema-based output incurs extra latency the first time you submit a request with a new schema. This is because the LLM provider needs to compile the schema down to a grammar to overlay.
 
+The JSON schema is cached on the server, while it usually doesn't contain sensitive business data, it is something you should be aware off. Even if you have a zero storage agreement with OpenAI, this piece of information remains behind.
+
+I should also mention that while the structure of your JSON schema is always followed by the model, the content could be wrong. If you run into issues with invalid values for properties of your output object, I recommend adding samples to the prompt to help the LLM put the right information into the right spot in the response.
+
+I wish that every LLM provider supported the constrained output decoding technique, but they don't. So you may have to resort to other techniques like the one we're discussing in the next section.
 
 ## Working with a sideband channel
 
-## Limitations of structured output
+In the previous section we covered how to get structured output with OpenAI-based models by setting the output format. The output format technique offered by Semantic Kernel doesn't work for models like Gemini and Claude, because they don't allow you to force the LLM into JSON mode like you can with OpenAI.
+
+However, there's another trick that involves tool calling that can help in this regard. Using tool calling to get structured output helps in two scenarios:
+
+1. The LLM support tool calling, but doesn't support constrained output decoding.
+2. You want to combine chat with structured output.
+
+Let's explore both scenarios as they require a slightly different approach to using tools with the LLM.
+
+### Using tool calling to get structured output
+
+We can get structured output from an LLM by forcing it to use a tool. It takes two steps to implement this:
+
+1. First, we need to create a tool that only defines metadata. We don't need an implementation for this scenario as we're not truly calling the tool.
+2. Next, we need to configure Semantic Kernel to return tool call results instead of calling the function we provide it.
+
+Let's start by setting up a fake tool that defines the structure of the expected output.
 
 ## Summary
 
 [FEATURE_FILES]: https://cucumber.io/docs/gherkin/reference/
 [JSON_SCHEMA_STANDARD]: https://json-schema.org/
+[JSON_OUTPUT_TEST]: https://datachain.ai/blog/enforcing-json-outputs-in-commercial-llms
+[FORCE_TOOL_CALL]: https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview#forcing-tool-use
+[JSON_SCHEMA_POST]: https://devblogs.microsoft.com/semantic-kernel/using-json-schema-for-structured-output-in-net-for-openai-models/
