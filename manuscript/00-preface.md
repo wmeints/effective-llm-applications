@@ -65,11 +65,7 @@ enough in a more enterprise-oriented language like C#.
   chapter is essential since it teaches you the complete RAG architecture from
   preprocessing to efficient retrieval and context integration.
 
-- **Chapter 8, "Working with structured output"**, teaches you how to get structured output
-  from LLMs, enabling you to reliably integrate AI responses into your applications.
-  This chapter helps you bridge the gap between AI capabilities and your existing
-  codebase. Mastering this skill will let you build reliable AI features that work
-  seamlessly with the other components in your applications.
+- **[#s,#t](#working-with-structured-output)**, teaches you how to get structured output from LLMs, enabling you to reliably integrate AI responses into your applications. This chapter helps you bridge the gap between AI capabilities and your existing codebase. Mastering this skill will let you build reliable AI features that work seamlessly with the other components in your applications.
 
 - **Chapter 9, "Prompt Chaining Workflows"**, delves into the essential pattern of prompt
   chaining, showing you how to break down complex tasks into manageable sequences of

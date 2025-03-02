@@ -7,3 +7,4 @@ mainmatter.txt
 05-testing-and-monitoring-prompts.md
 06-enhancing-llms-with-tools.md
 07-retrieval-augmented-generation.md
+08-working-with-structured-output.md
