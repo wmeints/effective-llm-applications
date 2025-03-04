@@ -257,9 +257,7 @@ If you've used tools like [v0.dev][V0_DEV] and [bolt.new][BOLT_NEW] you're famil
 
 Application like v0 use this style of communication to make the use of tools feel more interactive. It looks nice but it's also a powerful way to make sure the LLM outputs usable structured data when it comes to generating content.
 
-You can use this style of communication too in a similar fashion to how we used tools to force the LLM to output structured content.
-
-Make sure you have a tool connected to the kernel that is called something along the way `Create....` and then allow the kernel to invoke your tool as the following code demonstrates:
+You can use this style of communication too in a similar fashion to how we used tools to force the LLM to output structured content. Except this time we can set the function choice behavior for the application to automatic.
 
 ```csharp
 var outputTool = new OutputTool();
@@ -307,13 +305,43 @@ public interface IUserStoryGenerationHubClient
 }
 ```
 
-In this code we've created a hub that has the following code:
+In this code we create a hub that has the following code:
 
 1. First, we declare a new hub class that has an interface called `IUserStoryGenerationHubClient`. This defines the methods that a client needs to handle.
 2. Next, we'll allow clients to join and leave editing sessions so we know where to send the update for the user story.
 3. Finally, we have a method that allows the application to send updates to the current editing session with the generated content.
 
-To use the hub, we must register it in the application startup using the following code:
+We need to modify the tool to use the hub instead of storing the content in properties in the tool class. The following code demonstrates what the tool looks like when you connect it to a SignalR hub:
+
+```csharp
+public class OutputTool(IHubContext<
+    UserStoryGenerationHub, IUserStoryGenerationHubClient> hub, 
+    string clientId)
+{
+    [KernelFunction, Description("Store the created user story")]
+    public async Task CreateUserStory(string title, List<string> steps)
+    {
+        UserStoryContent userStoryContent = new()
+        {
+            Title = title,
+            Steps = steps
+        };
+
+        await hub.Clients
+            .Group(clientId)
+            .UpdateUserStoryContent(userStoryContent);
+    }
+}
+```
+
+In the tool we made the following changes:
+
+1. First, we inject the hub context for the hub we created.
+2. Next, we create a new content object that we stream to the clients by calling the `UpdateUserStoryContent` method. We're using a group to make sure that the content is only streamed to relevant clients.
+
+We're using the groups functionality in SignalR as a way to limit communication to only one or two clients. In production I recommend making sure you add authorization and allow clients to join a group only when they're the owner of a particular conversation (or user story in this scenario). You can find more information about this [in the manual][SIGNALR_AUTH].
+
+To use the hub we created, we must register it in the application startup using the following code:
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
@@ -332,9 +360,12 @@ First, we need to setup the required components for SignalR after which we can r
 The following code shows a basic chatbot class without conversation history that can respond to user prompts.
 
 ```csharp
-public class UserStoryGenerationAgent(UserStoryGenerationHub hub, Kernel kernel)
+public class UserStoryGenerationAgent(IHubContext<
+    UserStoryGenerationHub, IUserStoryGenerationHubClient> hub, 
+    Kernel kernel)
 {
-    public async Task<string> GenerateResponseAsync(string sessionId, string prompt)
+    public async Task<string> GenerateResponseAsync(
+        string sessionId, string prompt)
     {
         var outputTool = new OutputTool(hub, sessionId);
         var outputToolPlugin = kernel.Plugins.AddFromObject(outputTool);
@@ -426,3 +457,4 @@ In the next chapter, we'll look at prompt chaining as way to combine multiple pr
 [BOLT_NEW]: https://bolt.new
 [SIGNALR_DOCS]: https://dotnet.microsoft.com/en-us/apps/aspnet/signalr
 [GH_SAMPLE_CODE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-08/csharp/Chapter8.SidebandCommunication/
+[SIGNALR_AUTH]: https://learn.microsoft.com/en-us/aspnet/core/signalr/authn-and-authz?view=aspnetcore-9.0
