@@ -949,11 +949,11 @@ In this chapter, we covered a lot about the RAG pattern, one of the first design
 
 In the next chapter, we'll shift our focus towards using LLMs to generate structured output. I promise it will be less involved than implementing a RAG pattern, but it will still be fun and essential if you want to build more complicated workflows as we continue working towards chapters 9 and 10 of the book.
 
-[SAMPLE_SOURCE_1]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.RetrievalAugmentedGeneration/
+[SAMPLE_SOURCE_1]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/csharp/Chapter7.RetrievalAugmentedGeneration/
 [SO_BLOG]: https://stackoverflow.blog/2024/12/27/breaking-up-is-hard-to-do-chunking-in-rag-applications/
-[GEN_VAL_DATA_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.ValidationDatasetGeneration/
-[GH_TEST_SAMPLES]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.TestSampleGeneration/
-[GH_FM_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/Chapter7.FaithfulnessMetric/
+[GEN_VAL_DATA_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/csharp/Chapter7.ValidationDatasetGeneration/
+[GH_TEST_SAMPLES]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/csharp/Chapter7.TestSampleGeneration/
+[GH_FM_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-07/csharp/Chapter7.FaithfulnessMetric/
 [RAGAS_LIBRARY]: https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/
 [NEO4J]: https://neo4j.com/blog/news/graphrag-ecosystem-tools/
 [ES]: https://www.elastic.co/
