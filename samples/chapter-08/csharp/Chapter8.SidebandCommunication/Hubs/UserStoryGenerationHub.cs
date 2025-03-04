@@ -15,10 +15,4 @@ public class UserStoryGenerationHub : Hub<IUserStoryGenerationHubClient>
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, sessionId);
     }
-
-    public async Task UpdateUserStoryContent(string sessionId, UserStoryContent userStoryContent)
-    {
-        await Clients.Group(sessionId).UpdateUserStoryContent(userStoryContent);
-    }
-
 }
