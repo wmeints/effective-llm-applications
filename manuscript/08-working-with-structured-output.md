@@ -429,7 +429,7 @@ This code looks similar to how we configured the application before. I've added 
 
 Sideband communication makes for some interesting interaction patterns in applications. I love this pattern for chat applications, but I wouldn't use it for workflow-based scenarios. You need a lot more infrastructure for sideband communication to work in production, especially when your user base grows beyond a few hundred users.
 
-I've included the sample code in the [GitHub repository][GH_SAMPLE_CODE] so you can try it and modify it to your needs. It doesn't contain any client code, but if you're interested in learning how to use SignalR from a Javascript client, I recommend checking out the [SignalR client documentation][SIGNALR_CLIENT_DOCS]
+I've included the sample code in the [GitHub repository][GH_SAMPLE_CODE] so you can try it and modify it to your needs. It doesn't contain any client code, but if you're interested in learning how to use SignalR from a Javascript client, I recommend checking out the [SignalR client documentation][SIGNALR_CLIENT_DOCS].
 
 ## Summary
 
