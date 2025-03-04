@@ -290,13 +290,6 @@ public class UserStoryGenerationHub : Hub<IUserStoryGenerationHubClient>
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, sessionId);
     }
-
-    public async Task UpdateUserStoryContent(
-        string sessionId, UserStoryContent userStoryContent)
-    {
-        var group = Clients.Group(sessionId);
-        await group.UpdateUserStoryContent(userStoryContent);
-    }
 }
 
 public interface IUserStoryGenerationHubClient
@@ -309,7 +302,7 @@ In this code we create a hub that has the following code:
 
 1. First, we declare a new hub class that has an interface called `IUserStoryGenerationHubClient`. This defines the methods that a client needs to handle.
 2. Next, we'll allow clients to join and leave editing sessions so we know where to send the update for the user story.
-3. Finally, we have a method that allows the application to send updates to the current editing session with the generated content.
+3. Finally, we've created a client interface that allows the server to update user story content on the client.
 
 We need to modify the tool to use the hub instead of storing the content in properties in the tool class. The following code demonstrates what the tool looks like when you connect it to a SignalR hub:
 
@@ -339,7 +332,7 @@ In the tool we made the following changes:
 1. First, we inject the hub context for the hub we created.
 2. Next, we create a new content object that we stream to the clients by calling the `UpdateUserStoryContent` method. We're using a group to make sure that the content is only streamed to relevant clients.
 
-We're using the groups functionality in SignalR as a way to limit communication to only one or two clients. In production I recommend making sure you add authorization and allow clients to join a group only when they're the owner of a particular conversation (or user story in this scenario). You can find more information about this [in the manual][SIGNALR_AUTH].
+We're using the groups functionality in SignalR as a way to limit communication to only clients that are interested in seeing content updates. In production I recommend adding authorization and only allow clients to join a group when they're the owner of a particular conversation (or user story in this scenario). You can find more information about this [in the manual][SIGNALR_AUTH].
 
 To use the hub we created, we must register it in the application startup using the following code:
 
@@ -357,7 +350,7 @@ app.Run();
 
 First, we need to setup the required components for SignalR after which we can register the hub in the application. I've left out the other configuration code here needed to set up the kernel and the output tool. Let's look at how you can connect the hub to the Semantic Kernel code.
 
-The following code shows a basic chatbot class without conversation history that can respond to user prompts.
+The following code shows a basic chatbot class that can respond to user prompts.
 
 ```csharp
 public class UserStoryGenerationAgent(IHubContext<
@@ -434,9 +427,9 @@ This code looks similar to how we configured the application before. I've added 
 2. Then, I configured the agent class that we created as a transient dependency. I want a new one every time we have to handle a request.
 3. Finally, I created a POST operation that allows the user to submit prompts.
 
-I've left out the join and leave operations for now. You can find these operations in the sample code on [GitHub][GH_SAMPLE_CODE].
-
 Sideband communication makes for some interesting interaction patterns in applications. I love this pattern for chat applications, but wouldn't use it for workflow-based scenarios. You need a lot more infrastructure for sideband communication to work in production especially when your user base grows beyond a few hundred users.
+
+I've made sure to include the sample code in the [GitHub repository][GH_SAMPLE_CODE] so you can try it out and modify it to your needs. It doesn't include any client code, but if you're interested in learning how to use SignalR from a Javascript client, I recommend checking out the [SignalR client documentation][SIGNALR_CLIENT_DOCS]
 
 ## Summary
 
@@ -458,3 +451,4 @@ In the next chapter, we'll look at prompt chaining as way to combine multiple pr
 [SIGNALR_DOCS]: https://dotnet.microsoft.com/en-us/apps/aspnet/signalr
 [GH_SAMPLE_CODE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-08/csharp/Chapter8.SidebandCommunication/
 [SIGNALR_AUTH]: https://learn.microsoft.com/en-us/aspnet/core/signalr/authn-and-authz?view=aspnetcore-9.0
+[SIGNALR_CLIENT_DOCS]: https://learn.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-9.0&tabs=visual-studio
