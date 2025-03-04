@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter8.OutputFormatConfig", "Chapter8.OutputFormatConfig\Chapter8.OutputFormatConfig.csproj", "{227BD7C7-366D-4A03-867D-45CC75C3E3F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter8.OutputFormatConfig", "Chapter8.OutputFormatConfig\Chapter8.OutputFormatConfig.csproj", "{74BD10D4-DB07-4E81-AF4B-EA8ED953CB21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter8.StructuredContentTools", "Chapter8.StructuredContentTools\Chapter8.StructuredContentTools.csproj", "{32C7AF9B-533D-42DA-8B90-6404F5943C1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter8.SidebandCommunication", "Chapter8.SidebandCommunication\Chapter8.SidebandCommunication.csproj", "{8D3F669E-BC76-409E-A842-3ADBCCDA562A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,9 +18,17 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{227BD7C7-366D-4A03-867D-45CC75C3E3F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{227BD7C7-366D-4A03-867D-45CC75C3E3F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{227BD7C7-366D-4A03-867D-45CC75C3E3F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{227BD7C7-366D-4A03-867D-45CC75C3E3F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74BD10D4-DB07-4E81-AF4B-EA8ED953CB21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74BD10D4-DB07-4E81-AF4B-EA8ED953CB21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74BD10D4-DB07-4E81-AF4B-EA8ED953CB21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74BD10D4-DB07-4E81-AF4B-EA8ED953CB21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32C7AF9B-533D-42DA-8B90-6404F5943C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32C7AF9B-533D-42DA-8B90-6404F5943C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32C7AF9B-533D-42DA-8B90-6404F5943C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32C7AF9B-533D-42DA-8B90-6404F5943C1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D3F669E-BC76-409E-A842-3ADBCCDA562A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D3F669E-BC76-409E-A842-3ADBCCDA562A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D3F669E-BC76-409E-A842-3ADBCCDA562A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D3F669E-BC76-409E-A842-3ADBCCDA562A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
