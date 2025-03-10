@@ -3,12 +3,11 @@
 
 ## Why I wrote this book
 
-This book came about because I needed a way to copy my knowledge to my colleagues.
+This book came about because I needed a way to copy my knowledge to my colleagues. I almost built a custom AI agent to answer all my colleagues' questions, but it felt like giving McDonald's food to people who deserve healthy food for long-term happiness. So instead of giving quick, hallucinated together answers, I decided that my colleagues and you, as a reader, are better off with a book. I'm also gaining from this, because I structure my thoughts and get a chance to go back and improve myself.
 
-I've been using Large Language Models (LLMs) for quite a while now and discovered how to
-use them to build intelligent applications by failing a lot. I don't think I can protect
-anyone from making their own mistakes, but I can show what I learned and explain what
-worked for me.
+I've been using Large Language Models (LLMs) for quite a while now and discovered how to use them to build intelligent applications by failing a lot. I can't protect anyone from making their own mistakes, but I can show what I learned and explain what worked for me.
+
+It's challenging to write a book in this age of AI and the internet because the book is old when it hits the printing press. To combat this, I took a different approach: I'm writing and releasing it in chunks. Some chunks are lovely to read when they hit your mailbox, while others may be slightly incomplete. Please forgive my writing style and enjoy the fast-paced release cycle of the book.
 
 ## Who this book is for
 
@@ -67,7 +66,7 @@ enough in a more enterprise-oriented language like C#.
 
 - **[#s,#t](#working-with-structured-output)**, teaches you how to get structured output from LLMs, enabling you to reliably integrate AI responses into your applications. This chapter helps you bridge the gap between AI capabilities and your existing codebase. Mastering this skill will let you build reliable AI features that work seamlessly with the other components in your applications.
 
-- **Chapter 9, "Prompt Chaining Workflows"**, delves into the essential pattern of prompt
+- **[#s,#t](#prompt-chaining-workflows)**, delves into the essential pattern of prompt
   chaining, showing you how to break down complex tasks into manageable sequences of
   prompts that build upon each other's outputs to refine the output.
 
