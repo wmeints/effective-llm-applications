@@ -69,6 +69,22 @@ It helps to write down a rough schematic breakdown of the prompt chain you're tr
 
 One method that has really helped me through designing complex prompt chains is to use UML sequence diagrams. One tool I use for this is [app.diagrams.net][DRAW_IO], it has reasonable UML support and has free-form drawing capabilities that can be helpful too.
 
+Let's dive a little more into some samples of prompt chains and how I would solve them using small prompts and tools.
+
+### Creating blog content
+
+One application of a prompt chain that stands out among developers is to write a blog post about a technology topic. We'll implement this chain later in the chapter. For now, let's explore how to break down the problem of writing a blog post using AI.
+
+The following diagram shows the structure of the prompt chain for creating blog content [#s](#content-generation-workflow).
+
+First, we should talk about what it takes to write an article. Some people will write a blog post by just starting to write the content and refining it later. This could be done with AI too, but my personal preference here is to start with an outline based on online research.
+
+After finding relevant background information we can generate an outline for the article. It should list all the top-level headings for the article that we can refine into more detailed sections later on.
+
+### Converting code from Python to C#
+
+
+
 ## Building a prompt chain with Semantic Kernel
 
 ### Overview of the workflow
