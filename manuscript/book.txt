@@ -8,3 +8,4 @@ mainmatter.txt
 06-enhancing-llms-with-tools.md
 07-retrieval-augmented-generation.md
 08-working-with-structured-output.md
+09-prompt-chaining-workflows.md
