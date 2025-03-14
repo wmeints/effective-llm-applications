@@ -1,29 +1,29 @@
 {#prompt-chaining-workflows}
 # Prompt chaining workflows
 
-By now you'll have learned that LLMs are powerful and when combined with tools and RAG (Retrieval Augmented Generation) can produce interesting applications. In this chapter we'll start building workflows with LLMs that use the patterns and practices from the previous chapter.
+By now you have learned that LLMs are powerful and when combined with tools and RAG (Retrieval Augmented Generation) can produce interesting applications. In this chapter we'll start building workflows with LLMs that use the patterns and practices from the previous chapter.
 
-At the end of the chapter you know why workflows are essential to increase accuracy of LLMs and how to build a workflow with Semantic Kernel that chains multiple prompts and tools.
+At the end of the chapter you know why workflows are essential to increase the accuracy of LLMs and how to build a workflow with Semantic Kernel that chains multiple prompts and tools.
 
 We'll cover the following topics:
 
 - Why use a prompt chain workflow
 - Understanding and designing prompt chains
 - Building a prompt chain with Semantic Kernel
-- Testing approach for prompt chains
+- Testing approaches for prompt chains
 - Optimizations of the prompt chain workflow
 
 Let's start by discussing why you would want to use a prompt chain workflow over a plain chat solution.
 
 ## Why use a prompt chain workflow
 
-It's hard to think that with all the power of modern LLMs you'd have any need for workflows. Just by looking at LinkedIn, you can tell that at least one portion of the people think that agents is the only viable solution if you need to solve a complex task with an LLM.
+It's hard to imagine you'd have any need for workflows with all the power of modern LLMs. There are two schools of thought running around the internet at the time of writing in relation to this. One school of thought is that prompt engineering is the golden solution to everything. Another school of thought focuses on the idea of agents.
 
-I can tell you from experience that there are multiple reasons that building an agent shouldn't be your first step. It's much easier and much faster to build a workflow like a prompt chain.
+It is true that we can use chain-of-thought prompts, in-context learning, and add detailed instructions to create quite complicated responses. However, the prompts are rarely stable, and quite hard to maintain. The more complex and unfocused the prompt, the harder it becomes to get a reasonable answer.
 
-By breaking down a complex task into a chain of operations you can improve many aspects of your LLM-based solution. This chain of operations is often called a prompt chain, because most people chain together multiple prompts where the next prompt takes the output of the previous prompt to improve it with more details. While it's true that most prompt chains work like that, it's not a requirement to only use prompts.
+The other school of thought that focuses on agentic AI thinks that agents are powerful enough to figure a solid workflow on their own. The idea is that agents can use LLMs to build a plan for solving a task and then execute that plan to solve the task. While this sounds like a flexible solution, it rarely works the way we want. We're simply not in the era yet where agents are stable enough to solve complex problems because the reasoning capabilities of LLMs aren't stable enough yet.
 
-Before we dive into building a prompt chain workflow, let's first discuss three reasons why you want to decompose complex tasks with a prompt chain workflow.
+Right now, it's much easier and much faster to build a workflow instead of an agent when you know how to solve a problem and it's something that you need to solve again and again. Let me explain why.
 
 ### Prompt chains improve quality
 
@@ -43,47 +43,44 @@ Breaking down a big prompt into a chain of more focused prompts allows for a mor
 
 There's another reason why building a prompt chain is better. It's easier to test individual steps than it is to test a complex prompt. Think of a prompt like a  function in a computer program but with AI. We know from numerous projects that you and I have worked on, that it's hard to test a complex function with many scenarios. You need more unit-tests and it's easy to forget specific edge cases. When you break down the function into smaller functions it becomes much easier to reason about the logic and test it.
 
-This chain of thought around testing programming logic applies building LLM-based applications as well. Smaller, focused prompts, are easier to test and replace if they break. Rembmer, that LLM you're using will be replaced in a few months and you'll have to redo all the test work.
+This chain of thought around testing programming logic applies building LLM-based applications as well. Smaller, focused prompts, are easier to test and replace if they break. Remembmer, that LLM you're using will be replaced in a few months and you'll have to redo all the test work.
 
 ### Prompt chains improve security
 
-Monitoring a basic prompt is also easier. We have to keep in mind that hackers will attempt to abuse your application. Monitoring is an important line of defense to help you capture illegal usage patterns using security tools.
-
-Building a complex prompt makes it harder for monitoring tools to capture abuse. It's also a lot easier for a hacker to write a jailbreak or prompt injection attack when the prompt is more complex. The LLM is more easily distracted.
+Monitoring a less complicated prompt is easier. We have to keep in mind that hackers will attempt to abuse your application. Monitoring is an important line of defense to help you capture illegal usage patterns using security tools.
 
 For production cases, if you can turn your complex task into a chain of prompts, I highly recommend doing so.
 
 ## Understanding and designing prompt chains
 
-It sounds easy enough, split a big task into smaller tasks, but I've found that it can be quite hard to come up with a good structure to solve some of the more complicated tasks. I've found that it helps to have a few prompt design patterns somewhere in your notebook (or from this book for that matter).
+It sounds easy enough, split a big task into smaller tasks, but I've found that it can be quite hard to come up with a good structure to solve some of the more complicated tasks. I've found that it helps to have a few prompt design patterns somewhere in your notebook (or you could grab them from this book).
 
-In my notebook, several patterns emerged as I'm writing more prompts for different use cases. I've categorized these prompt patterns into two categories:
+In my notebook, several patterns emerged as I'm writing more prompts for different use cases. I've categorized these prompts into two categories:
 
-- **Divide and conquer prompts:** I use this pattern to split work into independent sub tasks. This is a useful technique for building a prompt to write a blog post for example.
+- **Divide and conquer prompts:** I use this pattern to split work into independent sub tasks. This is a useful technique for building a prompt to write a blog post for example. These prompts can be parallelized because you don't have any dependencies between the prompts.
 
 - **Refinement prompts:** I use this pattern of the output from a prompt is a little too unstable and I can't fix it, because the task is a two-step process. For example, if you have to summarize text and then rewrite it to a specific style. Often, an LLM can summarize pretty well sticking to the original style. It's quite hard to change the style at the same time. So I put the rewrite portion into a second follow-up prompt.
 
 Usually a problem can be solved with either a refinement prompt or a divide and conquer prompt. Sometimes you have to combine the two together.
 
-It helps to write down a rough schematic breakdown of the prompt chain you're trying to create. Most of the time I write a rough set of prompts and connect them together and execute one or two test runs. Sometimes I need to take a more elaborate approach to designing a good prompt. In a more complex scenario I prefer to draw a doodle with the steps needed to solve the problem using a few prompts and function calls.
+It helps to write down a rough breakdown of the prompt chain you're trying to create. Most of the time I write a rough set of prompts and connect them together and execute one or two test runs. Sometimes I need to take a more elaborate approach to designing a good prompt. In a more complex scenario I prefer to draw a doodle with the steps needed to solve the problem using a few prompts and function calls.
 
 One method that has really helped me through designing complex prompt chains is to use UML sequence diagrams. One tool I use for this is [app.diagrams.net][DRAW_IO], it has reasonable UML support and has free-form drawing capabilities that can be helpful too.
 
-Let's dive a little more into some samples of prompt chains and how I would solve them using small prompts and tools.
+Let's look at some samples and how you can solve them using chains of smaller prompts and tools.
 
 ### Creating blog content
 
-One application of a prompt chain that stands out among developers is to write a blog post about a technology topic. We'll implement this chain later in the chapter. For now, let's explore how to break down the problem of writing a blog post using AI.
+One application of a prompt chain that is an interesting case is to write a blog post about a technology topic. Let's look at how you could approach this problem as a prompt chain. [#s](#content-generation-workflow) shows the structure of the prompt chain for creating blog content.
 
-The following diagram shows the structure of the prompt chain for creating blog content [#s](#content-generation-workflow).
+{#content-generation-workflow}
+![Content generation workflow](content-generation-workflow.png)
 
-First, we should talk about what it takes to write an article. Some people will write a blog post by just starting to write the content and refining it later. This could be done with AI too, but my personal preference here is to start with an outline based on online research.
+Writing an article with AI requires a more structured approach than some people would take themselves, so the workflow may look more rigid than how you would approach the problem. Let's go over the steps to understand how the worklow works:
 
-After finding relevant background information we can generate an outline for the article. It should list all the top-level headings for the article that we can refine into more detailed sections later on.
+...
 
 ### Converting code from Python to C#
-
-
 
 ## Building a prompt chain with Semantic Kernel
 
