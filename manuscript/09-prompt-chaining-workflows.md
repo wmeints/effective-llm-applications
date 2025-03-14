@@ -81,14 +81,14 @@ Instead of going through the code here, I want to focus on the challenges of thi
 
 Running a complex prompt like the one we just discussed is annoying to debug and far from stable. There's a chance the LLM isn't going to follow my plan, because it found content on the internet that influences the reasoning capabilities. It can also fail to detect one or more of the tools for any number of reasons as we discussed in [#s](#what-are-tools-skills-and-plugins).
 
-I like to call these chain-of-thought prompts chain-of-problems prompts, because of the high probability it doesn't do what I want.
+I like to call these chain-of-thought prompts chain-of-problems prompts, because of the high probability these prompts don't work as intended.
 
 You can solve the same complex task but with much more control when you use a prompt chain. [#s](#content-generation-workflow) shows the structure of the prompt chain for creating blog content. I've taken the plan from the original prompt, refined it, and turned it into a nice workflow.
 
 {#content-generation-workflow}
 ![Content generation workflow](content-generation-workflow.png)
 
-The workflow takes a similar approach as the chain-of-thought prompt we used before, but is more stable, because there's no chance the LLM isn't going to call my tool. That's because I'm using logic to enforce the plan.
+The workflow takes a similar approach as the chain-of-thought prompt we used before, but is more stable, because we control when we're calling a tool instead of a probability based approach.
 
 Let's go over the worklow to understand how it works:
 
