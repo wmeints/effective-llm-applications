@@ -20,6 +20,7 @@ We'll cover the following topics in this chapter:
 Let's first understand what tools are in the context of an LLM and where they're
 helpful.
 
+{#what-are-tools-skills-and-plugins}
 ## What are tools, skills, and plugins
 
 Tools, skills, and functions are all used interchangeably in the context of LLMs. Most
@@ -78,8 +79,7 @@ information.
 If you need to flow information from a response into a follow-up prompt, you may wonder
 how you will make that work with just a workflow. It's challenging to parse data from a
 response in a structured way. As luck would have it, you can ask for structured
-responses. We'll discuss this in Chapter 8 when we discuss using LLMs to create
-structured outputs.
+responses. We'll discuss this in [#s](#working-with-structured-output) when we discuss using LLMs to create structured outputs.
 
 Before we dive into code, it's important to note that Semantic Kernel has limited
 support for calling tools at the time of writing. OpenAI and Azure OpenAI, for example,
@@ -283,7 +283,7 @@ to call functions instead of generating a response by setting the
 `FunctionChoiceBehavior` to `FunctionChoiceBehavior.Required()`. This setting allows you
 to give a list of functions, too, but this time, the list should contain functions that
 the LLM must call. The required setting is mostly useful when working with structured
-output, which we'll discuss in chapter 7. When you use this setting, only the first call
+output, which we'll discuss in [#s](#retrieval-augmented-generation). When you use this setting, only the first call
 to the LLM will force it to use a tool; otherwise, we'd end up with an endless loop.
 
 ### Providing functions to the kernel
@@ -602,7 +602,7 @@ answer to.
 
 Another excellent filter application is capturing information from a function call
 before it goes back into the LLM. Capturing data retrieved by a function is especially
-useful when you want to implement the RAG pattern (see Chapter 7) and need to store
+useful when you want to implement the RAG pattern (see [#s](#retrieval-augmented-generation)) and need to store
 references to the original documents found.
 
 Let's look at how you can build a function filter so you understand how to use them in
