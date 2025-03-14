@@ -67,20 +67,40 @@ It helps to write down a rough breakdown of the prompt chain you're trying to cr
 
 One method that has really helped me through designing complex prompt chains is to use UML sequence diagrams. One tool I use for this is [app.diagrams.net][DRAW_IO], it has reasonable UML support and has free-form drawing capabilities that can be helpful too.
 
-Let's look at some samples and how you can solve them using chains of smaller prompts and tools.
+Let's look how we can break down the problem of generating blog content into a prompt chain.
 
 ### Creating blog content
 
-One application of a prompt chain that is an interesting case is to write a blog post about a technology topic. Let's look at how you could approach this problem as a prompt chain. [#s](#content-generation-workflow) shows the structure of the prompt chain for creating blog content.
+One application of a prompt chain that is an interesting case is to write a blog post about a topic. It's interesting, because it shows off how much better a prompt chain works when compared to one big prompt. Let's first look at how you could approach this problem as a single chain-of-thought prompt.
+
+//TODO: Insert prompt
+
+The prompt contains a step-by-step plan to help the LLM generate the right response. We're relying on Semantic Kernel being able to call multiple tools thanks to the function calling loop we discussed in [#s](#llm-function-calling).
+
+Instead of going through the code here, I want to focus on the challenges of this prompt. If you're interested in learning how to build this, I recommend looking at [the example code for this chapter][SAMPLE_CODE].
+
+Running a complex prompt like the one we just discussed is annoying to debug and far from stable. There's a chance the LLM isn't going to follow my plan, because it found content on the internet that influences the reasoning capabilities. It can also fail to detect one or more of the tools for any number of reasons as we discussed in [#s](#what-are-tools-skills-and-plugins).
+
+I like to call these chain-of-thought prompts chain-of-problems prompts, because of the high probability it doesn't do what I want.
+
+You can solve the same complex task but with much more control when you use a prompt chain. [#s](#content-generation-workflow) shows the structure of the prompt chain for creating blog content. I've taken the plan from the original prompt, refined it, and turned it into a nice workflow.
 
 {#content-generation-workflow}
 ![Content generation workflow](content-generation-workflow.png)
 
-Writing an article with AI requires a more structured approach than some people would take themselves, so the workflow may look more rigid than how you would approach the problem. Let's go over the steps to understand how the worklow works:
+The workflow takes a similar approach as the chain-of-thought prompt we used before, but is more stable, because there's no chance the LLM isn't going to call my tool. That's because I'm using logic to enforce the plan.
 
-...
+Let's go over the worklow to understand how it works:
 
-### Converting code from Python to C#
+1. First, we'll research the topic by searching for 5 articles online that cover the topic of the article.
+2. Next, we ask the LLM to generate an outline with top-level headings to create the structure of the article.
+3. Then, we loop over the sections, and generate a key talking point for the section.
+4. After generating the key talking point, we'll research the section in greater depth.
+5. Finally, we'll generate for each section, and concatenate the content together.
+
+You pay a price for this stability: You're going to have to write more code to make the workflow run. However, you gain a lot of quality and simplicity back for that extra code. If you didn't do this, you had to write a ton of tests and deal with the fact that the chain-of-thought prompt is never going to achieve the same level of accuracy.
+
+To help you understand how much code we're talking about, let's build the workflow from start to finish with Semantic Kernel components and compare it to the chain-of-thought prompt implementation.
 
 ## Building a prompt chain with Semantic Kernel
 
@@ -119,3 +139,4 @@ Writing an article with AI requires a more structured approach than some people 
 ## Summary
 
 [DRAW_IO]: https://app.diagrams.net/
+[SAMPLE_CODE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-09/csharp
