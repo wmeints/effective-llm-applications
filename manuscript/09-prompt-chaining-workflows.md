@@ -98,7 +98,7 @@ Running a complex prompt like the one we just discussed is annoying to debug and
 
 I like to call these chain-of-thought prompts chain-of-problems prompts, because of the high probability these prompts don't work as intended.
 
-A> With recent development in reasoning models, you'll find that these chain-of-thought prompts work much better. But I've found that they're still hard to debug. Also, while they tend to fail much less often, when a prompt fails with a reasoning model, it's more expensive and it fails more spectaculairly.
+A> With recent development in reasoning models like OpenAI's o3 and o1 models, you'll find that these chain-of-thought prompts work much better. But I've found that they're still hard to debug. Also, while they tend to fail much less often, when a prompt fails with a reasoning model, it's more expensive and it fails more spectaculairly.
 
 You can solve the same complex task but with much more control when you use a prompt chain. [#s](#content-generation-workflow) shows the structure of the prompt chain for creating blog content. I've taken the plan from the original prompt, refined it, and turned it into a nice workflow.
 
