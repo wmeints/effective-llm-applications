@@ -41,7 +41,7 @@ Breaking down a big prompt into a chain of more focused prompts allows for a mor
 
 ### Prompt chains improve testability
 
-There's another reason why building a prompt chain is better. It's easier to test individual steps than it is to test a complex prompt. Think of a prompt like a  function in a computer program but with AI. We know from numerous projects that you and I have worked on, that it's hard to test a complex function with many scenarios. You need more unit-tests and it's easy to forget specific edge cases. When you break down the function into smaller functions it becomes much easier to reason about the logic and test it.
+There's another reason why building a prompt chain is better. It's easier to test individual steps than it is to test a complex prompt. Think of a prompt like a function in a computer program but with AI. We know from numerous projects that you and I have worked on, that it's hard to test a complex function with many scenarios. You need more unit-tests and it's easy to forget specific edge cases. When you break down the function into smaller functions it becomes much easier to reason about the logic and test it.
 
 This chain of thought around testing programming logic applies building LLM-based applications as well. Smaller, focused prompts, are easier to test and replace if they break. Remembmer, that LLM you're using will be replaced in a few months and you'll have to redo all the test work.
 
@@ -73,7 +73,22 @@ Let's look how we can break down the problem of generating blog content into a p
 
 One application of a prompt chain that is an interesting case is to write a blog post about a topic. It's interesting, because it shows off how much better a prompt chain works when compared to one big prompt. Let's first look at how you could approach this problem as a single chain-of-thought prompt.
 
-//TODO: Insert prompt
+```text
+We’re writing a blog post about "{{topic}}". The main goal of the blog post
+is to explain the importance of securing your agent properly. Please use
+the following step-by-step instructions to write the article:
+
+1. First, research the topic by looking at 5 articles on 
+   the internet using the `search` tool that I’ve provided.
+2. Next, create an outline based on the research you found. 
+   We should only cover the top-level headings in the outline,
+   we’ll expand these headings later.
+3. After creating the outline, go over each section and figure
+   out a key talking point for that section.
+4. Finally, expand each section covering the key talking point.
+
+Write the article. Make sure to include the title of the article.
+```
 
 The prompt contains a step-by-step plan to help the LLM generate the right response. We're relying on Semantic Kernel being able to call multiple tools thanks to the function calling loop we discussed in [#s](#llm-function-calling).
 
@@ -82,6 +97,8 @@ Instead of going through the code here, I want to focus on the challenges of thi
 Running a complex prompt like the one we just discussed is annoying to debug and far from stable. There's a chance the LLM isn't going to follow my plan, because it found content on the internet that influences the reasoning capabilities. It can also fail to detect one or more of the tools for any number of reasons as we discussed in [#s](#what-are-tools-skills-and-plugins).
 
 I like to call these chain-of-thought prompts chain-of-problems prompts, because of the high probability these prompts don't work as intended.
+
+A> With recent development in reasoning models, you'll find that these chain-of-thought prompts work much better. But I've found that they're still hard to debug. Also, while they tend to fail much less often, when a prompt fails with a reasoning model, it's more expensive and it fails more spectaculairly.
 
 You can solve the same complex task but with much more control when you use a prompt chain. [#s](#content-generation-workflow) shows the structure of the prompt chain for creating blog content. I've taken the plan from the original prompt, refined it, and turned it into a nice workflow.
 
