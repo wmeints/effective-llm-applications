@@ -13,22 +13,22 @@ Kernel](https://leanpub.com/effective-llm-applications-with-semantic-kernel)
 
 I'm writing this book as you read this, and I'm at **57% completion**.
 
-| Chapter                                       | Status      | Samples    |
-| --------------------------------------------- | ----------- | ---------- |
-| 1. Understanding Large Language Models        | Complete    | N.A.       |
-| 2. Essential LLMOps knowledge                 | Complete    | N.A.       |
-| 3. Getting started with Semantic Kernel       | Complete    | C#, Python |
-| 4. The art and nonsense of prompt engineering | Complete    | C#, Python |
-| 5. Testing and monitoring prompts             | Complete    | C#         |
-| 6. Enhancing LLMs with functions              | Complete    | C#         |
-| 7. Retrieval Augmented Generation (RAG)       | Complete    | C#         |
-| 8. Working with structured output             | Complete    | C#         |
-| 9. Prompt chaining workflows                  | In progress |            |
-| 10. Intelligent request routing workflows     | Not started |            |
-| 11. LLM orchestration workflows               | Not started |            |
-| 12. Artist and critic workflows               | Not started |            |
-| 13. Building basic agents                     | Not started |            |
-| 14. Multi-agent teams                         | Not started |            |
+| Chapter                                       | Status      | Samples                                                                    |
+| --------------------------------------------- | ----------- | -------------------------------------------------------------------------- |
+| 1. Understanding Large Language Models        | Complete    | N.A.                                                                       |
+| 2. Essential LLMOps knowledge                 | Complete    | N.A.                                                                       |
+| 3. Getting started with Semantic Kernel       | Complete    | [C#](./samples/chapter-03/csharp/), [Python](./samples/chapter-03/python/) |
+| 4. The art and nonsense of prompt engineering | Complete    | [C#](./samples/chapter-04/csharp/), [Python](./samples/chapter-04/python/) |
+| 5. Testing and monitoring prompts             | Complete    | [C#](./samples/chapter-05/csharp/)                                         |
+| 6. Enhancing LLMs with functions              | Complete    | [C#](./samples/chapter-06/csharp/)                                         |
+| 7. Retrieval Augmented Generation (RAG)       | Complete    | [C#](./samples/chapter-07/csharp/)                                         |
+| 8. Working with structured output             | Complete    | [C#](./samples/chapter-08/csharp/)                                         |
+| 9. Prompt chaining workflows                  | In progress | [C#](./samples/chapter-09/csharp/)                                         |
+| 10. Intelligent request routing workflows     | Not started |                                                                            |
+| 11. LLM orchestration workflows               | Not started |                                                                            |
+| 12. Artist and critic workflows               | Not started |                                                                            |
+| 13. Building basic agents                     | Not started |                                                                            |
+| 14. Multi-agent teams                         | Not started |                                                                            |
 
 ## Working with the examples
 
