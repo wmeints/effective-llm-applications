@@ -6,11 +6,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NoWarn>SKEXP0050</NoWarn>
+    <UserSecretsId>5ad5e95e-e31e-4536-87bc-f2020fd9465d</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.3" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.41.0" />
     <PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.41.0-alpha" />
+    <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.41.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.41.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Prompts\generate-content.yml" />
+    <EmbeddedResource Include="Prompts\generate-content.yml" />
   </ItemGroup>
 
 </Project>
