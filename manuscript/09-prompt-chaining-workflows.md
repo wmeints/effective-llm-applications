@@ -69,6 +69,7 @@ One method that has really helped me through designing complex prompt chains is 
 
 Let's look how we can break down the problem of generating blog content into a prompt chain.
 
+{#creating-blog-content}
 ### Creating blog content
 
 One application of a prompt chain that is an interesting case is to write a blog post about a topic. It's interesting, because it shows off how much better a prompt chain works when compared to one big prompt. Let's first look at how you could approach this problem as a single chain-of-thought prompt.
@@ -115,17 +116,214 @@ Let's go over the worklow to understand how it works:
 4. After generating the key talking point, we'll research the section in greater depth.
 5. Finally, we'll generate for each section, and concatenate the content together.
 
-You pay a price for this stability: You're going to have to write more code to make the workflow run. However, you gain a lot of quality and simplicity back for that extra code. If you didn't do this, you had to write a ton of tests and deal with the fact that the chain-of-thought prompt is never going to achieve the same level of accuracy.
-
-To help you understand how much code we're talking about, let's build the workflow from start to finish with Semantic Kernel components and compare it to the chain-of-thought prompt implementation.
+You pay a price for this stability: You're going to have to write more code to make the workflow run. However, you gain a lot of quality and testability back for that extra code. If you didn't do this, you had to write a ton of tests and deal with the fact that the chain-of-thought prompt is never going to achieve the same level of accuracy.
 
 ## Building a prompt chain with Semantic Kernel
 
+To help you understand how much code we're talking about, let's build the workflow from start to finish with Semantic Kernel components and compare it to the chain-of-thought prompt implementation.
+
 ### Overview of the workflow
+
+The workflow we'll build in Semantic Kernel follows the sequence diagram that you can find in [#s](#creating-blog-content). When designing the workflow for the book I figured it would be a good idea to package up each step in the workflow into a separate component so you can copy and paste those to your own code base should you wish to.
+
+We'll create the following steps in the workflow:
+
+1. Finding research online - This step uses the web search plugin for Semantic Kernel to find content related to the blog article topic.
+2. Outlining the article - This step uses a prompt to create an outline with top-level section titles and a title for the blog article.
+3. Researching individual sections - This step uses a prompt to create a key question to be answered in each section and then performs another search to find an answer to the key question.
+4. Generating the article content - This step generates the final content for the article.
+
+The main `Program.cs` file will contain the main orchestration logic for the workflow and some setup logic for the application. Let's start by implementing the first step of the workflow.
 
 ### Finding research online with the search tool
 
+In the first step of the workflow, we'll use the `Microsoft.SemanticKernel.Plugins.Web` package that you can use to implement web search as a tool in your LLM-based application. For the purpose of the workflow, though, we'll use the plugin directly.
+
+The research step looks like this:
+
+```csharp
+public class ResearchContentStep
+{
+    private readonly WebSearchEnginePlugin _webSearchPlugin;
+
+    public ResearchContentStep(IConfiguration configuration)
+    {
+        _webSearchPlugin = new WebSearchEnginePlugin(new GoogleConnector(
+            apiKey: configuration["Google:ApiKey"]!,
+            searchEngineId: configuration["Google:SearchEngineId"]!));
+    }
+
+    public async Task<ResearchContentResult> InvokeAsync(string topic)
+    {
+        var searchResults = await _webSearchPlugin.SearchAsync(topic);
+        return new ResearchContentResult(searchResults);
+    }
+}
+```
+
+This has the following logic:
+
+1. First, we'll create a new class called `ResearchContentStep` that will package up the dependencies needed to execute the step. In the class there's a method called `InvokeAsync` that we can use to execute the step.
+2. In the constructor of the class we create a new instance of the `WebSearchPlugin` class and give it access to a custom Google Search engine configuration. 
+3. Then, in the `InvokeAsync` method we invoke the web search plugin and return its results to the caller.
+
+The google web search connector requires an API key and a unique identifier for your application. You can set up a new API key [through the Google JSON search manual][GA_API_KEY]. The manual also includes a link to [the custom search engine control panel][GA_CONTROL_PANEL] that you'll need to obtain the unique search engine identifier for your application.
+
+It may sound like over engineering to package each step into a separate class, but I've found that it makes it much easier to rewire the workflow at a later time. I had to rewire my workflow steps two or three times while making the sample code for the chapter because the order of operations just wasn't quite right.
+
+Another benefit of packaging steps into classes I've found is that you can more easily unit-test the steps. I used the following xUnit-based test to validate the step:
+
+```csharp
+public class ResearchContentStepTests
+{
+    private readonly IConfiguration _configuration;
+    private readonly ResearchContentStep _researchContentStep;
+
+    public ResearchContentStepTests()
+    {
+        _configuration = TestObjectFactory.GetTestConfiguration();
+        _researchContentStep = new ResearchContentStep(_configuration);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_ValidTopic_ReturnsResearchContentResult()
+    {
+        // Arrange
+        var topic = "Artificial Intelligence";
+
+        // Act
+        var result = await _researchContentStep.InvokeAsync(topic);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotNull(result.SearchResults);
+        Assert.NotEmpty(result.SearchResults);
+    }
+```
+
+This unit-test looks a little underwhelming, but I'm not looking to unit-test the Semantic Kernel code itself. I just want to make sure that I'm getting something back in my process step.
+
+I prefer to use a test object factory to configure some of the more frequently used components in the tests. The `TestObjectFactory` class contains logic to create a configuration object and a kernel for testing purposes. It looks like this:
+
+```csharp
+public class TestObjectFactory
+{
+    public static IConfiguration GetTestConfiguration()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddUserSecrets<TestObjectFactory>()
+            .Build();
+
+        return configuration;
+    }
+
+    public static Kernel GetKernel(IConfiguration configuration)
+    {
+        var kernel = Kernel.CreateBuilder()
+            .AddAzureOpenAIChatCompletion(
+                configuration["LanguageModel:DeploymentName"]!,
+                configuration["LanguageModel:Endpoint"]!,
+                configuration["LanguageModel:ApiKey"]!
+            ).Build();
+
+        return kernel;
+    }
+}
+```
+
+In the `TestObjectFactory` class you can find two methods:
+
+1. First, there's a method that creates a configuration object for the tests so that I can obtain secrets from [the user-secrets configuration store][USER_SECRETS_STORE].
+2. Next, there's a method to create a new kernel instance for every test we're running.
+
+Moving logic like kernel initialization into a dedicated factory class makes the test logic a lot more compact so you can focus more on testing the prompts.
+
+In the next step, after researching the blog topic, we'll create an outline based on the topic of the blog article, and the research we've found.
+
 ### Outlining the article content with a prompt
+
+In the create outline step, we'll need a promp that we can use to create an outline that's based off the topic we're working on and the located research. I created a prompt for this purpose:
+
+```yaml
+name: create_outline
+description: Generates a full article based on a plan
+template: |
+   We’re writing a blog post about "{{topic}}". Write an outline of the article. Follow these instructions carefully when
+   creating the outline for the article. Refer to the search results below to help you create the outline.
+
+   <|research|>
+   {{searchResults}}
+   <|research_end|>
+
+   - Only generate top-level headings
+   - Follow the hour-glass structure for the article
+   - Include no formatting in the outline
+template_format: handlebars
+input_variables:
+  - name: topic
+    description: The topic you want to discuss in the blogpost.
+    is_required: true
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 12000
+```
+
+I use specific markup in the prompt to help the LLM distinguish between my prompt and the research content. I've found that [ChatML][CHATML], a markup invented by OpenAI for LLMs can be a great tool to help structure prompts. Officially, ChatML doesn't support the tag I'm using, but because ChatML has a well defined structure, the LLM responds really well to my trick.
+
+To use the prompt, we need to store it  in a prompt YAML file that's embedded in the program so we can use the following code to generate an outline:
+
+```csharp
+public class CreateOutlineStep
+{
+    private readonly KernelFunction _promptTemplate;
+    private readonly Kernel _kernel;
+
+    public CreateOutlineStep(Kernel kernel)
+    {
+        _kernel = kernel;
+        _promptTemplate = kernel.CreateFunctionFromPromptYaml(
+            EmbeddedResource.Read("Prompts.create-outline.yml"),
+            new HandlebarsPromptTemplateFactory());
+    }
+
+    public async Task<CreateOutlineResult> InvokeAsync(
+        string topic, string searchResults)
+    {
+        var executionSettings = new OpenAIPromptExecutionSettings()
+        {
+            ResponseFormat = typeof(CreateOutlineResult)
+        };
+
+        var response = await _promptTemplate.InvokeAsync(
+            _kernel, 
+            new KernelArguments(executionSettings)
+            {
+                ["topic"] = topic,
+                ["searchResults"] = searchResults
+            }
+         );
+
+        var responseData = JsonSerializer.Deserialize<CreateOutlineResult>(
+            response.GetValue<string>()!);
+
+        return responseData;
+    }
+}
+```
+
+This step uses the following logic:
+
+1. First, we create a new step class and initialize the prompt template by reading the prompt YAML file that we described earlier.
+2. Next, we create an `InvokeAsync` method that invokes the prompt template with the information about the topic and the reseach content that we located earlier on Google. We'll ask for structured output to help the produce content that we can easily parse.
+3. Finally, we deserialize the structured JSON into the `CreateOutlineResult` class.
+
+We're using structured output with the prompt template to make chaining easier. Without the structured output format, we'd have to resort to regular expressions and other difficult parsing logic to obtain the results we need.
+
+Now that we have the outline, we can research the content of each of the generated sections in the outline.
 
 ### Researching individual sections
 
@@ -157,3 +355,7 @@ To help you understand how much code we're talking about, let's build the workfl
 
 [DRAW_IO]: https://app.diagrams.net/
 [SAMPLE_CODE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-09/csharp
+[GA_API_KEY]: https://developers.google.com/custom-search/v1/overview
+[GA_CONTROL_PANEL]: https://programmablesearchengine.google.com/controlpanel/all
+[USER_SECRETS_STORE]: https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-9.0&tabs=windows
+[CHATML]: https://github.com/openai/openai-python/blob/release-v0.28.0/chatml.md
