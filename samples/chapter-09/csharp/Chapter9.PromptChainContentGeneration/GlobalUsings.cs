@@ -6,3 +6,5 @@ global using Microsoft.SemanticKernel.Plugins.Web;
 global using Microsoft.SemanticKernel.Plugins.Web.Google;
 global using System.Text.Json;
 global using Chapter9.PromptChainContentGeneration.Shared;
+global using Chapter9.PromptChainContentGeneration.Steps;
+global using System.Text;

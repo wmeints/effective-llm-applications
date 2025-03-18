@@ -16,6 +16,26 @@ public class WriteSectionStep
     public async Task<GenerateSectionContentResult> InvokeAsync(
         string topic, string sectionTitle, string query, string searchResults)
     {
+        if (string.IsNullOrEmpty(topic))
+        {
+            throw new ArgumentException("Topic cannot be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(sectionTitle))
+        {
+            throw new ArgumentException("Section title cannot be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(query))
+        {
+            throw new ArgumentException("Query cannot be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(searchResults))
+        {
+            throw new ArgumentException("Search results cannot be null or empty");
+        }
+
         var promptExecutionSettings = new OpenAIPromptExecutionSettings
         {
             ResponseFormat = typeof(GenerateSectionContentResult)
