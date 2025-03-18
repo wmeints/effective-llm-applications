@@ -1,8 +1,7 @@
 name: generate_content
 description: Generates a full article based on a plan
 template: |
-  We’re writing a blog post about "{{topic}}". The main goal of the blog post is to explain the
-  importance of securing your agent properly. Please use the following step-by-step instructions to write the article:
+  We’re writing a blog post about "{{topic}}". Please use the following step-by-step instructions to write the article:
   
   1.	First, research the topic by looking at 5 articles on the internet using the `search` tool that I’ve provided.
   2.	Next, create an outline based on the research you found. We should only cover the top-level headings in the outline, we’ll expand these headings later.

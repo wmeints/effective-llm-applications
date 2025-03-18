@@ -1,0 +1,53 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Chapter9.PromptChainContentGeneration.Shared;
+using Chapter9.PromptChainContentGeneration.Steps;
+using Chapter9.PromptChainContentGeneration.Tests.Utilities;
+using Microsoft.Extensions.Configuration;
+using Microsoft.SemanticKernel;
+using Xunit;
+
+namespace Chapter9.PromptChainContentGeneration.Tests.Steps;
+
+public class ResearchSectionStepTests
+{
+    private readonly Kernel _kernel;
+    private readonly IConfiguration _configuration;
+
+    public ResearchSectionStepTests()
+    {
+        _kernel = TestObjectFactory.CreateKernel();
+        _configuration = TestObjectFactory.CreateConfiguration();
+    }
+
+    [Fact]
+    public async Task InvokeAsync_ShouldReturnSearchResults()
+    {
+        var step = new ResearchSectionStep(_kernel, _configuration);
+        var topic = "Artificial Intelligence";
+        var sectionTitle = "History of AI";
+
+        var result = await step.InvokeAsync(topic, sectionTitle);
+
+        Assert.NotNull(result);
+        Assert.NotEmpty(result.SearchResults);
+    }
+
+    [Fact]
+    public async Task GenerateSearchQueryAsync_ShouldReturnValidQuery()
+    {
+        // Arrange
+        var step = new ResearchSectionStep(_kernel, _configuration);
+        var topic = "Artificial Intelligence";
+        var sectionTitle = "History of AI";
+
+        // Act
+        var query = await step.GenerateSearchQueryAsync(topic, sectionTitle);
+
+        // Assert
+        Assert.NotNull(query);
+        Assert.NotEmpty(query);
+        Assert.Contains("AI", query, StringComparison.OrdinalIgnoreCase);
+    }
+}

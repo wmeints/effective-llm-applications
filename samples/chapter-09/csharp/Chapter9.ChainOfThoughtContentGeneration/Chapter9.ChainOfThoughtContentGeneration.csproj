@@ -16,7 +16,6 @@
     <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.41.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Prompts\generate-content.yml" />
     <EmbeddedResource Include="Prompts\generate-content.yml" />
   </ItemGroup>
 
