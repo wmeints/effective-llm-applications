@@ -18,7 +18,7 @@ Let's get started with a good test strategy for testing prompts.
 
 Prompt testing is a difficult subject because the LLM will give you a different response each time you call it. You can't test for a specific response. And that makes for brittle tests. I know from experience that not many of you will be very happy with brittle tests in their codebase. But there are ways around the problem.
 
-Let's take a step back and consider what you can expect from an LLM-based application first. You can't expect the same response every time from an LLM because the LLM uses sampling to generate response tokens. Also, the runtime environment is inherently indeterministic thanks to modern GPU/TPU hardware. However, you can expect the response to follow a general pattern. This is what we're going to test for.
+Let's take a step back and consider what you can expect from an LLM-based application first. You can't expect the same response every time from an LLM because the LLM uses sampling to generate response tokens. Also, the runtime environment is inherently non-deterministic thanks to modern GPU/TPU hardware. However, you can expect the response to follow a general pattern. This is what we're going to test for.
 
 I dabbled in functional programming in the past, and they have the concept of property-based testing that's useful when building LLM-based applications. Property-based testing is a way to test your code by checking if specific properties hold for your code. The test framework used in these types of tests will generate a set of random input samples and check if the properties hold true for that data. While this method has limitations, it's worth considering for testing prompts.
 
@@ -268,6 +268,7 @@ There's another reason to limit your data collection efforts. Most of the data y
 
 With that in mind, let's look at enabling telemetry collection in Semantic Kernel.
 
+{#tracing-llm-applications}
 ### Enabling tracing in your LLM-based application
 
 The Semantic Kernel generates telemetry data in the [OpenTelemetry][OPEN_TELEMETRY] format through the .NET diagnostics stack. Let me give you a brief overview of these concepts.
