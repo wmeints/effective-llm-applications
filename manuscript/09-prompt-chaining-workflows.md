@@ -581,7 +581,7 @@ It's important to remember that despite all the effort you put into testing, the
 Using auto-corrective steps can add an additional layer of confidence. To understand this pattern, let's look at the following diagram.
 
 {#auto-corrective-steps-pattern}
-![Auto-corrective steps in Semantic Kernel](auto-corrective-steps-pattern.png)
+![The auto-corrective step pattern](auto-corrective-steps-pattern.png)
 
 In this pattern, we generate content as usual, and then we use a second prompt that takes in the output of the first step along with review instructions and instructions to produce improvements. We then use a third step to execute the improvements on the output generated in step 1. After improving the output generated in step 1, we can go back to the review step to enhance the content further as needed.
 
