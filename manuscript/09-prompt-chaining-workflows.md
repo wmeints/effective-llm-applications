@@ -242,39 +242,26 @@ In the next step, after researching the blog topic, we'll create an outline base
 
 ### Outlining the article content with a prompt
 
-In the create outline step, we'll need a promp that we can use to create an outline that's based off the topic we're working on and the located research. I created a prompt for this purpose:
+In the create outline step, we'll need a promp that we can use to create an outline that's based off the topic we're working on and the located research. We can a prompt for this purpose that looks like this:
 
 ```yaml
-name: create_outline
-description: Generates a full article based on a plan
-template: |
-   We’re writing a blog post about "{{topic}}". Write an outline of the article. Follow these instructions carefully when
-   creating the outline for the article. Refer to the search results below to help you create the outline.
+We’re writing a blog post about "{{topic}}". Write an outline of the
+article. Follow these instructions carefully when creating the outline
+for the article. Refer to the search results below to help you 
+create the outline.
 
-   <|research|>
-   {{searchResults}}
-   <|research_end|>
+<|research|>
+{{searchResults}}
+<|research_end|>
 
-   - Only generate top-level headings
-   - Follow the hour-glass structure for the article
-   - Include no formatting in the outline
-template_format: handlebars
-input_variables:
-  - name: topic
-    description: The topic you want to discuss in the blogpost.
-    is_required: true
-execution_settings:
-  default:
-    top_p: 0.98
-    temperature: 0.7
-    presence_penalty: 0.0
-    frequency_penalty: 0.0
-    max_tokens: 12000
+- Only generate top-level headings
+- Follow the hour-glass structure for the article
+- Include no formatting in the outline
 ```
 
 I use specific markup in the prompt to help the LLM distinguish between my prompt and the research content. I've found that [ChatML][CHATML], a markup invented by OpenAI for LLMs can be a great tool to help structure prompts. Officially, ChatML doesn't support the tag I'm using, but because ChatML has a well defined structure, the LLM responds really well to my trick.
 
-To use the prompt, we need to store it  in a prompt YAML file that's embedded in the program so we can use the following code to generate an outline:
+To use the prompt, we need to store it in a prompt YAML file that's embedded in the program so we can use the following code to generate an outline:
 
 ```csharp
 public class CreateOutlineStep
@@ -321,37 +308,352 @@ This step uses the following logic:
 2. Next, we create an `InvokeAsync` method that invokes the prompt template with the information about the topic and the reseach content that we located earlier on Google. We'll ask for structured output to help the produce content that we can easily parse.
 3. Finally, we deserialize the structured JSON into the `CreateOutlineResult` class.
 
-We're using structured output with the prompt template to make chaining easier. Without the structured output format, we'd have to resort to regular expressions and other difficult parsing logic to obtain the results we need.
+We're using structured output with the prompt template to make chaining easier. Without the structured output format, we'd have to resort to regular expressions and other difficult parsing logic to obtain the results from the output.
 
 Now that we have the outline, we can research the content of each of the generated sections in the outline.
 
 ### Researching individual sections
 
+In the research content step we need to come up with detailed information for a single section. We'll use the Google search we used before to get the information we need.
+
+To research the content of a single section we need to ask a more detailed question to Google to get relevant information. It's quite hard to get this right, but thanks to the power of the LLM we can make a decent attempt at it.
+
+The code for this step looks like this:
+
+```csharp
+public class ResearchSectionStep
+{
+    private readonly KernelFunction _generateQuestionPromptTemplate;
+    private readonly Kernel _kernel;
+    private readonly WebSearchEnginePlugin _webSearchPlugin;
+
+    public ResearchSectionStep(Kernel kernel, IConfiguration configuration)
+    {
+        _kernel = kernel;
+
+        _generateQuestionPromptTemplate = kernel.CreateFunctionFromPromptYaml(
+            EmbeddedResource.Read("Prompts.research-section.yml"),
+            new HandlebarsPromptTemplateFactory());
+
+        _webSearchPlugin = new WebSearchEnginePlugin(new GoogleConnector(
+            apiKey: configuration["Google:ApiKey"]!,
+            searchEngineId: configuration["Google:SearchEngineId"]!));
+    }
+
+    public async Task<ResearchSectionResult> InvokeAsync(string topic, string sectionTitle)
+    {
+        var searchQuery = await GenerateSearchQueryAsync(topic, sectionTitle);
+        var searchResults = await _webSearchPlugin.SearchAsync(searchQuery);
+
+        return new ResearchSectionResult(searchQuery, searchResults);
+    }
+    
+    // Implementation of the GenerateSearchQueryAsync omitted for now.
+}
+```
+
+In the step we have an `InvokeAsync` method that takes in the topic, and section title. This information is used to build a search query we can then use to find relevant information.
+
+The `GenerateSearchQueryAsync` method uses a prompt to generate a well-written search query. The code for this method looks like this:
+
+```csharp
+private async Task<string> GenerateSearchQueryAsync(string topic, string sectionTitle)
+    {
+        var promptExecutionSettings = new OpenAIPromptExecutionSettings
+        {
+            ResponseFormat = typeof(GenerateSearchQueryResult)
+        };
+
+        var response = await _generateQuestionPromptTemplate.InvokeAsync(
+            _kernel, new KernelArguments(promptExecutionSettings)
+            {
+                ["topic"] = topic,
+                ["sectionTitle"] = sectionTitle
+            });
+
+        string responseData = response.GetValue<string>()!;
+
+        var searchQueryResult = 
+            JsonSerializer.Deserialize<GenerateSearchQueryResult>(
+                responseData);
+
+        if (searchQueryResult is null)
+        {
+            throw new InvalidOperationException("Failed to generate search query");
+        }
+
+        return searchQueryResult.SearchQuery;
+    }
+```
+
+This code performs the following steps:
+
+1. First, we configure a set of prompt execution settings so we can ask for a structured response.
+2. Next, we invoke a query generation prompt template providing it with the correct inputs and settings to generate a new search query for us.
+3. Then, we use the `JsonSerializer` to deserialize the content to a `GenerateSearchQueryResult` object containing the query.
+4. Finally, we return the generated search query.
+
+The method uses a prompt to generate a question we can ask Google. The prompt looks like this:
+
+```text
+I'm writing a blog post about "{{topic}}". I'm looking for a search query
+I can run through Google to find out more about "{{sectionTitle}}". I'm
+looking for a search query that will give me a good amount of detail. The 
+search query should be in the form of a question.
+```
+
+The topic and section title are quite short, but it's still enough to generate a good quality question to ask a search engine.
+
+As for testing this step, I recommend that you don't worry so much about the search results returned by Google and focus on the question generation part of this step. Remember from [#s](#model-based-testing) that you can use model-based tests to validate the prompt quality.
+
+Let's take a look at the final step in the process, the actual content generation, next.
+
 ### Generating the article content
+
+The final step in the workflow generates the content per section. We'll use a prompt-based approach to generate content based on the topic, the section title, and the content we've found using Google in the previous step.
+
+This step is repeated for every section we've researched in the previous step.
+The step code looks like this:
+
+```csharp
+public class WriteSectionStep
+{
+    private readonly KernelFunction _writeSectionPromptTemplate;
+    private readonly Kernel _kernel;
+
+    public WriteSectionStep(Kernel kernel)
+    {
+        _kernel = kernel;
+        _writeSectionPromptTemplate = kernel.CreateFunctionFromPromptYaml(
+            EmbeddedResource.Read("Prompts.write-section.yml"),
+            new HandlebarsPromptTemplateFactory());
+    }
+
+    public async Task<GenerateSectionContentResult> InvokeAsync(
+        string topic, string sectionTitle, string query, string searchResults)
+    {
+        var promptExecutionSettings = new OpenAIPromptExecutionSettings
+        {
+            ResponseFormat = typeof(GenerateSectionContentResult)
+        };
+
+        var response = await _writeSectionPromptTemplate.InvokeAsync(
+            _kernel, new KernelArguments(promptExecutionSettings)
+            {
+                ["topic"] = topic,
+                ["sectionTitle"] = sectionTitle,
+                ["query"] = query,
+                ["searchResults"] = searchResults
+            });
+
+        var responseData = response.GetValue<string>()!;
+
+        var result = 
+            JsonSerializer.Deserialize<GenerateSectionContentResult>(
+                responseData);
+
+        if (result is null)
+        {
+            throw new InvalidOperationException(
+                "Failed to generate section content");
+        }
+
+        return result;
+    }
+}
+```
+
+This code performs the following steps:
+
+1. First, we create a new step class that accepts a kernel instance in the constructor. We'll use the kernel to load the prompt for the step.
+2. Next, we have an `InvokeAsync` method that invokes a prompt to generate content. We'll again use structured output to help the LLM generate useful content without having to manually parse the output.
+3. Then, we deserialize the generated response using the `JsonSerializer` into a `GenerateSectionContentResult` that contains the title of the section and the content that should answer the question we generated earlier.
+
+### Finishing the workflow
+
+Now that we have the final step, let's complete the workflow by writing the main program logic. It looks like this:
+
+```csharp
+var configuration = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
+
+var kernel = Kernel.CreateBuilder()
+    .AddAzureOpenAIChatCompletion(
+        configuration["LanguageModel:DeploymentName"]!,
+        configuration["LanguageModel:Endpoint"]!,
+        configuration["LanguageModel:ApiKey"]!
+    ).Build();
+
+var researchContentStep = new ResearchContentStep(configuration);
+var createOutlineStep = new CreateOutlineStep(kernel);
+var researchSectionStep = new ResearchSectionStep(kernel, configuration);
+var writeSectionStep = new WriteSectionStep(kernel);
+
+var topic = "The importance of securing your AI agents in production";
+
+var researchedContent = await researchContentStep.InvokeAsync(topic);
+
+var outline = await createOutlineStep.InvokeAsync(
+    topic, researchedContent.SearchResults);
+
+var outputBuilder = new StringBuilder();
+
+outputBuilder.AppendLine($"# {outline.Title}");
+
+foreach (var section in outline.Sections)
+{
+    var researchedSectionContent =
+        await researchSectionStep.InvokeAsync(topic, section);
+
+    var sectionContent = await writeSectionStep.InvokeAsync(
+        topic, section, researchedSectionContent.Query,
+        researchedSectionContent.SearchResults);
+
+    outputBuilder.AppendLine();
+    outputBuilder.AppendLine($"## {sectionContent.Title}");
+    outputBuilder.AppendLine();
+    outputBuilder.AppendLine(sectionContent.Content);
+}
+
+Console.WriteLine(outputBuilder.ToString());
+```
+
+The main program performs the following steps:
+
+1. First, we load the configuration from the user-secrets so we can store secrets securely.
+2. Next, we build the kernel for the application using the configuration values stored in the user secrets.
+3. Then, we initialize the steps in the workflow with their dependencies
+4. After, we define the topic we want to write about, and run it through the first step researching the content for the article.
+5. Using the result from the first step, we'll invoke the next step to come up with an outline based on the research we found.
+6. Then, we go over each section in the article, to research the section and generate content for the section.
+7. Finally, we combine the content for the sections into the full article content.
+
+I kept things simple to help you understand the chain. In production I recommend looking at the different aspects of LLMOps to make the chain more robust. For example, you may want to add retries to the steps so we automatically try again when a step fails. I can also recommend saving the intermediate outputs and skip steps if you have valid output for them. We'll cover more about these topics in chapter 11.
 
 ## Testing approach for prompt chains
 
+In the previous sections we talked about testing for a little bit. Assuming you have read [#s](#prompt-testing-and-monitoring) you know that there are two types of tests you can run for each step depending on what you need to validate.
+
+There are a few things that we need to discuss in relation to prompt chains and testing. For example, when exactly, are you going to use model-based tests, and how can we make the testing process as smooth as possible? Because a prompt chain often can grow in complexity quite fast.
+
 ### Using property-based tests over model-based tests
+
+When you start building a prompt chain, you typically have one prompt that you need to validate with deterministic input. In our workflow, for example, we have a topic that we can use to generate an outline. At this point, it's useful to have a model-based test to validate the prompt, because you can control the input.
+
+I skipped over the part where we use Google results to generate the outline here. That's on purpose, because adding content from an external tool will make it harder to write useful tests. You have to make a choice here:
+
+1. You can run the research step in a unit-test and save the Google search results in a test dataset for your tests and use that dataset to run model-based tests.
+2. You can run a property-based test and don't worry about the actual content of the response. In the property-based test you can validate that you get a result that's a list of items and accept that as enough.
+
+The first option has the advantage that you can switch possibly use a small language model and make sure that it's still producing useful results. The downside is that the search results get stale so you may run into surprise responses in production.
+
+The second option is more robust and possibly easier to implement. If you're just starting out, I recommend building a property-based test first and improve your safety net later as needed.
 
 ### Following the prompt chain with your tests
 
+As the prompt chain grows you'll find that you need more results from previous steps to test the next step. I recommend following the prompt chain when writing tests. Start by building the first step, test the first step, and then use the output from the first step to create a test dataset to validate the next step.
+
+Testing prompt chains can be quite a bit of work, but the more solid the validation process, the more fun you'll have in production and the more thankful the developers who maintain the code will be.
+
 ### User testing
+
+User testing will be harder when using a prompt chain like the one we just built because you need to be able to pinpoint exactly where the chain is breaking. I recommend using Application Insights to track interactions with the prompt chain. You can use the content in [#s](#tracing-llm-applications) to help configure Application Insights in your application.
 
 ## Optimizations of the prompt chain workflow
 
+The prompt chain in this chapter is useful as-is if you accept that it sometimes fails. You can take the quality of the prompt chain to a higher level by performing these extra steps:
+
+- First, you can use auto-corrective steps to improve the generated content
+- Next, you can speed up the workflow by parallelizing steps
+- Finally, you can add intelligence to the step execution to skip steps that you executed before for the same input.
+
+Let's go over each of these steps to understand what it takes to implement them in the prompt chain we built in this chapter.
+
 ### Adding auto-corrective steps
 
-- The LLM can generate the wrong content, you can use the pattern from chapter 12 to improve the quality by usign the artist/critic workflow.
+It's important to keep in mind that despite all the effort you put into testing, the prompts in the prompt chain will sometimes fail to generate the wanted content.
+
+You can add an additional layer of confidence by using auto-corrective steps. Let's look at the following diagram to understand this pattern.
+
+{#auto-corrective-steps-pattern}
+![Auto-corrective steps in Semantic Kernel](auto-corrective-steps-pattern.png)
+
+In this pattern, we generate content as normal, we then use a second prompt that takes in the output of the first step along with review instructions and instructions to produce improvements. We then use a third step to execute the improvements on the output generated in step 1. After improving the output generated in step 1, we can go back to the review step to further improve the content as needed.
+
+It's amazing to see how the LLM can improve itself. However, this auto-corrective step pattern should not be used without any limitations. In many cases, the LLM will keep generating improvement steps and actually degrade the output. I recommend limiting the improvement cycles to one or two attempts. Anymore and you'll risk degrading the output to gibberish.
+
+In chapter 12, we'll explore auto-corrective steps in greater depth when we discuss the artist critic workflow design pattern.
 
 ### Adding fan-out operations to parallelize the workflow
 
-- Running prompts is slow, use a fanout operation to improve how the workflow works. See chapter 11 for more information.
+As the prompt chain we've built is sequential it takes a while to generate the full article. While testing the prompt chain I found that it isn't too bad, but you can imagine that it gets worse when you have twenty sections to generate or when one of the steps is slower.
+
+You can use basic fan-out operations to speed up the prompt chain. You could parallelize the for-loop using the built-in parallelization options in C#. We could for example convert the for-loop for the research section step and generate section content step using the following code:
+
+```csharp
+var outputBuilder = new StringBuilder();
+var output = new Dictionary<int, GenerateSectionContentResult>();
+
+await Parallel.ForAsync(
+    0, outline.Sections.Count,
+    async (index, cancellationToken) =>
+    {
+        var section = outline.Sections[index];
+
+        var researchedSectionContent =
+            await researchSectionStep.InvokeAsync(topic, section);
+
+        var sectionContent = await writeSectionStep.InvokeAsync(
+            topic, section, researchedSectionContent.Query,
+            researchedSectionContent.SearchResults);
+
+        output[index] = sectionContent;
+    }
+);
+
+outputBuilder.AppendLine($"# {outline.Title}");
+
+foreach (var index in output.Keys.OrderBy(x => x))
+{
+    var sectionContent = output[index];
+
+    outputBuilder.AppendLine($"## {sectionContent.Title}");
+    outputBuilder.AppendLine(sectionContent.Content);
+}
+
+Console.WriteLine(outputBuilder.ToString());
+```
+
+This code is a bit more complex when compared to the original for-loop we had. In this code we perform the following steps:
+
+1. First, we create a dictionary to collect the results. This is important, because while we're going to work in parallel, the sections have an ordering to them. I need to preserve the order somehow. In this dictionary, I let the parallel algorithm store the output in slots based on the index of the section.
+2. Next, we iterate over the sections in parallel based on their index and produce the content foreach section as normal.
+3. Finally, we iterate over the dictionary keys in order from lowest to highest to construct the final content.
+
+It's faster to parallelize the content generation process, but you also increase the likelihood of running into the rate limiter of the LLM. So this trick shouldn't be your default option to speed things up. You may end up slowing down thanks to the rate limiting.
 
 ### Using intelligent routing to speed up the workflow even more
 
-- Some parts of the outline may be perfect already, intelligent routing can help make a more informed decision whether a step should be executed or not. Read chapter 10 to learn more about this technique.
+One of the best tricks I've found in prompt chains like the one we discussed in this chapter is not to parallelize, but instead use response caching to speed up the workflow if you need to re-run it for some reason.
+
+I'm not going into great depth here, but this is what you can do to make the prompt chain more solid.
+
+You can store the output generated for a set of inputs in a step. Later, when the step is called again, you can try to load the result generated earlier based on the input provided to the step. If the output was saved, you can skip the execution of the step and return the result directly. When there's no output available, you can execute the content of the step as normal.
+
+This technique doesn't speed up the initial run, but does help when the prompt chain fails somewhere down the line and you have to retry the chain. I recommend looking into this if you want to build a safer experience in production.
+
+In chapter 12, we'll look at this technique in greater detail and explore how to implement it for your application.
 
 ## Summary
+
+In this chapter we covered how to use prompt chains to increase the quality of the responses the LLM gives and why you need this approach, because the reasoning capabilities remain limited even if you can use LLMs like the o-series models from OpenAI.
+
+We then covered how to implement a prompt chain in Semantic Kernel, covering the step-by-step approach and how to test steps in the prompt chain. 
+
+Finally, we talked about different steps you can take to improve the chain using caching, parallelization, and auto-corrective steps. In chapter 12, we'll get back to these optimizations to help you implement them.
+
+In the next chapter, Intelligent Request Routing Workflows, we'll extend the prompt chain pattern by using the LLM to make decisions on what should be the next step in the workflow.
 
 [DRAW_IO]: https://app.diagrams.net/
 [SAMPLE_CODE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-09/csharp
