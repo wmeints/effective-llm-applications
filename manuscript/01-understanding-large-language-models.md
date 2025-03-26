@@ -554,7 +554,7 @@ break in unexpected ways. What works better is:
 - Building robust error handling around the LLM
 - Iterating based on actual usage
 
-We'll dive deep into practical prompt engineering in Chapter 3.
+We'll dive deep into practical prompt engineering in [#s](#getting-started-with-semantic-kernel).
 
 #### Fine-tuning vs. prompt engineering
 
