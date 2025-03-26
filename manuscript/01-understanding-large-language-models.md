@@ -429,8 +429,7 @@ The embedding concept can be challenging without seeing it in motion. [This
 website][UNDERSTANDING_TRANSFORMERS] does a great job visualizing the concept.
 
 You'll work directly with embeddings later when we implement the Retrieval Augmented
-Generation (RAG) pattern in Chapter 5. For now, just know they're essential for LLMs'
-understanding text.
+Generation (RAG) pattern in [#s](#retrieval-augmented-generation). For now, just know they're essential for LLMs' understanding text.
 
 #### Context window
 
@@ -582,7 +581,7 @@ This approach is:
 - Faster to implement
 - More maintainable
 
-Throughout this book, we'll explore patterns like RAG that give you the control you need without the complexity of fine-tuning. In [#s](#prompt-testing-and-monitoring), we'll implement a complete RAG system so you can see these benefits firsthand.
+Throughout this book, we'll explore patterns like RAG that give you the control you need without the complexity of fine-tuning. In [#s](#retrieval-augmented-generation), we'll implement a complete RAG system so you can see these benefits firsthand.
 
 In the next section, we'll look at practical considerations for working with these models, building on these fundamental concepts to create reliable applications.
 
