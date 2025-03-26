@@ -353,7 +353,8 @@ In this step, an `InvokeAsync` method takes in the topic and section title. This
 The `GenerateSearchQueryAsync` method uses a prompt to generate a well-written search query. The code for this method looks like this:
 
 ```csharp
-private async Task<string> GenerateSearchQueryAsync(string topic, string sectionTitle)
+private async Task<string> GenerateSearchQueryAsync(
+    string topic, string sectionTitle)
 {
     var promptExecutionSettings = new OpenAIPromptExecutionSettings
     {
