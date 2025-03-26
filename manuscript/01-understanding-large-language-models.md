@@ -23,7 +23,7 @@ Let's explore the world of large language models—not as magical black boxes bu
 
 ## What are LLMs, and why do they matter
 
-Let's start with the basics. A Large Language Model (LLM) is a neural network trained on massive amounts of data to understand and generate human-like text.
+A large language model (LLM) is a neural network trained on massive amounts of data to understand and generate human-like text. It can be used for many different purposes. LLMs sound like a new thing, but they aren't.
 
 ### A brief history
 
@@ -36,8 +36,7 @@ The real game-changers started appearing around 2017. Before that, we had specia
 
 ### The breakthrough moment
 
-Everything changed with the introduction of the transformer neural network architecture. The paper ["Attention is all you need"](https://arxiv.org/abs/1706.03762) demonstrated an entirely new way of processing language. I won't bore you with the technical details,
-but here is why it matters: Previous models would process text word-by-word and couldn't look at the context as a whole. The transformer architecture instead looks at the entire context at once, understanding the relationship between words regardless of their position.
+Everything changed with the introduction of the transformer neural network architecture. The paper ["Attention is all you need"](https://arxiv.org/abs/1706.03762) demonstrated an entirely new way of processing language. I won't bore you with the technical details, but here is why it matters: Previous models would process text word-by-word and couldn't look at the context as a whole. The transformer architecture instead looks at the entire context at once, understanding the relationship between words regardless of their position.
 
 Think about how you understand this sentence: "The developer copy-pasted the code into ChatGPT to generate unit tests for it.". You automatically know "it" refers to the code, not the tool ChatGPT. Transformers can make these connections, too, and they can do it at scale.
 
