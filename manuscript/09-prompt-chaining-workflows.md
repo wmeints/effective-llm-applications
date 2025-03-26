@@ -1,7 +1,7 @@
 {#prompt-chaining-workflows}
 # Prompt chaining workflows
 
-By now, you have learned that LLMs are powerful and can produce interesting applications when combined with tools and RAG (Retrieval Augmented Generation). In this chapter, we'll start building workflows with LLMs that use the patterns and practices from the previous chapter.
+In the previous chapters we've covered how LLMs can help us build powerful and interesting applications especially when combined with tools and RAG (Retrieval Augmented Generation). In this chapter, we'll start building workflows with LLMs that use the patterns and practices from the previous chapters.
 
 At the end of the chapter, you know why workflows are essential to increase the accuracy of LLMs and how to build a workflow with Semantic Kernel that chains multiple prompts and tools.
 
@@ -13,15 +13,15 @@ We'll cover the following topics:
 - Testing approaches for prompt chains
 - Optimizations of the prompt chain workflow
 
-Let's discuss why you would choose a prompt chain workflow over a plain chat solution.
+Let's start by discussing why you would choose a prompt chain workflow.
 
 ## Why use a prompt chain workflow
 
-It's hard to imagine you'd need workflows with all the power of modern LLMs. There are two schools of thought running around the internet about this. 
+To understand the importance of a prompt chain, we need to first talk about what a prompt chain is. A prompt chain is a linear workflow that uses two or more steps in the form of prompts after each other. Usually, we feed output from the first prompt into a second prompt. Prompt chains don't have to be prompts only; you can mix and match prompts with tools to create more complicated ones.
 
-One school of thought is that prompt engineering is the golden solution to everything. The idea here is that we can use chain-of-thought prompts, in-context learning, and detailed instructions to create complicated responses. However, the prompts are rarely stable and quite hard to maintain. The more complex and unfocused the prompt, the harder it becomes to get a reasonable answer.
+Not everyone likes workflows, though. Many believe that prompt engineering is the golden solution to everything. We can create complicated responses using chain-of-thought prompts, in-context learning, and detailed instructions. With recent developments in LLMs, you can get pretty far with prompts. However, the more complicated prompts are rarely stable and hard to maintain. The more complex and unfocused the prompt, the harder it becomes to get a reasonable answer.
 
-The other school of thought focuses on agentic AI and thinks that agents are powerful enough to figure out a solid workflow independently. The idea is that agents can use LLMs to build a plan for solving a task and then execute that plan to solve the task. While this sounds like a flexible solution, it rarely works how we want. We're not yet in an era where agents are stable enough to solve complex problems because the reasoning capabilities of LLMs aren't stable enough.
+Other people dislike building workflows because they think AI agents are powerful enough to figure out a solid workflow independently. The idea is that agents can use LLMs to construct a plan for solving a task and then execute that plan to solve the task. While this sounds like a flexible solution, it rarely works how we want. We're not yet in an era where agents are stable enough to solve complex problems because the reasoning capabilities of LLMs aren't stable enough.
 
 Right now, it's much easier and much faster to build a workflow than an agent when you know how to solve a problem that you need to solve repeatedly. Let me explain why.
 
@@ -45,12 +45,6 @@ There's another reason why building a prompt chain is better. It's easier to tes
 
 This chain of thought around testing programming logic applies to building LLM-based applications as well. Smaller, focused prompts are easier to test and replace if they break. Remember that the LLM you're using will be replaced in a few months, and you'll have to redo all the test work.
 
-### Prompt chains improve security
-
-Monitoring a less complicated prompt is easier. We must remember that hackers will attempt to abuse your application. Monitoring is an essential line of defense to help you capture illegal usage patterns using security tools.
-
-For production cases, I highly recommend turning your complex task into a chain of prompts.
-
 ## Understanding and designing prompt chains
 
 Splitting a big task into smaller tasks sounds easy enough, but I've found that it can be quite hard to come up with a good structure to solve some of the more complicated problems with an LLM. It helps to have a few prompt design patterns somewhere in your notebook (or you could grab them from this book).
@@ -61,7 +55,7 @@ In my notebook, several patterns emerged as I wrote more prompts for different u
 
 - **Refinement prompts:** I use this pattern to improve the output quality from a prompt if it is too unstable and I can't fix it because I approached the problem with a one-step process in mind, while solving it in two steps is better. For example, if you have to summarize text and then rewrite it to a specific style, an LLM can often summarize pretty well, sticking to the original style. Changing the style and structure simultaneously is challenging, so I put the rewrite portion into a second follow-up prompt.
 
-Usually, you can solve an LLM prompt problem with either a refinement or a divide-and-conquer prompt. Sometimes, you have to combine the two.
+Usually, you can solve the problem with either a refinement or a divide-and-conquer prompt. Sometimes, you have to combine the two.
 
 It helps to write down a rough breakdown of the prompt chain you're trying to create. I usually write a rough set of prompts, connect them, and execute one or two test runs. Sometimes, I must take a more elaborate approach to designing a good prompt. In a more complex scenario, I prefer to draw a doodle with the steps to solve the problem using a few prompts and function calls.
 
@@ -137,7 +131,7 @@ The main `Program.cs` file will contain the main orchestration logic for the wor
 
 ### Finding research online with the search tool
 
-In the first step of the workflow, we'll use the `Microsoft.SemanticKernel.Plugins.Web` package that you can use to implement web search as a tool in your LLM-based application. For the workflow, though, we'll use the plugin directly.
+In the first step of the workflow, we'll use the `Microsoft.SemanticKernel.Plugins.Web` package that you can use to implement web search as a tool in your LLM-based application. You add the package to your project by executing the command `dotnet add package Microsoft.SemanticKernel.Plugins.Web`.
 
 The research step looks like this:
 
