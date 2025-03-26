@@ -2,30 +2,14 @@
 {sample: true} 
 # Understanding Large Language Models
 
-I remember first realizing how useful large language models could be. Like many
-developers, I tried ChatGPT almost as a joke – I didn't expect it to work as well as it
-did. I had this piece of code that needed unit tests, and on a whim, I copy-pasted it
-into ChatGPT and asked it to write the tests for me. What happened next surprised me.
-Within seconds, I got back working code that needed only minor tweaks. The overall
-structure was spot-on, saving me 30 minutes of work. While 30 minutes doesn't sound like
-a lot of time saved, it does add up, and this is the worst-case scenario at a time when
-I didn't quite understand how an LLM worked.
+I remember first realizing how useful large language models could be. Like many developers, I tried ChatGPT almost as a joke—I didn't expect it to work as well as it did. I had this piece of code that needed unit tests, and on a whim, I copied and pasted it into ChatGPT and asked it to write the tests for me. What happened next surprised me.
+Within seconds, I got back working code that needed only minor tweaks. The overall structure was spot-on, saving me 30 minutes of work. While 30 minutes doesn't sound like a lot of time saved, it does add up, and this is the worst-case scenario at a time when I didn't quite understand how an LLM worked.
 
-That interaction looked like magic, but it really wasn't. It resulted from careful
-engineering, good quality prompt design, and understanding of what LLMs can (and can't)
-do well. This chapter is about demystifying these powerful tools so you can put them to
-work in your applications.
+That interaction looked like magic, but it really wasn't. It resulted from careful engineering, good quality prompt design, and understanding what LLMs can (and can't) do well. This chapter is about demystifying these powerful tools so you can put them to work in your applications.
 
-You've probably heard the buzz around LLMs and played with ChatGPT, Claude, or other AI
-assistants. Perhaps you're skeptical about the hype or excited about the possibilities.
-Whatever your starting point, this chapter will give you the solid foundation to move
-beyond simple interactions and build real applications with LLMs.
+You've probably heard the buzz around LLMs and played with ChatGPT, Claude, or other AI assistants. Perhaps you're skeptical about the hype or excited about the possibilities. Whatever your starting point, this chapter will give you the solid foundation to move beyond simple interactions and build real applications with LLMs.
 
-We'll start with the basics – what LLMs are and why they matter – but we won't get
-bogged down in the theoretical. Instead, we'll focus on the practical: how these models
-work in the real world, what they're good at, and where they fall short. I'll share
-stories from my journey with LLMs, including the failures and breakthroughs that taught
-me the most.
+We'll start with the basics – what LLMs are and why they matter – but we won't get bogged down in the theoretical. Instead, we'll focus on the practical: how these models work in the real world, what they're good at, and where they fall short. I'll share stories from my journey with LLMs, including the failures and breakthroughs that taught me the most.
 
 By the end of this chapter, you'll understand:
 
@@ -35,50 +19,31 @@ By the end of this chapter, you'll understand:
 - Practical considerations for building production applications
 - Real-world use cases and applications that go beyond the obvious
 
-Let's explore the world of large language models—not as magical black boxes, but as
-practical tools, we can understand, control, and use to solve real problems.
+Let's explore the world of large language models—not as magical black boxes but as practical tools we can understand, control, and use to solve real problems.
 
 ## What are LLMs, and why do they matter
 
-Let's start with the basics. A Large Language Model (LLM) is a neural network trained on
-massive amounts of data to understand and generate human-like text.
+Let's start with the basics. A Large Language Model (LLM) is a neural network trained on massive amounts of data to understand and generate human-like text.
 
 ### A brief history
 
-Language models aren't new at all. We've been trying to understand human language for a
-very long time. Early attempts involved pattern matching using regular expressions,
-which are probably well-known because you only write them once and then never change
-them. They're hard to understand and relatively inflexible because they break at the
+Language models aren't new at all. We've been trying to understand human language for a very long time. Early attempts involved pattern matching using regular expressions, which are well-known because you only write them once and never change them. They're hard to understand and relatively inflexible because they break at the
 slightest change in the input.
 
-Later, we introduced clunky chatbots that could match patterns to understand intent
-using machine learning. However, these bots still had fixed responses and were unable to
-understand intent when the input was even slightly off.
+Later, we introduced clunky chatbots that could match patterns to understand intent using machine learning. However, these bots still had fixed responses and could not understand intent when the input was slightly off.
 
-The real game-changers started appearing around 2017. Before that, we had specialized
-language models that had limited performance. Don't get me wrong, tools like
-[SpaCy](https://spacy.io/) were terrific at the time for what we could do.
+The real game-changers started appearing around 2017. Before that, we had specialized language models that had limited performance. Don't get me wrong, tools like [SpaCy](https://spacy.io/) were terrific at the time for what we could do.
 
 ### The breakthrough moment
 
-Everything changed with the introduction of the transformer neural network architecture.
-The paper ["Attention is all you need"](https://arxiv.org/abs/1706.03762) demonstrated
-an entirely new way of processing language. I won't bore you with the technical details,
-but here is why it matters: Previous models would process text word-by-word and couldn't
-look at the context as a whole. The transformer architecture instead looks at the entire
-context at once, understanding the relationship between words regardless of their
-position.
+Everything changed with the introduction of the transformer neural network architecture. The paper ["Attention is all you need"](https://arxiv.org/abs/1706.03762) demonstrated an entirely new way of processing language. I won't bore you with the technical details,
+but here is why it matters: Previous models would process text word-by-word and couldn't look at the context as a whole. The transformer architecture instead looks at the entire context at once, understanding the relationship between words regardless of their position.
 
-Think about how you understand this sentence: "The developer copy-pasted the code into
-ChatGPT to generate unit tests for it.". You automatically know "it" refers to the code,
-not the tool ChatGPT. Transformers can make these connections, too, and they can do it
-at scale.
+Think about how you understand this sentence: "The developer copy-pasted the code into ChatGPT to generate unit tests for it.". You automatically know "it" refers to the code, not the tool ChatGPT. Transformers can make these connections, too, and they can do it at scale.
 
 ### How LLMs Work
 
-At their core, LLMs predict what comes next based on what they've seen before. When you
-give an LLM input text, it's not searching through a database for answers. Instead, it's
-using its understanding of patterns to generate responses word by word.
+At their core, LLMs predict what comes next based on what they've seen before. When you give an LLM input text, it's not searching through a database for answers. Instead, it's using its understanding of patterns to generate responses word by word.
 
 Here's a simplified view of what happens:
 
@@ -87,28 +52,18 @@ Here's a simplified view of what happens:
 3. It predicts the most likely next token based on its training
 4. This process repeats until it generates a complete response
 
-The magic happens in how these models handle context. The attention mechanism helps
-predict the combined context of input and (the to-be-generated) output. When you feed
-tokens into the model, the attention mechanism state is updated with the current
-understanding of the context that we're working on. Based on this information, the model
+The magic happens in how these models handle context. The attention mechanism helps predict the combined context of input and (the to-be-generated) output. When you feed tokens into the model, the attention mechanism state is updated with the current understanding of the context we're working on. Based on this information, the model
 can now more reliably predict the next likely token.
 
 ### Why this matters for software development
 
-You might think, "Okay, cool technology, but why should I care as a developer?" Here's
-why:
+You might think, "Okay, cool technology, but why should I care as a developer?" Here's why:
 
-First, LLMs are changing how we write code. They're not just glorified autocomplete –
-they can understand intent. When working on a new feature, I can describe what I want in
-plain English, and an LLM can help me scaffold the code, suggest test cases, or point
-out potential issues.
+First, LLMs are changing how we write code. They're not just glorified autocomplete – they can understand intent. When working on a new feature, I can describe what I want in plain English, and an LLM can help me scaffold the code, suggest test cases, or point out potential issues.
 
-So, even if you're not building AI applications, it will change how your tools work and
-how quickly and effectively you can write code.
+So, even if you're not building AI applications, it will change how your tools work and how quickly and effectively you can write code.
 
-Second, and this is what this book is about, they're enabling new types of applications.
-Think about all the tasks that were too complex or expensive to automate before because
-they required understanding natural language. Now, we can build applications that can:
+Second, and this is what this book is about, they're enabling new types of applications. Think about all the tasks that were too complex or expensive to automate before because they required understanding natural language. Now, we can build applications that can:
 
 - Generate human-like responses to customer inquiries
 - Upgrade code bases from deprecated frameworks or old languages to more modern equivalents 
@@ -119,22 +74,16 @@ And we're just getting started!
 
 ### The current reality
 
-Let's be clear, though – LLMs aren't magic. They have fundamental limitations. They can
-provide you with some pretty surprising responses; the response can look right but
-contain the wrong information, and you need to apply careful engineering to use LLMs in
-production systems.
+Let's be clear, though – LLMs aren't magic. They have fundamental limitations. They can provide some pretty surprising responses; the response can look right but contain the wrong information, and you need to apply careful engineering to use LLMs in production systems.
 
-That's precisely why understanding how they work is so crucial. When you know what's
-happening under the hood, you can:
+That's precisely why understanding how they work is so crucial. When you know what's happening under the hood, you can:
 
 - Design better prompts that get more reliable results
 - Build safeguards against standard failure modes
 - Create hybrid systems that combine LLM capabilities with traditional programming
 - Make informed decisions about when (and when not) to use LLMs
 
-In the next sections, we'll explore these practical aspects more deeply. But first, let
-me share some real examples from my own journey with LLMs—including the mistakes I
-made—so you don't have to repeat them.
+In the following sections, we'll explore these practical aspects more deeply. But first, let me share some real examples from my journey with LLMs — including the mistakes I made — so you don't have to repeat them.
 
 ## My journey with LLMs
 
