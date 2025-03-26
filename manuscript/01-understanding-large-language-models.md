@@ -559,41 +559,16 @@ We'll dive deep into practical prompt engineering in Chapter 3.
 
 #### Fine-tuning vs. prompt engineering
 
-You might hear people talk about fine-tuning models for specific domains. Let me share
-my perspective on this.
+You might hear people talk about fine-tuning models for specific domains. Let me share my perspective on this.
 
-Fine-tuning means taking a base model (like GPT-4) and training it on your specific data
-to improve it at particular tasks. While this sounds appealing, there are several
-reasons I rarely recommend it:
+Fine-tuning means taking a base model (like GPT-4) and training it on your specific data to improve it at particular tasks. While this sounds appealing, there are two reasons I rarely recommend it.
 
-**Why People Consider Fine-tuning:**
+1. **Costs:** Fine-tuning an LLM requires significant computing resources. You also increase maintenance costs because you need to re-run the fine-tuning and validation steps each time the base model is updated.
+2. **Complexity:** Fine-tuning requires in-depth knowledge of LLMs that goes beyond what we discuss in this book. You also need to collect a lot of data to fine-tune. You can use synthetic data, but it's still a lot of work.
 
-- Make the model more specialized for specific tasks and domains
-- Improve performance for domain-specific language
-- Ensure consistent outputs
+Instead of fine-tuning, I recommend looking at alternatives like Retrieval Augmented Generation (RAG). Here's a practical example:
 
-**Why I Usually Avoid It:**
-
-1. Cost
-   - Significant computing resources required
-   - High monetary investment
-   - Ongoing maintenance costs
-
-2. Complexity
-   - Requires extensive training data
-   - Technical expertise needed
-   - Time-consuming process
-
-3. Trade-offs
-   - Lose general capabilities
-   - Limited flexibility
-   - Can be overkill for most use cases
-
-Instead of fine-tuning, I recommend looking at alternatives like Retrieval Augmented
-Generation (RAG). Here's a practical example:
-
-You're building a chatbot to answer questions about your company's products. Instead of
-fine-tuning a model on your product documentation, you could:
+You're building a chatbot to answer questions about your company's products. Instead of fine-tuning a model on your product documentation, you could:
 
 1. Store your documentation in a vector database
 2. Search for relevant information when a question comes in
@@ -607,12 +582,9 @@ This approach is:
 - Faster to implement
 - More maintainable
 
-Throughout this book, we'll explore patterns like RAG that give you the control you need
-without the complexity of fine-tuning. In [#s](#prompt-testing-and-monitoring), we'll
-implement a complete RAG system so you can see these benefits firsthand.
+Throughout this book, we'll explore patterns like RAG that give you the control you need without the complexity of fine-tuning. In [#s](#prompt-testing-and-monitoring), we'll implement a complete RAG system so you can see these benefits firsthand.
 
-In the next section, we'll look at practical considerations for working with these
-models, building on these fundamental concepts to create reliable applications.
+In the next section, we'll look at practical considerations for working with these models, building on these fundamental concepts to create reliable applications.
 
 ## Practical considerations for working with LLMs
 
