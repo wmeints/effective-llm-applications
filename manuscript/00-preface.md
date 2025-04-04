@@ -66,13 +66,9 @@ enough in a more enterprise-oriented language like C#.
 
 - **[#s, #t](#working-with-structured-output)**, teaches you how to get structured output from LLMs, enabling you to reliably integrate AI responses into your applications. This chapter helps you bridge the gap between AI capabilities and your existing codebase. Mastering this skill will let you build reliable AI features that work seamlessly with the other components in your applications.
 
-- **[#s, #t](#prompt-chaining-workflows)**, delves into the essential pattern of prompt
-  chaining, showing you how to break down complex tasks into manageable sequences of
-  prompts that build upon each other's outputs to refine the output.
+- **[#s, #t](#prompt-chaining-workflows)**, delves into the essential pattern of prompt chaining, showing you how to break down complex tasks into manageable sequences of prompts that build upon each other's outputs to refine the output.
 
-- **Chapter 10, "Intelligent Request Routing Workflows"**, teaches you how to build systems
-  that intelligently route requests through a workflow by applying a reasoning prompt
-  with logic. This chapter helps you build more flexible workflows using LLMs.
+- **[$#s, #t](#intelligent-request-routing)**, teaches you how to build systems that intelligently route requests through a workflow by applying a reasoning prompt with logic. This chapter helps you build more flexible workflows using LLMs.
 
 - In **Chapter 11, "LLM Orchestration Workflows"**, you'll learn how to design and implement
   robust LLM orchestration workflows that can handle complex document processing tasks

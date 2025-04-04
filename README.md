@@ -23,8 +23,8 @@ I'm writing this book as you read this, and I'm at **57% completion**.
 | 6. Enhancing LLMs with functions              | Complete    | [C#](./samples/chapter-06/csharp/)                                         |
 | 7. Retrieval Augmented Generation (RAG)       | Complete    | [C#](./samples/chapter-07/csharp/)                                         |
 | 8. Working with structured output             | Complete    | [C#](./samples/chapter-08/csharp/)                                         |
-| 9. Prompt chaining workflows                  | In progress | [C#](./samples/chapter-09/csharp/)                                         |
-| 10. Intelligent request routing workflows     | Not started |                                                                            |
+| 9. Prompt chaining workflows                  | Complete    | [C#](./samples/chapter-09/csharp/)                                         |
+| 10. Intelligent request routing workflows     | In progress |                                                                            |
 | 11. LLM orchestration workflows               | Not started |                                                                            |
 | 12. Artist and critic workflows               | Not started |                                                                            |
 | 13. Building basic agents                     | Not started |                                                                            |
