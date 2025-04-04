@@ -26,7 +26,7 @@ For the remainder of this chapter we'll focus on designing and building two type
 - Routing Github issues to specific functional areas
 - A chat solution with multiple "agents" for product catalog information and customer service
 
-We'll start by looking at routing issues to specific functional teams using Semantic Kernel.
+We'll start by looking at routing Github issues to specific functional teams using Semantic Kernel.
 
 ## Building an intelligent request routing workflow in Semantic Kernel
 
