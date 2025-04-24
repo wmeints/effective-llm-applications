@@ -38,7 +38,7 @@ While the last item on this list isn't always useful when you have short-running
 While all of these products are great, they have one problem in common: You need to add yet another layer of moving parts on top of Semantic Kernel. That's why the developers of the Semantic Kernel team came up with the idea of providing a workflow engine out of the box tailored for LLM-based workflows.
 
 A> **The Semantic Kernel process framework is still in preview!**  
-A> While the base API of Semantic Kernel has been stable for a while, the API interface for the process framework shows some churn. I don't recommend running the process framework in a production scenario unless you plan for extra maintenance due to changes in the API. A workflow engine like the one offered in Dapr is a better option if you need to plan for a more stable environment.
+A> While the base API of Semantic Kernel has been stable for a while, the API interface for the process framework shows some churn. I don't recommend running the process framework in a production scenario unless you plan for extra maintenance due to changes in the API. Using the workflow engine offered in Dapr is a better option if you need to plan for a more stable environment for now.
 
 The process framework in Semantic Kernel has two core components:
 
