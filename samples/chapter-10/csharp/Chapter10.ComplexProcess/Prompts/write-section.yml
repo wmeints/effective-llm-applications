@@ -1,0 +1,33 @@
+﻿name: write_section
+description: Generates a section for the blog post
+template: |
+  I'm writing a blog post about "{{topic}}". I want you to write a section called "{{sectionTitle}}".
+  The section should answer the question "{{query}}". I want you to write three paragraphs of content.
+  Refer to the search results below to help you write the section.
+
+  <|search_results|>
+  {{searchResults}}
+  <|search_results_end|>
+  
+  Only write the content of the section omit the title.
+template_format: handlebars
+input_variables:
+  - name: topic
+    description: The topic you want to discuss in the blogpost.
+    is_required: true
+  - name: sectionTitle
+    description: The title of the section
+    is_required: true
+  - name: query
+    description: The question you want to answer in the section.
+    is_required: true
+  - name: searchResults
+    description: The search results to refer to when writing the section.
+    is_required: true
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 12000

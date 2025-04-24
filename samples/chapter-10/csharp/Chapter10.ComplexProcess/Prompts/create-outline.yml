@@ -1,0 +1,25 @@
+name: create_outline
+description: Generates a full article based on a plan
+template: |
+  We’re writing a blog post about "{{topic}}". Write an outline of the article. Follow these instructions carefully when
+  creating the outline for the article. Refer to the search results below to help you create the outline.
+
+  <|research|>
+  {{searchResults}}
+  <|research_end|>
+
+  - Only generate top-level headings
+  - Follow the hour-glass structure for the article
+  - Include no formatting in the outline
+template_format: handlebars
+input_variables:
+  - name: topic
+    description: The topic you want to discuss in the blogpost.
+    is_required: true
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 12000

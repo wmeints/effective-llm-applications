@@ -1,0 +1,21 @@
+﻿name: create_research_query
+description: Generates a search query for a specific section of the blog post
+template: |
+  I'm writing a blog post about "{{topic}}". I'm looking for a search query I can run through google to find out more
+  about "{{sectionTitle}}". I'm looking for a search query that will give me a good amount of detail.
+  The search query should be in the form of a question.
+template_format: handlebars
+input_variables:
+  - name: topic
+    description: The topic you want to discuss in the blogpost.
+    is_required: true
+  - name: sectionTitle
+    description: The title of the section.
+    is_required: true
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.7
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 12000
