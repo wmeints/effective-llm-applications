@@ -206,7 +206,12 @@ public class GreetingProcess
 
 You can call the `ToMermaid` method from a unit-test and store the output in a text file so you can more easily copy it over to the online mermaid tool. I sometimes add some logic to the `Program.cs` file of my application to export the content to the terminal there. Just make sure you remove it before committing to git!
 
-#{making-decisions-with-sk-process}
+When you generate a mermaid file for the process we just built, you will get the the visualization in the online Mermaid tool as shown in [#s](#process-visualization).
+
+{#process-visualization}
+![Mermaid diagram for the basic process](process-mermaid-visualization.png)
+
+{#making-decisions-with-sk-process}
 ## Making decisions in a Semantic Kernel process
 
 ### Using events to route data through the workflow
