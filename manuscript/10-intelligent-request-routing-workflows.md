@@ -23,16 +23,9 @@ Another use case where intelligent routing can be useful is when you need to sor
 
 Finally, intelligent routing can be used to optimize costs of your LLM. You can use a small language model as a router to determine whether the question is a simple or complex question and route the question to either a smaller language model or a larger language model depending on the complexity. You do incur an extra call to a language model, but it could help you shave off quite a sizable amount off your next creditcard bill, improve the response quality and speed at which users get a response.
 
-For the remainder of this chapter we'll focus on designing and building two types of intelligent request routing solutions:
-
-- Routing Github issues to specific functional areas in a Github repository.
-- A chat solution with multiple "agents" for product catalog information and customer service.
-
-In the previous chapter we've built our workflow by hand. It helps to understand how to split a complex task into separate steps, but it is lacking some important features to make the workflow more robust. There is a solution though: The Semantic Kernel process framework.
-
 ## Introducing to the process framework
 
-When it comes to chaining prompts together it's a great idea to use a workflow engine to make handling transient errors, human-machine interaction, and versioning of long-running workflows easier.
+In the previous chapter we built our workflow by hand. But as our workflows become more complex when we add intelligent routing for example it's important to build them on top of a more robust foundation. A workflow engine provides better options for robustness and scaling workflows.
 
 There are a lot of options available in the marketplace right now. I've personally used [Camunda][CAMUNDA], [Dapr Workflow][DAPR], and [Prefect][PREFECT] a lot in my work. Each of these products offer the same set of features:
 
@@ -40,11 +33,11 @@ There are a lot of options available in the marketplace right now. I've personal
 - A solution to handle long-running workflows with versioning.
 - A management dashboard to track running workflow instances.
 
-While the last item on this list isn't always useful when you have short-running workflows, it's a life saver for long-running workflows with human interaction.
+While the last item on this list isn't always useful when you have short-running workflows, it's an important feature for long-running workflows with human interaction.
 
 While all of these products are great, they have one problem in common: You need to add yet another layer of moving parts on top of Semantic Kernel. That's why the developers of the Semantic Kernel team came up with the idea of providing a workflow engine out of the box tailored for LLM-based workflows.
 
-> The Semantic Kernel process framework is still in preview!  
+> **The Semantic Kernel process framework is still in preview!**  
 > While the base API of Semantic Kernel has been stable for a while, the API interface for the process framework shows some churn. I don't recommend running the process framework in a production scenario unless you plan for extra maintenance due to changes in the API. A workflow engine like the one offered in Dapr is a better option if you need to plan for a more stable environment.
 
 The process framework in Semantic Kernel has two core components:
@@ -180,7 +173,7 @@ The same technique we just discussed should also be applied to `SendEventTo`. Yo
 
 As your process becomes more complex, you'll find that it becomes harder to see what's the exact flow in the process. Luckily for us, Microsoft thought of this and added a `ToMermaid` method to the final process instance we created in the constructor of our process. Mermaid is a text-based diagramming syntax with [an online tool][MERMAID_TOOL] that allows you to turn the mermaid format into a PNG image.
 
-I made a habit of wiring the `ToMermaid` method in my process definitions so I can call it to output the graph definition of my process in the mermaid format. The following code demonstrates how to do this:
+I made a habit of wiring the `ToMermaid` method in my process definitions so I can call it to output the graph definition of my process in the mermaid format. It's a life saver when you get to building workflows with more complex decision making steps or loops. The following code demonstrates how to do this:
 
 ```csharp
 public class GreetingProcess
@@ -210,6 +203,8 @@ When you generate a mermaid file for the process we just built, you will get the
 
 {#process-visualization}
 ![Mermaid diagram for the basic process](process-mermaid-visualization.png)
+
+The visualization
 
 {#making-decisions-with-sk-process}
 ## Making decisions in a Semantic Kernel process
