@@ -100,12 +100,15 @@ The code in the previous sample only returns a name to generate a greeting for. 
 public class GenerateGreetingStep: KernelProcessStep
 {
     [KernelFunction]
-    public void GenerateGreeting(string name)
+    public void GenerateGreeting(Kernel kernel, string name)
     {
-        Console.WriteLine("$Hello, ${name}!");
+        kernel.Data["GreetingMessage"] = $"Hello, {name}";
     }
 }
 ```
+
+In this second step we use the kernel to store the outcome of the step.
+Currently, there's no way to send data from inside the process as a return value of the process. To work around this problem you need to use the `Data` dictionary of the kernel. It's not ideal, and I hope they'll fix this in an upcoming release of the process framework.
 
 Now that we have two steps, let's wire them up into a basic process.
 
@@ -139,12 +142,16 @@ public class GreetingProcess
         _process = processBuilder.Build();
     }
 
-    public async Task StartAsync(Kernel kernel)
+    public async Task<string> StartAsync(Kernel kernel)
     {
         await _process.StartAsync(kernel, new KernelProcessEvent 
         { 
             Id = "StartProcess" 
         });
+
+        var result = kernel.Data["GreetingMessage"] as string;
+
+        return result;
     }
 }
 ```
@@ -156,12 +163,23 @@ This code performs the following steps:
 3. Then, we register the step definitions for the process.
 4. After that, we define an input event for the process to start the process.
 5. Next, we emit an event to the second step when the first step finishes.
+6. Finally, we define a `StartAsync` method that runs the process and returns the `GreetingMessage` we stored in the second step of the process.
 
-The Semantic Kernel process framework uses events whenever it needs to send or receive data. The input event we defined is fired when we call `StartAsync` and causes the `GetName` method in `GetNameStep` to be called. 
+The Semantic Kernel process framework uses events whenever it needs to send or receive data. The input event we defined is fired when we call `StartAsync` and causes the `GetName` method in `GetNameStep` to be called.
 
 The `OnFunctionResult` definition in the process generates an event that we capture by executing the `GenerateGreeting` method in the `GenerateGreetingStep` class.
 
 Using events to transport data is important, because this allows the runtime to move the process steps to different machines and talk to them via HTTP or even gRPC. The event data is serialized to JSON, sent over to where the step is executed and then deserialized and used.
+
+You can use the process in your web application using the following code:
+
+```csharp
+app.MapGet("/greeting", async (Kernel kernel) =>
+{
+    var process = new GreetingProcess();
+    return await process.StartAsync(kernel);
+});
+```
 
 The basic process we just built uses a single method in each step, but that's not a requirement. You can define multiple kernel functions per step. This makes it possible to have multiple variations of the same process step in one class. Definine multiple kernel functions in one step class can be useful if you need to have a variant of the step for the first time it's executed and another variant for the executions after that.
 
@@ -171,7 +189,7 @@ The same technique we just discussed should also be applied to `SendEventTo`. Yo
 
 ### Visualizing the process using mermaid diagrams
 
-As your process becomes more complex, you'll find that it becomes harder to see what's the exact flow in the process. Luckily for us, Microsoft thought of this and added a `ToMermaid` method to the final process instance we created in the constructor of our process. Mermaid is a text-based diagramming syntax with [an online tool][MERMAID_TOOL] that allows you to turn the mermaid format into a PNG image.
+As your process becomes more complex, you'll find that it becomes harder to see what the exact flow is in the process. Luckily for us, Microsoft thought of this and added a `ToMermaid` method to the final process instance we created in the constructor of our process. Mermaid is a text-based diagramming syntax with [an online tool][MERMAID_TOOL] that allows you to turn the mermaid format into a PNG image.
 
 I made a habit of wiring the `ToMermaid` method in my process definitions so I can call it to output the graph definition of my process in the mermaid format. It's a life saver when you get to building workflows with more complex decision making steps or loops. The following code demonstrates how to do this:
 
@@ -204,14 +222,93 @@ When you generate a mermaid file for the process we just built, you will get the
 {#process-visualization}
 ![Mermaid diagram for the basic process](process-mermaid-visualization.png)
 
-The visualization
+Now that we've seen the basics of building a process in Semantic Kernel we need to discuss how to route to different steps in the workflow based on a condition in a step.
 
 {#making-decisions-with-sk-process}
 ## Making decisions in a Semantic Kernel process
 
+In many workflow engines you have a dedicated decision step that uses input and an expression to invoke one workflow step or another. In Semantic Kernel we need to build a decision making step ourselves.
+
 ### Using events to route data through the workflow
 
+The following code demonstrates how to build a step that emits two different events based on the input provided to the step:
+
+```csharp
+public class MakeDecisionStep: KernelProcessStep
+{
+    [KernelFunction]
+    public async Task MakeDecisionAsync(
+        KernelProcessStepContext context, int randomValue)
+    {
+        if (randomValue > 10)
+        {
+            await context.EmitEventAsync("HighOutcome", randomValue);
+        }
+        else
+        {
+            await context.EmitEventAsync("LowOutcome", randomValue);
+        }
+    }
+}
+```
+
+This process step contains the following logic:
+
+1. First, we check if the input argument is higher than 10.
+2. If the input is higher than 10, we emit the "HighOutcome" event.
+3. If the input is lower or equal to 10, we emit the "LowOutcome" event.
+
+We can use these events to execute different steps in the workflow. Let's take a look
+at the process logic:
+
+```csharp
+public class RandomDecisionMakingProcess
+{
+    private readonly KernelProcess _process;
+
+    public RandomDecisionMakingProcess()
+    {
+        var processBuilder = new ProcessBuilder("RandomDecisionMaking");
+        
+        var generateRandomNumberStep = processBuilder.AddStepFromType<GenerateRandomNumberStep>();
+        var makeDecisionStep = processBuilder.AddStepFromType<MakeDecisionStep>();
+        var handleLowOutcomeStep = processBuilder.AddStepFromType<HandleLowOutcomeStep>();
+        var handleHighOutcomeStep = processBuilder.AddStepFromType<HandleHighOutcomeStep>();
+        
+        processBuilder.OnInputEvent("StartProcess").SendEventTo(new(generateRandomNumberStep));
+        generateRandomNumberStep.OnFunctionResult().SendEventTo(new(makeDecisionStep));
+        
+        makeDecisionStep.OnEvent("HighOutcome").SendEventTo(new(handleHighOutcomeStep));
+        makeDecisionStep.OnEvent("LowOutcome").SendEventTo(new(handleLowOutcomeStep));
+        
+        _process = processBuilder.Build();
+    }
+
+    // ... Rest is omitted for now
+}
+```
+
+In the process logic we use the `OnFunctionResult` method to route the output
+of the `GenerateRandomNumberStep` to the `MakeDecisionStep`. From there we no longer use the `OnFunctionResult` method to route the data. Instead, we capture the `HighOutcome` event and route the data of the event to the `ProcessHighOutcomeStep`. We also capture the `LowOutcome` event to route it to the `ProcessLowOutcomeStep`.
+
+If you're interested in the rest of the code for this process, make sure to check out [the sample code][DECISION_PROCESS_SAMPLE] for this chapter.
+
+Using events we can route data to different steps. We can also use events to create loops in the workflow.
+
 ### Using state in workflow steps to base your decisions on
+
+Working with loops in Semantic Kernel is a bit more work than you might initially expect. Loops require a step to track state so it can decide based on state data if it should execute another loop or move on to the final step of a workflow.
+
+The following code demonstrates how to build a process step with state:
+
+```csharp
+
+```
+
+The process step contains the following logic:
+
+1. First, we define a process step class that derives from `KernelProcessStep<T>`. The type argument provided is the state class that we use to track the state data.
+2. Next, we have a method called `StartProcessAsync`
 
 ## Building an intelligent request routing workflow
 
@@ -222,3 +319,4 @@ The visualization
 [PREFECT]: https://www.prefect.io/
 [BASIC_SAMPLE_CODE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-10/csharp/Chapter10.BasicProcess/
 [MERMAID_TOOL]: https://mermaid.live/
+[DECISION_PROCESS_SAMPLE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-10/csharp/Chapter10.DecisionMakingProcess/
