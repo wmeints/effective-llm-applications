@@ -21,9 +21,12 @@ public class GreetingProcess
         _process = processBuilder.Build();
     }
 
-    public async Task StartAsync(Kernel kernel)
+    public async Task<string> StartAsync(Kernel kernel)
     {
         await _process.StartAsync(kernel, new KernelProcessEvent { Id = "StartProcess" });
+        var result = kernel.Data["GreetingMessage"] as string;
+
+        return result!;
     }
 
     public string ToMermaid()

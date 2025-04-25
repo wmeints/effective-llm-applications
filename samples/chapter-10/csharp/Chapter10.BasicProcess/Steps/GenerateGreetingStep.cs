@@ -5,8 +5,8 @@ namespace Chapter10.BasicProcess.Steps;
 public class GenerateGreetingStep: KernelProcessStep
 {
     [KernelFunction]
-    public void GenerateGreeting(string name)
+    public void GenerateGreeting(Kernel kernel, string name)
     {
-        Console.WriteLine("$Hello, ${name}!");
+        kernel.Data["GreetingMessage"] = $"Hello, {name}";
     }
 }
