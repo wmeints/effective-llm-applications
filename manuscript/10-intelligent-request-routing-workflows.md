@@ -270,16 +270,33 @@ public class RandomDecisionMakingProcess
     {
         var processBuilder = new ProcessBuilder("RandomDecisionMaking");
         
-        var generateRandomNumberStep = processBuilder.AddStepFromType<GenerateRandomNumberStep>();
-        var makeDecisionStep = processBuilder.AddStepFromType<MakeDecisionStep>();
-        var handleLowOutcomeStep = processBuilder.AddStepFromType<HandleLowOutcomeStep>();
-        var handleHighOutcomeStep = processBuilder.AddStepFromType<HandleHighOutcomeStep>();
+        var generateRandomNumberStep = processBuilder.
+            AddStepFromType<GenerateRandomNumberStep>();
+
+        var makeDecisionStep = processBuilder
+            .AddStepFromType<MakeDecisionStep>();
+
+        var handleLowOutcomeStep = processBuilder
+            .AddStepFromType<HandleLowOutcomeStep>();
+
+        var handleHighOutcomeStep = processBuilder.
+            AddStepFromType<HandleHighOutcomeStep>();
         
-        processBuilder.OnInputEvent("StartProcess").SendEventTo(new(generateRandomNumberStep));
-        generateRandomNumberStep.OnFunctionResult().SendEventTo(new(makeDecisionStep));
+        processBuilder
+            .OnInputEvent("StartProcess")
+            .SendEventTo(new(generateRandomNumberStep));
+
+        generateRandomNumberStep
+            .OnFunctionResult()
+            .SendEventTo(new(makeDecisionStep));
         
-        makeDecisionStep.OnEvent("HighOutcome").SendEventTo(new(handleHighOutcomeStep));
-        makeDecisionStep.OnEvent("LowOutcome").SendEventTo(new(handleLowOutcomeStep));
+        makeDecisionStep
+            .OnEvent("HighOutcome")
+            .SendEventTo(new(handleHighOutcomeStep));
+
+        makeDecisionStep
+            .OnEvent("LowOutcome")
+            .SendEventTo(new(handleLowOutcomeStep));
         
         _process = processBuilder.Build();
     }
@@ -293,24 +310,145 @@ of the `GenerateRandomNumberStep` to the `MakeDecisionStep`. From there we no lo
 
 If you're interested in the rest of the code for this process, make sure to check out [the sample code][DECISION_PROCESS_SAMPLE] for this chapter.
 
-Using events we can route data to different steps. We can also use events to create loops in the workflow.
+## Building an intelligent request routing workflow
 
-### Using state in workflow steps to base your decisions on
+So far in this chapter we've only covered how to build processes in Semantic Kernel. While useful, it doesn't address the topic of intelligent request routing. It's time we address that by looking at how we can use an LLM to route requests based on their complexity.
 
-Working with loops in Semantic Kernel is a bit more work than you might initially expect. Loops require a step to track state so it can decide based on state data if it should execute another loop or move on to the final step of a workflow.
+We need to perform a couple of steps to build an intelligent model router using the process framework:
 
-The following code demonstrates how to build a process step with state:
+1. First, we need to configure multiple LLMs in our application. A bigger model for answering complex questions and a smaller model for the more straightforward questions.
+2. Next, we need to create two steps to address the complex and more straightforward questions using the correct models.
+3. Then, we need to make a decision making step that routes requests based on their complexity.
+4. Finally, we need to wire up the process.
+
+Let's start by configuring multiple LLMs with Semantic Kernel.
+
+### Configuring multiple AI connectors
+
+So far we've only focused on using a single LLM with our application but Semantic Kernel supports registering multiple LLMs by setting a service identifier for each of the registered models.
+
+The following code demonstrates how to configure the kernel with multiple models in ASP.NET Core:
 
 ```csharp
-
+builder.Services.AddKernel()
+    .AddAzureOpenAIChatCompletion(
+        builder.Configuration["LanguageModel:ComplexCompletionModel"]!,
+        builder.Configuration["LanguageModel:Endpoint"]!,
+        builder.Configuration["LanguageModel:ApiKey"]!,
+        serviceId: "complexPrompts")
+    .AddAzureOpenAIChatCompletion(
+        builder.Configuration["LanguageModel:BasicCompletionModel"]!,
+        builder.Configuration["LanguageModel:Endpoint"]!,
+        builder.Configuration["LanguageModel:ApiKey"]!,
+        serviceId: "basicPrompts");
 ```
 
-The process step contains the following logic:
+We specify one chat completion model with a `complexPrompts` service identifier and the other with a `basicPrompts` service identifier. The complex requests we'll route to GPT-4o while the more basic questions we'll route to GPT-4o-mini.
 
-1. First, we define a process step class that derives from `KernelProcessStep<T>`. The type argument provided is the state class that we use to track the state data.
-2. Next, we have a method called `StartProcessAsync`
+After configuring the models, we need to make sure we can use both models.
 
-## Building an intelligent request routing workflow
+### Creating steps for straightforward and complex prompts
+
+Let's first create a step that can handle straightforward questions by using the chat completion service marked with the `basicRequests` service identifier.
+
+```csharp
+public class HandleBasicPromptStep: KernelProcessStep
+{
+    [KernelFunction]
+    public async Task HandlePromptAsync(Kernel kernel, string prompt)
+    {
+        var completionService = kernel.GetRequiredService<IChatCompletionService>();
+        var chatHistory = new ChatHistory();
+        
+        chatHistory.AddSystemMessage(EmbeddedResource.Read("instructions.txt"));
+        chatHistory.AddUserMessage(prompt);
+
+        var response = await completionService.GetChatMessageContentsAsync(
+            chatHistory,new AzureOpenAIPromptExecutionSettings()
+        {
+            ServiceId = "basicPrompts",
+        });
+        
+        // NOTE: The response is a list of choices that you could request in the past.
+        // Now, there's only one choice no matter what model you're using!
+        
+        kernel.Data["ResponseContent"] = response[0].Content;
+    }
+}
+```
+
+This step contains the following logic:
+
+1. First, we implement a new step class for basic prompts.
+2. Next, we create a method `HandlePromptAsync` that accepts a prompt
+3. Then, in the `HandlePromptAsync` method we request the `IChatCompletionService`.
+4. After, we create a chat history with system instructions and the user's prompt.
+5. Next, we invoke the completion service providing prompt execution settings that point the completion service to the correct service identifier.
+6. Finally, we return the response by putting it in the kernel data dictionary.
+
+The logic for handling complex prompts is similar to how we handle straightforward prompts. The difference is in the service identifier.
+
+```csharp
+public class HandleComplexPromptStep: KernelProcessStep
+{
+    [KernelFunction]
+    public async Task HandlePromptAsync(Kernel kernel, string prompt)
+    {
+        var completionService = kernel.GetRequiredService<IChatCompletionService>();
+        var chatHistory = new ChatHistory();
+        
+        chatHistory.AddSystemMessage(EmbeddedResource.Read("instructions.txt"));
+        chatHistory.AddUserMessage(prompt);
+
+        var response = await completionService.GetChatMessageContentsAsync(
+            chatHistory,new AzureOpenAIPromptExecutionSettings()
+        {
+            ServiceId = "complexPrompts",
+        });
+        
+        // NOTE: The response is a list of choices that you could request in the past.
+        // Now, there's only one choice no matter what model you're using!
+
+        kernel.Data["ResponseContent"] = response[0].Content;
+    }
+}
+```
+
+I've copied the logic here for simplicity and because this allows me to customize the behavior for complex prompts. You can use inheritance to create different implementations of the class, but it doesn't make much sense to me because conceptually I'm doing different things here.
+
+Let's discuss how we're going to decide to route a prompt to the basic or the complex prompt handling steps.
+
+### Routing prompts based on their complexity
+
+Deciding where a user's prompt should go is a type of classification task that's easily handled by almost any LLM with sufficient capacity. After some experimentation I came up with the following prompt to route requests based on their complexity
+
+~~~text
+You are a routing agent responsible for deciding whether a user message should be handled by the powerful GPT-4o model or the lightweight GPT-4o-mini model.
+
+Use the following logic:
+
+1. If the user input:
+   - Is long (more than 100 words), or
+   - Includes technical content, code, math, or complex instructions, or
+   - Requires reasoning, step-by-step planning, or detailed analysis,
+   → route to **GPT-4o**.
+
+2. If the user input:
+   - Is short (less than 100 words), and
+   - Is a straightforward query, casual chat, or small task like summarizing, translating, or answering trivia,
+   → route to **GPT-4o-mini**.
+
+Your output must be in this exact JSON format:
+
+~~~json
+{
+  "model": "gpt-4o" | "gpt-4o-mini",
+  "reason": "Short explanation of why this model was chosen"
+}
+```
+~~~
+
+
 
 ## Summary
 
