@@ -2,6 +2,9 @@ using Chapter10.BasicProcess.Processes;
 using Microsoft.SemanticKernel;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddKernel();
+
 var app = builder.Build();
 
 app.MapGet("/greeting", async (Kernel kernel) =>
