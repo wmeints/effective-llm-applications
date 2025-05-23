@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>SKEXP0080</NoWarn>
+    <UserSecretsId>d1f55c19-9baf-4e26-916a-b2aee2f08ffe</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SemanticKernel.Process.Core" Version="1.54.0-alpha" />
+    <PackageReference Include="Microsoft.SemanticKernel.Process.LocalRuntime" Version="1.54.0-alpha" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.54.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.54.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.54.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="instructions.txt" />
+    <EmbeddedResource Include="instructions.txt" />
+    <None Remove="routing-prompt.yml" />
+    <EmbeddedResource Include="routing-prompt.yml" />
+  </ItemGroup>
+</Project>

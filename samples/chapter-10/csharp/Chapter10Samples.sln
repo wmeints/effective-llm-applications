@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter10.BasicProcess", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter10.DecisionMakingProcess", "Chapter10.DecisionMakingProcess\Chapter10.DecisionMakingProcess.csproj", "{DE5B28B9-C53E-4CF7-9347-04D50AF86177}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chapter10.IntelligentRequestRouting", "Chapter10.IntelligentRequestRouting\Chapter10.IntelligentRequestRouting.csproj", "{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{DE5B28B9-C53E-4CF7-9347-04D50AF86177}.Release|x64.Build.0 = Release|Any CPU
 		{DE5B28B9-C53E-4CF7-9347-04D50AF86177}.Release|x86.ActiveCfg = Release|Any CPU
 		{DE5B28B9-C53E-4CF7-9347-04D50AF86177}.Release|x86.Build.0 = Release|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Debug|x64.Build.0 = Debug|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Debug|x86.Build.0 = Debug|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Release|x64.ActiveCfg = Release|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Release|x64.Build.0 = Release|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Release|x86.ActiveCfg = Release|Any CPU
+		{DF14EE91-E7DE-43A7-9719-6CD7C12100D8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

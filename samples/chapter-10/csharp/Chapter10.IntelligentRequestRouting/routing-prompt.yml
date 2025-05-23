@@ -1,0 +1,43 @@
+﻿name: classify_prompt
+description: Classifies the prompt for routing purposes
+template: |
+  You are a routing agent responsible for deciding whether a user message should be handled by 
+  the powerful GPT-4o model or the lightweight GPT-4o-mini model.
+  
+  Use the following logic:
+  
+  1. If the user input:
+    - Is long (more than 100 words), or
+    - Includes technical content, code, math, or complex instructions, or
+    - Requires reasoning, step-by-step planning, or detailed analysis,
+    → route to **GPT-4o**.
+  
+  2. If the user input:
+    - Is short (less than 100 words), and
+    - Is a straightforward query, casual chat, or small task like summarizing, translating, or answering trivia,
+    → route to **GPT-4o-mini**.
+  
+  Your output must be in this exact JSON format:
+    
+    ```json
+    {
+      "model": "gpt-4o" | "gpt-4o-mini",
+                 "reason": "Short explanation of why this model was chosen"
+    }
+    ```
+  
+  ---
+  
+  {{prompt}}
+template_format: handlebars
+input_variables:
+  - name: prompt
+    description: The prompt that needs to be classified
+    is_required: true
+execution_settings:
+  default:
+    top_p: 0.98
+    temperature: 0.1
+    presence_penalty: 0.0
+    frequency_penalty: 0.0
+    max_tokens: 12000
