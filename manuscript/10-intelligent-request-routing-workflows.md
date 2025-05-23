@@ -39,8 +39,7 @@ Beyond these characteristics, these products vary a lot. Camunda, for example, f
 
 While both of these products are great, they have one problem in common: You need to add yet another layer of moving parts on top of Semantic Kernel. That's why the Semantic Kernel team's developers came up with the idea of providing a workflow engine out of the box tailored for LLM-based workflows.
 
-A> **The Semantic Kernel process framework is still in preview!**  
-A> While the base API of Semantic Kernel has been stable for a while, the API interface for the process framework shows some churn. I don't recommend running the process framework in a production scenario unless you plan for extra maintenance due to changes in the API. Using the workflow engine offered in Dapr is a better option if you need to prepare for a more stable environment.
+A> While the base API of Semantic Kernel has been stable for a while, the API interface for the process framework is still in preview. I don't recommend running the process framework in a production scenario unless you plan for extra maintenance due to changes in the API. Using the workflow engine offered in Dapr is a better option if you need to prepare for a more stable environment.
 
 The process framework in Semantic Kernel has two core components:
 
@@ -89,7 +88,7 @@ public class GetNameStep: KernelProcessStep
 In the process step implementation, you'll need to add a method marked with `[KernelFunction]` to add logic to the step. Kernel process step methods have a few rules to them:
 
 - You can add a `Kernel` argument to the method to access a kernel instance. You can use this to invoke prompts or get access to plugins.
-- You can add a `KernelProcessStepContext` argument to the method to emit events from your step logic to introduce a more complex control flow. We'll cover emitting events when we get to [#s](#making-decisions-with-sk-process) and how to make a decision in a process.
+- You can add a `KernelProcessStepContext` argument to the method to emit events from your step logic to introduce a more complex control flow. We'll cover emitting events when we get to [#s](#making-decisions-with-sk-process). where we'll discuss how to make a decision in a process.
 - You can have one argument containing the input data for your workflow. This argument can be of any type as long as it is serializable to JSON. As you can scale workflows across multiple machines, you must send and receive data across network boundaries.
 - The method can return a JSON serializable value directly or a `Task<T>` where the `T` type argument is a JSON serializable type defining the result of the task.
 
@@ -422,10 +421,15 @@ Let's discuss how we will route a prompt to the basic or the complex prompt hand
 
 ### Routing prompts based on their complexity
 
-Deciding where a user's prompt should go is a classification task that any LLM easily handles with sufficient capacity. After some experimentation, I came up with the following prompt to route requests based on their complexity:
+Deciding where a user's prompt should go is a classification 
+task that any LLM easily handles with sufficient capacity. 
+After some experimentation, I came up with the following prompt 
+to route requests based on their complexity:
 
 ~~~text
-You are a routing agent responsible for deciding whether a user message should be handled by the powerful GPT-4o model or the lightweight GPT-4o-mini model.
+You are a routing agent responsible for deciding whether a user
+message should be handled by the powerful GPT-4o model or the
+lightweight GPT-4o-mini model.
 
 Use the following logic:
 
@@ -433,11 +437,12 @@ Use the following logic:
    - Is long (more than 100 words), or
    - Includes technical content, code, math, or complex instructions, or
    - Requires reasoning, step-by-step planning, or detailed analysis,
-   → route to **GPT-4o**.
+     → route to **GPT-4o**.
 
 2. If the user input:
    - Is short (less than 100 words), and
-   - Is a straightforward query, casual chat, or small task like summarizing, translating, or answering trivia,
+   - Is a straightforward query, casual chat, or small task like
+     summarizing, translating, or answering trivia,
    → route to **GPT-4o-mini**.
 
 Your output must be in this exact JSON format:
@@ -530,11 +535,15 @@ public class AnswerQuestionProcess
     {
         var builder = new ProcessBuilder("AnswerQuestion");
 
-        var basicQuestionStep = builder.AddStepFromType<HandleBasicPromptStep>();
-        var complexQuestionStep = builder.AddStepFromType<HandleComplexPromptStep>();
-        var routingStep = builder.AddStepFromType<RoutePromptStep>();
+        var basicQuestionStep = builder
+            .AddStepFromType<HandleBasicPromptStep>();
+        var complexQuestionStep = builder
+            .AddStepFromType<HandleComplexPromptStep>();
+        var routingStep = builder
+            .AddStepFromType<RoutePromptStep>();
 
-        builder.OnInputEvent("StartProcess").SendEventTo(new(routingStep));
+        builder.OnInputEvent("StartProcess")
+            .SendEventTo(new(routingStep));
 
         routingStep.OnEvent("HandleBasicPrompt")
             .SendEventTo(new(basicQuestionStep));
@@ -560,7 +569,7 @@ public class AnswerQuestionProcess
 
 The process's layout is similar to what we've seen before. We can start the process from an input event, providing it with a prompt. The input data is routed to the routing step we built. From the routing step, we then use the `OnEvent` method to route the prompt to the correct step based on the event raised by the routing step.
 
-## Things to consider when using intelligent request routing
+## Considerations for using intelligent request routing
 
 If you're planning on using multiple language models in chat scenarios, you'll need a slightly different approach from what we discussed in this chapter. Typical chat scenarios feature streaming responses to provide a better experience for the application's users, which invalidates using a workflow for chat scenarios.
 
