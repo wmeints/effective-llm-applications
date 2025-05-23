@@ -356,17 +356,17 @@ public class HandleBasicPromptStep: KernelProcessStep
     [KernelFunction]
     public async Task HandlePromptAsync(Kernel kernel, string prompt)
     {
-        var completionService = kernel.GetRequiredService<IChatCompletionService>();
+        var completionService = 
+            kernel.GetRequiredService<IChatCompletionService>(
+                "basicPrompts");
+
         var chatHistory = new ChatHistory();
         
         chatHistory.AddSystemMessage(EmbeddedResource.Read("instructions.txt"));
         chatHistory.AddUserMessage(prompt);
 
         var response = await completionService.GetChatMessageContentsAsync(
-            chatHistory,new AzureOpenAIPromptExecutionSettings()
-        {
-            ServiceId = "basicPrompts",
-        });
+            chatHistory,new AzureOpenAIPromptExecutionSettings());
         
         // NOTE: The response has a list of choices. In the past you could
         // ask for multiple responses. This is no longer the case, but the
@@ -381,9 +381,10 @@ This step contains the following logic:
 
 1. First, we implement a new step class for basic prompts.
 2. Next, we create a method `HandlePromptAsync` that accepts a prompt
-3. After that, in the `HandlePromptAsync` method, we request the `IChatCompletionService.`
+3. After that, in the `HandlePromptAsync` method, we request the `IChatCompletionService` with the correct service identifier for the
+   AI connection that we setup for basic prompts.
 4. After, we create a chat history with system instructions and the user's prompt.
-5. Next, we invoke the completion service, providing prompt execution settings that point the completion service to the correct service identifier.
+5. Next, we invoke the completion service.
 6. Finally, we return the response by putting it in the kernel data dictionary.
 
 The logic for handling complex prompts is similar to straightforward prompts. The difference is in the service identifier.
@@ -394,17 +395,17 @@ public class HandleComplexPromptStep: KernelProcessStep
     [KernelFunction]
     public async Task HandlePromptAsync(Kernel kernel, string prompt)
     {
-        var completionService = kernel.GetRequiredService<IChatCompletionService>();
+        var completionService = 
+            kernel.GetRequiredService<IChatCompletionService>(
+                "complexPrompts");
+
         var chatHistory = new ChatHistory();
         
         chatHistory.AddSystemMessage(EmbeddedResource.Read("instructions.txt"));
         chatHistory.AddUserMessage(prompt);
 
         var response = await completionService.GetChatMessageContentsAsync(
-            chatHistory,new AzureOpenAIPromptExecutionSettings()
-        {
-            ServiceId = "complexPrompts",
-        });
+            chatHistory,new AzureOpenAIPromptExecutionSettings());
         
         // NOTE: The response has a list of choices. In the past you could
         // ask for multiple responses. This is no longer the case, but the
@@ -489,7 +490,11 @@ private async Task<string> ClassifyPromptAsync(Kernel kernel, string prompt)
     var executionSettings = new AzureOpenAIPromptExecutionSettings
     {
         Temperature = 0.1,
-        ResponseFormat = typeof(RequestRoutingResponseData)
+        ResponseFormat = typeof(RequestRoutingResponseData),
+        // Important: You have to set the AI service to use for this prompt,
+        // otherwise this requires a default service registration that we don't
+        // have.
+        ServiceId = "basicPrompts"
     };
 
     var response = await promptTemplate.InvokeAsync(
