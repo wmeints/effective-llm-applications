@@ -68,32 +68,10 @@ enough in a more enterprise-oriented language like C#.
 
 - **[#s, #t](#prompt-chaining-workflows)**, delves into the essential pattern of prompt chaining, showing you how to break down complex tasks into manageable sequences of prompts that build upon each other's outputs to refine the output.
 
-- **[$#s, #t](#intelligent-request-routing)**, teaches you how to build systems that intelligently route requests through a workflow by applying a reasoning prompt with logic. This chapter helps you build more flexible workflows using LLMs.
+- **[#s, #t](#intelligent-request-routing)**, teaches you how to build systems that intelligently route requests through a workflow by applying a reasoning prompt with logic. This chapter helps you build more flexible workflows using LLMs.
 
-- In **Chapter 11, "LLM Orchestration Workflows"**, you'll learn how to design and implement
-  robust LLM orchestration workflows that can handle complex document processing tasks
-  at scale, including key patterns for state handling, and error recovery. This chapter
-  is essential for anyone building production-grade LLM applications that need to
-  reliably process large volumes of requests while maintaining observability and
-  performance - skills that become critical as your LLM applications grow beyond simple
-  single-request implementations.
-
-- **Chapter 12, "Artist and Critic Workflows"**, explores the powerful "artist and critic"
-  pattern where LLMs are used both to generate content and to critically evaluate and
-  refine that content through iterative feedback loops. This chapter helps you
-  understand how you can build self-improving workflows for content creation and code
-  generation or any other scenario where output quality is important.
-
-- **Chapter 13, "Building Basic Agents"**, introduces the fundamentals of building
-  autonomous agents with LLMs. It covers the core loop of observation, reasoning, and
-  action along with essential patterns for managing agent memory and state. This chapter
-  helps you understand the role of agents and when the use an agent in your application.
-
-- **Chapter 14, "Building Multi-Agent Teams"**, tackles the advanced topic of building
-  multi-agent teams, exploring how to coordinate multiple AI agents working together
-  with defined roles, communication protocols, and strategies for solving complex tasks.
-  Although the multi-agent pattern is still in its infancy, reading this chapter will
-  help you understand where current generative AI research is moving towards.
+- **Chapter 11, "Working with agents"**, tackles the topic of building
+  agents and multi-agent teams, exploring how to coordinate multiple AI agents working together with defined roles, communication protocols, and strategies for solving complex tasks. Although the multi-agent pattern is still in its infancy, reading this chapter will help you understand where current generative AI research is moving towards.
 
 ## System requirements
 
