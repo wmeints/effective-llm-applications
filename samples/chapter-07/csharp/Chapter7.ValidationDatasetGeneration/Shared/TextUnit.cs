@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.VectorData;
+using Microsoft.SemanticKernel.Data;
 
 namespace Chapter7.ValidationDatasetGeneration.Shared;
 

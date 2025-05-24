@@ -18,7 +18,10 @@ public class ContentIndexer(
         logger.LogInformation("Processing content");
 
         ulong currentIdentifier = 1L;
-        var files = Directory.GetFiles("Content", "*.md", SearchOption.AllDirectories);
+        
+        var files = Directory.GetFiles("Content", "*.md",
+            SearchOption.AllDirectories);
+
         var textUnits = new List<TextUnit>();
 
         var collection = vectorStore.GetCollection<ulong, TextUnit>("content");
