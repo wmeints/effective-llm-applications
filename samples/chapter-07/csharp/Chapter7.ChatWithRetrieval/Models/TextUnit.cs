@@ -1,20 +1,19 @@
 using System;
 using Microsoft.Extensions.VectorData;
 
-namespace Chapter7.ChatWithRetrieval.Models
+namespace Chapter7.ChatWithRetrieval.Models;
+
+public class TextUnit
 {
-    public class TextUnit
-    {
-        [VectorStoreRecordKey]
-        public ulong Id { get; set; }
+    [VectorStoreKey]
+    public ulong Id { get; set; }
 
-        [VectorStoreRecordData(IsFilterable = true)]
-        public string OriginalFileName { get; set; } = default!;
+    [VectorStoreData]
+    public string OriginalFileName { get; set; } = default!;
 
-        [VectorStoreRecordData(IsFullTextSearchable = true)]
-        public string Content { get; set; } = default!;
+    [VectorStoreData(IsFullTextIndexed = true)]
+    public string Content { get; set; } = default!;
 
-        [VectorStoreRecordVector(Dimensions: 1536, DistanceFunction.CosineSimilarity, IndexKind.Hnsw)]
-        public ReadOnlyMemory<float> Embedding { get; set; }
-    }
+    [VectorStoreVector(1536, DistanceFunction = DistanceFunction.CosineSimilarity, IndexKind = IndexKind.Hnsw)]
+    public ReadOnlyMemory<float> Embedding { get; set; }
 }

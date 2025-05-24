@@ -1,21 +1,18 @@
 ﻿using Microsoft.Extensions.VectorData;
 
-namespace Chapter7.ContentPreprocessing.Shared;
+namespace Chapter7.ValidationDatasetGeneration.Shared;
 
 public class TextUnit
 {
-    [VectorStoreRecordKey]
-    public required ulong Id { get; set; }
+    [VectorStoreKey]
+    public ulong Id { get; set; }
 
-    [VectorStoreRecordData(IsFilterable = true)]
-    public required string ChunkId { get; set; }
+    [VectorStoreData]
+    public string OriginalFileName { get; set; } = default!;
 
-    [VectorStoreRecordData(IsFullTextSearchable = true)]
-    public required string Content { get; set; }
+    [VectorStoreData(IsFullTextIndexed = true)]
+    public string Content { get; set; } = default!;
 
-    [VectorStoreRecordData(IsFilterable = true)]
-    public required string OriginalFileName { get; set; }
-
-    [VectorStoreRecordVector(1536)]
+    [VectorStoreVector(1536, DistanceFunction = DistanceFunction.CosineSimilarity, IndexKind = IndexKind.Hnsw)]
     public ReadOnlyMemory<float> Embedding { get; set; }
 }

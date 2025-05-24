@@ -13,14 +13,13 @@ var kernelBuilder = builder.Services.AddKernel()
         endpoint: builder.Configuration["LanguageModel:Endpoint"]!,
         apiKey: builder.Configuration["LanguageModel:ApiKey"]!
     )
-    .AddAzureOpenAITextEmbeddingGeneration(
+    .AddAzureOpenAIEmbeddingGenerator(
         deploymentName: builder.Configuration["LanguageModel:EmbeddingModel"]!,
         endpoint: builder.Configuration["LanguageModel:Endpoint"]!,
         apiKey: builder.Configuration["LanguageModel:ApiKey"]!
     );
 
-builder.Services.AddSingleton<IVectorStore>(
-    sp => new QdrantVectorStore(new QdrantClient("localhost")));
+builder.Services.AddQdrantVectorStore("localhost");
 
 builder.Services.AddSingleton<ContentIndexer>();
 builder.Services.AddSingleton<QuestionAnsweringTool>();

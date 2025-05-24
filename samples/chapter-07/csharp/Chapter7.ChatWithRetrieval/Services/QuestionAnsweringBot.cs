@@ -1,4 +1,5 @@
 using Chapter7.ChatWithRetrieval.Models;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -9,8 +10,8 @@ using Microsoft.SemanticKernel.Embeddings;
 namespace Chapter7.ChatWithRetrieval.Services;
 
 public class QuestionAnsweringBot(
-    Kernel kernel, IVectorStore vectorStore,
-    ITextEmbeddingGenerationService embeddingGenerator,
+    Kernel kernel, VectorStore vectorStore,
+    IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator,
     IChatCompletionService chatCompletions)
 {
     public async Task<string> GenerateResponse(string prompt)

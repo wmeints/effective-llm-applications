@@ -4,6 +4,7 @@ using System.Text.Json;
 using Chapter7.TestSampleGeneration;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
@@ -38,26 +39,27 @@ var kernel = Kernel.CreateBuilder()
         endpoint: configuration["LanguageModel:Endpoint"]!,
         apiKey: configuration["LanguageModel:ApiKey"]!
     )
-    .AddAzureOpenAITextEmbeddingGeneration(
+    .AddAzureOpenAIEmbeddingGenerator(
         deploymentName: configuration["LanguageModel:EmbeddingModel"]!,
         endpoint: configuration["LanguageModel:Endpoint"]!,
         apiKey: configuration["LanguageModel:ApiKey"]!
     )
     .Build();
 
-var vectorStore = new QdrantVectorStore(new QdrantClient("localhost"));
+var vectorStore = new QdrantVectorStore(new QdrantClient("localhost"), true);
+var embeddingGenerator = kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
 
 var answeringTool = new QuestionAnsweringTool(
     kernel,
     vectorStore,
-    kernel.GetRequiredService<ITextEmbeddingGenerationService>());
+    embeddingGenerator);
 
 // STEP 1: Index the content
 // ------------------------------------------------------------
 
 var contentIndexer = new ContentIndexer(
     vectorStore,
-    kernel.GetRequiredService<ITextEmbeddingGenerationService>(),
+    embeddingGenerator,
     loggerFactory.CreateLogger<ContentIndexer>());
 
 await contentIndexer.ProcessContentAsync();

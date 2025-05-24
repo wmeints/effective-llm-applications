@@ -3,7 +3,7 @@ using Microsoft.SemanticKernel;
 
 namespace Chapter7.ValidationDatasetGeneration.Shared;
 
-public class KernelFactory
+public static class KernelFactory
 {
     public static Kernel CreateKernel(IConfiguration configuration)
     {
@@ -24,7 +24,7 @@ public class KernelFactory
                 endpoint: languageModelConfig.Endpoint,
                 apiKey: languageModelConfig.ApiKey
             )
-            .AddAzureOpenAITextEmbeddingGeneration(
+            .AddAzureOpenAIEmbeddingGenerator(
                 deploymentName: languageModelConfig.TextEmbeddingModel,
                 endpoint: languageModelConfig.Endpoint,
                 apiKey: languageModelConfig.ApiKey

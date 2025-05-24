@@ -1,3 +1,4 @@
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Embeddings;
@@ -6,8 +7,8 @@ using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 namespace Chapter7.TestSampleGeneration;
 
 public class QuestionAnsweringTool(
-    Kernel kernel, IVectorStore vectorStore,
-    ITextEmbeddingGenerationService embeddingGenerator)
+    Kernel kernel, VectorStore vectorStore,
+    IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator)
 {
     public async Task<QuestionAnsweringToolResult> AnswerAsync(string question)
     {
@@ -18,20 +19,13 @@ public class QuestionAnsweringTool(
 
         var collection = vectorStore.GetCollection<ulong, TextUnit>("content");
 
-        var questionEmbedding = await embeddingGenerator.GenerateEmbeddingAsync(
+        var questionEmbedding = await embeddingGenerator.GenerateAsync(
             question);
 
-        var searchOptions = new VectorSearchOptions
-        {
-            Top = 3,
-        };
-
-        var searchResponse = await collection.VectorizedSearchAsync(
-            questionEmbedding, searchOptions);
-
+        var searchResponse = collection.SearchAsync(questionEmbedding, 3);
         var fragments = new List<TextUnit>();
 
-        await foreach (var fragment in searchResponse.Results)
+        await foreach (var fragment in searchResponse)
         {
             fragments.Add(fragment.Record);
         }
