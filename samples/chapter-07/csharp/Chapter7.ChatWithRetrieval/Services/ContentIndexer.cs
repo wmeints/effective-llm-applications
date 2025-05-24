@@ -1,5 +1,6 @@
 using System.Diagnostics.SymbolStore;
 using Chapter7.ChatWithRetrieval.Models;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.Text;
@@ -8,8 +9,8 @@ using OpenAI.Chat;
 namespace Chapter7.ChatWithRetrieval.Services;
 
 public class ContentIndexer(
-    IVectorStore vectorStore,
-    ITextEmbeddingGenerationService embeddingGenerator,
+    VectorStore vectorStore,
+    IEmbeddingGenerator<string ,Embedding<float>> embeddingGenerator,
     ILogger<ContentIndexer> logger)
 {
     public async Task ProcessContentAsync()
@@ -22,7 +23,7 @@ public class ContentIndexer(
 
         var collection = vectorStore.GetCollection<ulong, TextUnit>("content");
 
-        await collection.CreateCollectionIfNotExistsAsync();
+        await collection.EnsureCollectionDeletedAsync();
 
         foreach (var file in files)
         {
@@ -37,12 +38,12 @@ public class ContentIndexer(
 
             foreach (var chunk in chunks)
             {
-                var embedding = await embeddingGenerator.GenerateEmbeddingAsync(chunk);
+                var embedding = await embeddingGenerator.GenerateAsync(chunk);
 
                 var textUnit = new TextUnit
                 {
                     Content = chunk,
-                    Embedding = embedding,
+                    Embedding = embedding.Vector,
                     OriginalFileName = file,
                     Id = currentIdentifier++
                 };

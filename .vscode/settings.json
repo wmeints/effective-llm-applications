@@ -4,5 +4,6 @@
         "editor.wrappingIndent": "same",
         "editor.wordWrapColumn": 88,
     },
-    "prettier.enable": false
+    "prettier.enable": false,
+    "editor.rulers": [88],
 }

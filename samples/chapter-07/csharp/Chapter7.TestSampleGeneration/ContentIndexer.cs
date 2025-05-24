@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
@@ -12,12 +13,12 @@ namespace Chapter7.TestSampleGeneration;
 
 public class ContentIndexer
 {
-    private AsyncRetryPolicy _retryPolicy;
+    private readonly AsyncRetryPolicy _retryPolicy;
     private readonly ILogger _logger;
-    private readonly IVectorStore _vectorStore;
-    private readonly ITextEmbeddingGenerationService _embeddingGenerator;
+    private readonly VectorStore _vectorStore;
+    private readonly IEmbeddingGenerator<string, Embedding<float>> _embeddingGenerator;
 
-    public ContentIndexer(IVectorStore vectorStore, ITextEmbeddingGenerationService embeddingGenerator, ILogger<ContentIndexer> logger)
+    public ContentIndexer(VectorStore vectorStore, IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator, ILogger<ContentIndexer> logger)
     {
         _logger = logger;
         _vectorStore = vectorStore;
@@ -48,7 +49,7 @@ public class ContentIndexer
 
         var collection = _vectorStore.GetCollection<ulong, TextUnit>("content");
 
-        await collection.CreateCollectionIfNotExistsAsync();
+        await collection.EnsureCollectionExistsAsync();
 
         foreach (var file in files)
         {
@@ -65,12 +66,12 @@ public class ContentIndexer
             {
                 await _retryPolicy.ExecuteAsync(async () =>
                 {
-                    var embedding = await _embeddingGenerator.GenerateEmbeddingAsync(chunk);
+                    var embedding = await _embeddingGenerator.GenerateAsync(chunk);
 
                     var textUnit = new TextUnit
                     {
                         Content = chunk,
-                        Embedding = embedding,
+                        Embedding = embedding.Vector,
                         OriginalFileName = file,
                         Id = currentIdentifier++
                     };

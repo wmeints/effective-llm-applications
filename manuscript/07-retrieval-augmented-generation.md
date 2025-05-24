@@ -123,8 +123,8 @@ To implement the RAG pattern in Semantic Kernel, we'll need to integrate a few c
 We'll need to configure the following pieces:
 
 1. First, we need to build a data model, `TextUnit`, for the data we want to retrieve.
-2. Then, we need to build a `ContextIndexer` that will process raw content into `TextUnit` instances and store it in an `IVectorStore`
-3. Finally, we need to build the `QuestionAnsweringTool` that uses the `IVectorStore` in combination with the `Kernel` to answer questions.
+2. Then, we need to build a `ContextIndexer` that will process raw content into `TextUnit` instances and store it in an `VectorStore`
+3. Finally, we need to build the `QuestionAnsweringTool` that uses the `VectorStore` in combination with the `Kernel` to answer questions.
 
 We'll use a straightforward workflow with a single prompt to explore the RAG pattern to help you understand the basics. Many of the components in the workflow are the same for chat-based scenarios. We'll discuss how to use many of the components in the basic RAG pattern implementation with a chatbot after the initial setup.
 
@@ -159,14 +159,13 @@ var kernelBuilder = builder.Services.AddKernel()
         endpoint: builder.Configuration["LanguageModel:Endpoint"]!,
         apiKey: builder.Configuration["LanguageModel:ApiKey"]!
     )
-    .AddAzureOpenAITextEmbeddingGeneration(
+    .AddAzureOpenAIEmbeddingGenerator(
         deploymentName: builder.Configuration["LanguageModel:EmbeddingModel"]!,
         endpoint: builder.Configuration["LanguageModel:Endpoint"]!,
         apiKey: builder.Configuration["LanguageModel:ApiKey"]!
     );
 
-builder.Services.AddSingleton<IVectorStore>(
-    sp => new QdrantVectorStore(new QdrantClient("localhost")));
+builder.Services.AddQdrantVectorStore("localhost");
 
 builder.Services.AddTransient<ContentIndexer>();
 builder.Services.AddTransient<QuestionAnsweringTool>();
@@ -206,24 +205,33 @@ The `TextUnit` class forms the data model for our RAG implementation. A text uni
 
 ```csharp
 using Microsoft.Extensions.VectorData;
+using Microsoft.SemanticKernel.Data;
 
 public class TextUnit
 {
-    [VectorStoreRecordKey]
-    public ulong Id { get; set; }
+    [VectorStoreKey]
+    public ulong Id { get; set; }
 
-    [VectorStoreRecordData]
-    public string OriginalFileName { get; set; } = default!;
+    [VectorStoreData]
+    [TextSearchResultName]
+    public string OriginalFileName { get; set; } = default!;
 
-    [VectorStoreRecordData(IsFullTextSearchable = true)]
-    public string Content { get; set; } = default!;
+    [VectorStoreData(IsFullTextIndexed = true)]
+    [TextSearchResultValue]
+    public string Content { get; set; } = default!;
 
-    [VectorStoreRecordVector(1536)]
-    public ReadOnlyMemory<float> Embedding { get; set; }
+    [VectorStoreVector(
+        1536, 
+        DistanceFunction = DistanceFunction.CosineSimilarity, 
+        IndexKind = IndexKind.Hnsw
+    )]
+    public ReadOnlyMemory<float> Embedding { get; set; }
 }
 ```
 
-A vector store record in Semantic Kernel requires a unique key and a vector data field. The identifier for the `TextUnit` is a unique number marked with the `[VectorStoreRecordKey]` attribute. The vector data field has to be of type `ReadOnlyMemory<float>` and is marked with the `[VectorStoreRecordVector]` attribute. Depending on the embedding model you will use to generate embeddings, you need to specify a different value for the embedding size. We're using the `text-embedding-v3-small` model by OpenAI, which has an embedding size of 1536, meaning that each text piece is represented by a vector with 1536 dimensions.
+A vector store record in Semantic Kernel requires a unique key and a vector data field. The identifier for the `TextUnit` is a unique number marked with the `[VectorStoreKey]` attribute. The vector data field has to be of type `ReadOnlyMemory<float>` and is marked with the `[VectorStoreVector]` attribute. Depending on the embedding model you will use to generate embeddings, you need to specify a different value for the embedding size. We're using the `text-embedding-3-small` model by OpenAI, which has an embedding size of 1536, meaning that each text piece is represented by a vector with 1536 dimensions.
+
+To retrieve the value of a chunk for the LLM, we need to specify which property contains the original text we indexed. We can use the `[TextSearchResultValue]` attribute for this purpose. In addition to the result value, we can also request the filename using the `[TextSearchResultName]` attribute. The name is useful when citing the source for an answer.
 
 The embedding size is usually found in the manual of the LLM provider that offers the embedding model you're using. Although it's wise to use an embedding model from the LLM provider that you're using for the LLM, it's not required. Using an embedding model from another provider or an open-source embedding model requires extra maintenance and may not add additional value in terms of higher-quality search results.
 
@@ -237,43 +245,46 @@ We'll split the content into approximately 1000 tokens each to simplify things. 
 
 ```csharp
 public class ContentIndexer(
-    IVectorStore vectorStore,
-    ITextEmbeddingGenerationService embeddingGenerator,
+    VectorStore vectorStore,
+    IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator,
+    ILogger<ContentIndexer> logger)
 {
-    public async Task ProcessContentAsync()
-    {
-        ulong currentIdentifier = 1L;
-        
-        var files = Directory.GetFiles(
-            "Content", "*.md", SearchOption.AllDirectories);
+    public async Task ProcessContentAsync()
+    {
+        ulong currentIdentifier = 1L;
+        
+        var files = Directory.GetFiles("Content", "*.md",
+            SearchOption.AllDirectories);
 
-        var collection = vectorStore.GetCollection<ulong, TextUnit>("content");
-        await collection.CreateCollectionIfNotExistsAsync();
+        var textUnits = new List<TextUnit>();
 
-        foreach (var file in files)
-        {
-            var lines = await File.ReadAllLinesAsync(file);
+        var collection = vectorStore.GetCollection<ulong, TextUnit>("content");
 
-            var chunks = TextChunker.SplitMarkdownParagraphs(
+        await collection.EnsureCollectionExistsAsync();
+
+        foreach (var file in files)
+        {
+            var lines = await File.ReadAllLinesAsync(file);
+
+            var chunks = TextChunker.SplitMarkdownParagraphs(
                 lines, maxTokensPerParagraph: 1000);
 
-            foreach (var chunk in chunks)
-            {
-                var embedding = 
-                    await embeddingGenerator.GenerateEmbeddingAsync(chunk);
+            foreach (var chunk in chunks)
+            {
+                var embedding = await embeddingGenerator.GenerateAsync(chunk);
 
-                var textUnit = new TextUnit
-                {
+                var textUnit = new TextUnit
+                {
                     Content = chunk,
-                    Embedding = embedding,
+                    Embedding = embedding.Vector,
                     OriginalFileName = file,
                     Id = currentIdentifier++
-                };
+                };
 
-                await collection.UpsertAsync(textUnit);
-            }
-        }
-    }
+                await collection.UpsertAsync(textUnit);
+            }
+        }
+    }
 }
 ```
 
@@ -298,8 +309,8 @@ The generation component of the RAG pattern implementation we're working on is f
 
 ```csharp
 public class QuestionAnsweringTool(
-    Kernel kernel, IVectorStore vectorStore,
-    ITextEmbeddingGenerationService embeddingGenerator)
+    Kernel kernel, VectorStore vectorStore,
+    IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator)
 {
     public async Task<string> AnswerAsync(string question)
     {
@@ -318,20 +329,15 @@ The code for the `AnswerAsync` method looks like this:
 ```csharp
 var collection = vectorStore.GetCollection<ulong, TextUnit>("Content");
 
-var questionEmbedding = await embeddingGenerator.GenerateEmbeddingAsync(
+var questionEmbedding = await embeddingGenerator.GenerateAsync(
     question);
 
-var searchOptions = new VectorSearchOptions
-{
-    Top = 3,
-};
-
-var searchResponse = await collection.VectorizedSearchAsync(
+var searchResponse = collection.SearchAsync(
     questionEmbedding, searchOptions);
 
 var fragments = new List<TextUnit>();
 
-await foreach (var fragment in searchResponse.Results)
+await foreach (var fragment in searchResponse)
 {
     fragments.Add(fragment.Record);
 }
@@ -465,9 +471,8 @@ public class QuestionAnsweringBot(
             new TextUnitStringMapper(),
             new TextUnitTextSearchResultMapper());
 
-        var searchFunction = textSearch.CreateGetTextSearchResults();
-
-        kernel.Plugins.AddFromFunctions("SearchPlugin", [searchFunction]);
+        kernel.Plugins.AddFromObject(
+            textSearch.CreateWithSearch("SearchPlugin"));
 
         var chatHistory = new ChatHistory();
 
@@ -584,8 +589,8 @@ You can integrate this filter into the bot using the following code:
 
 ```csharp
 public class QuestionAnsweringBot(
-    Kernel kernel, IVectorStore vectorStore,
-    ITextEmbeddingGenerationService embeddingGenerator,
+    Kernel kernel, VectorStore vectorStore,
+    IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator,
     IChatCompletionService chatCompletions)
 {
     public async Task<string> GenerateResponse(string prompt)
@@ -598,9 +603,8 @@ public class QuestionAnsweringBot(
             new TextUnitStringMapper(),
             new TextUnitTextSearchResultMapper());
 
-        var searchFunction = textSearch.CreateGetTextSearchResults();
-
-        kernel.Plugins.AddFromFunctions("SearchPlugin", [searchFunction]);
+        kernel.Plugins.AddFromObject(
+            textSearch.CreateWithSearch("SearchPlugin"));
   
         var citationsFilter = new CitationCapturingFilter();
             kernel.FunctionInvocationFilters.Add(citationsFilter);
@@ -767,10 +771,13 @@ using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 var validationQuestionRecords = csv.GetRecords<ValidationDataRecord>().ToList();
 var testSampleRecords = new List<TestSampleRecord>();
 
+var embeddingGenerator = 
+    kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>()
+
 var answeringTool = new QuestionAnsweringTool(
     kernel,
     vectorStore,
-    kernel.GetRequiredService<ITextEmbeddingGenerationService>());
+    embeddingGenerator);
 
 foreach (var record in validationQuestionRecords.SelectRandom(25))
 {
@@ -795,7 +802,7 @@ await JsonSerializer.SerializeAsync(
 In this code, we perform the following steps:
 
 1. First, we load the validation dataset we created earlier.
-2. Next, we use the `QuestionAnsweringTool` to generate a response for each question in the dataset.
+2. Next, we use the `QuestionAnsweringTool` to generate a response for each question in the dataset. We feed an embedding generator, the kernel, and vector store to it.
 3. Finally, we store the question, the answer, and the used context in a JSON file.
 
 The code for this step of the validation workflow can also be found on [GitHub][GH_TEST_SAMPLES]. It includes more details about setting up the kernel instance and code to handle content indexing, similar to how we did it in [#s](#using-the-vector-store-with-a-prompt).
