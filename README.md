@@ -29,10 +29,10 @@ I'm writing this book as you read this, and I'm at **90% completion**.
 
 ## Working with the examples
 
-This book features examples in multiple languages to demonstrate how to implement various patterns
+This book features examples in Python and C# to demonstrate how to implement various patterns
 with Semantic Kernel.
 
-You can open the solutions in the `samples` directory to browse through them.
+You can open the solutions in the `samples` directory to browse them.
 Follow the instructions provided with each example to run the example.
 
 ### Requirements for the C# samples
@@ -73,37 +73,37 @@ My workflow has the following phases:
 - Formatting and layout
 - Publishing
 
-I publish after each chapter is complete and undergone initial editing. This way, you
-get the content as fast as possible. After I've completed the full book, I'll go through
+I publish after each chapter is complete and has undergone initial editing. This way, you
+get the content as fast as possible. After I've completed the whole book, I'll go through
 the entire book again to ensure everything is consistent and correct.
 
 > **Hey, didn't you use AI to write your book?**  
 > Yes, I did! I used Claude.ai to help me generate text for the book. But I stopped. I
 > found that it gets in the way of critical thinking and creativity. It also throws so
-> much mediocre content at me it's hard to manage it. I prefer to write the content
+> much mediocre content at me, it's hard to manage it. I prefer to write the content
 > myself now that I have the time for it. I love writing, and AI wasn't doing me a favor
 > in that regard.
 
 ### Research
 
 The book contains my experience with building LLM-based applications using Semantic Kernel.
-I try to pull from experience as much as possible because it gives the best results for me.
+I pull from experience as much as possible because it gives the best results for me.
 
-However, before I write, I do my research to verify that my ideas are going to work and
+However, before I write, I research to verify that my ideas will work and
 build a sample to demonstrate the principles. Working code is still the best way to
-demonstrate things. The book is the narrative to the example.
+demonstrate things. The book is the narrative of the example.
 
 ### Writing
 
-I write an initial set of notes in Markdown and a rough outline that I refine as I go.
+I write an initial set of notes in Markdown and a rough outline that I refine.
 
 After the initial outline, I'll start by adding detail to each of the sections in the
-outline. I still use a note writing style as I want to make sure that each section makes
-sense to you as the reader of my work. Often, I need to rework the outline as I write
+outline. I still use a note writing style to make sure that each section makes
+sense to you, as the reader of my work. Often, I need to rework the outline as I write
 the notes because I find that the initial outline doesn't work out as I thought.
 
-Once I have the notes for the full chapter, I'll go back and expand the notes into the
-full text. It's at this time I want to make sure that there are pointers and bridges
+Once I have the notes for the whole chapter, I'll go back and expand the notes into the
+full text. At this time, I want to ensure that there are pointers and bridges
 to help you navigate the text. I also want to make sure that the text is engaging and
 that it's easy to read.
 
@@ -111,20 +111,19 @@ that it's easy to read.
 
 Once everything is in the chapter, I'll put aside the text for a day and let it rot,
 ripen, or marinate if you will. This helps me to get a fresh perspective on the text.
-I'll then go through the text and make sure that everything makes sense and that the
-text still conveys what I wanted to tell you.
+I'll then go through the text and make sure everything makes sense and still conveys what 
+I wanted to tell you.
 
 I perform a final spell check using Grammarly, an online tool that helps me catch mistakes
 in grammar, spelling, and style.
 
 ### Formatting and layout
 
-At this point I use the Leanpub preview generator to preview the final look of my book.
+At this point, I use the Leanpub preview generator to preview the final look of my book.
 I find that I often need to insert additional line breaks and correct figures to make
-sure that everything looks good. I also need to make sure that the layout of the code
-samples isn't broken.
+sure that everything looks good. I also need to ensure that the code samples' layout isn't broken.
 
 ### Publishing
 
-When I think the chapter is ready, I'll publish a new version in Leanpub.
+When the chapter is ready, I'll publish a new version in Leanpub.
 I'll also update the README.md file to reflect the current state of the book.
