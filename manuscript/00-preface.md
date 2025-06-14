@@ -70,8 +70,7 @@ enough in a more enterprise-oriented language like C#.
 
 - **[#s, #t](#intelligent-request-routing)**, teaches you how to build systems that intelligently route requests through a workflow by applying a reasoning prompt with logic. This chapter helps you build more flexible workflows using LLMs.
 
-- **Chapter 11, "Working with agents"**, tackles the topic of building
-  agents and multi-agent teams, exploring how to coordinate multiple AI agents working together with defined roles, communication protocols, and strategies for solving complex tasks. Although the multi-agent pattern is still in its infancy, reading this chapter will help you understand where current generative AI research is moving towards.
+- **[#s, #t](#working-with-agents)**, helps you understand agents and how to build them with Semantic Kernel. We'll also look at combining multiple agents to solve even more complex problems. Although agents and multi-agent systems are relatively new, this chapter will help you build a solid foundation for the future whatever it may look like with agents.
 
 ## System requirements
 
