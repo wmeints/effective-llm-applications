@@ -240,9 +240,21 @@ Let's start with unit-test strategies that work well for testing agents.
 - Use the monitoring to understand how people are using your agent and derive test scenarios from this information.
 
 {#multi-agent-patterns}
-## Useful multi-agent patterns
+## Interaction patterns for multi-agent systems
 
-In [#s](#building-multi-agent-systems) we used the competitive agents pattern to review feature files after they were written by a requirements engineering agent. There are other patterns that are useful for other use cases.
+In [#s](#building-multi-agent-systems) we used the competitive agents to review feature files after they were written by a requirements engineering agent. There are other patterns that are useful for other use cases.
+
+When it comes to multi-agent systems it's important to understand that you'll have to deal with multiple autonomous agents communicating with eachother. This requires you to make choices about interaction and coordination styles.
+
+### interaction styles for multi-agent systems
+
+There are three coordination styles that are important for multi-agent systems:
+
+1. Competitive agents
+2. Cooperative agents
+3. Hierarchical agents
+
+Agents can give eachother feedback and in essence work against eachother with the ultimate goal of improving the produced end result. 
 
 ## Security practices when working with agents
 
