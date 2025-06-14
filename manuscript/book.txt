@@ -10,3 +10,4 @@ mainmatter.txt
 08-working-with-structured-output.md
 09-prompt-chaining-workflows.md
 10-intelligent-request-routing-workflows.md
+11-working-with-agents.md
