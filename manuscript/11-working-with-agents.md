@@ -22,13 +22,15 @@ The concept of an AI agent in relation to LLMs is flexible depending on how you 
 
 The product marketing definition is on one hand very broad and involves everything from running a simple prompt, a workflow, up to building highly complex interactions with an LLM. On the other hand, the definition of agents from a product marketing perspective is rather limited. It only focuses on using LLMs.
 
+While agents can use prompts and workflows using a prompt or a workflow doesn't make your application an agent.
+
 ### The scientific definition of an agent
 
-The more scientific approach to agents goes back much farther than using an LLM. You can find agents in a subset of the AI field called reinforcement learning that teaches computers to perform a task by letting an agent interact with an environment and teaching it based on feedback given by the environment.
+The more scientific approach to agents goes back much farther than using an LLM. You can find agents in a subset of the AI field called reinforcement learning that teaches computers to perform a task by letting an agent interact with an environment and teaching it based on feedback given by the environment. Agents in reinforcement learning are trained by letting them practice on a task thousands to millions of times. Where you'll like see them train thousands of times on simple tasks and millions of times on more complex tasks like picking products from a conveyor belt.
 
 Before the use of agents in reinforcement learning there were symbolic reasoning agents. Symbolic reasoning is a form of AI where we give the computer symbols and logical rules and then let it figure out how to solve a problem. The symbols can be values retrieved from a database, and the rules are invented by humans.
 
-Siri, the well-known agent from Apple is a sample of a symbolic agent. It uses speech to text to translate audio to text, extracts entities and intent as symbols and then uses logical rules to perform tasks like setting a timer or sending an email.
+Siri, the well-known digital assistant from Apple is a sample of a symbolic agent. It uses speech to text to translate audio to text, extracts entities and intent as symbols and then uses logical rules to perform tasks like setting a timer or sending an email. After executing the requested task you typicall get feedback by converting templated responses to speech. It's a well designed symbolic agent, but it's technique is a little dated these days.
 
 Agents have a few key characteristics that make them what they are:
 
@@ -38,17 +40,17 @@ Agents have a few key characteristics that make them what they are:
 
 All agents are made to operate without giving at a lot of human input while they're running. You can have agents that run completely on their own once you start them. But there are also agents that require some human feedback to ensure safe operation and high quality results.
 
-Agents typically work towards a single goal. For example, when you ask Siri to set a timer, you start the agent with the goal of setting a timer. It will figure out everything else based on information from the environment it's running in. An agent that you want to use for writing test cases to validate your software has the goal to write a test for a specific piece of code. 
+Agents typically work towards a single goal. For example, when you ask Siri to set a timer, you start the agent with the goal of setting a timer. It will figure out everything else based on information from the environment it's running in. An agent that you want to use for writing test cases to validate your software has the goal to write a test for a specific piece of code.
 
 Finally, agents are given ways to interact with their environment. There are two ways in which an agent interacts with their environment. The agent can read information from the environment needed to generate a plan for reaching the goal. The agent can also perform actions to manipulate the environment to reach the goal. Depending on how well the agent is trained it will have an easy or hard time achieving its goal.
 
 ### The role of large language models in agents
 
-Looking at the scientific approach to agents you can see that agents aren't necessarily bound to an LLM. There are other approaches to reaching a goal for agents. So why are we using LLMs with agents then? 
+Looking at the scientific approach to agents you can see that agents aren't necessarily bound to an LLM. There are other approaches to reaching a goal for agents. So why are we using LLMs with agents then?
 
-To understand the power of using an LLM to build an agent we should first look at a model of an agent. I've found the model used to explain a reinforcement learning agent quite useful to learn about LLM-based agents. 
+To understand the power of using an LLM to build an agent we should first look at a model of an agent. I've found the model used to explain a reinforcement learning agent quite useful to learn about LLM-based agents.
 
-Consider the structure of an agent as displayed in [#s](#agent-structure). 
+Consider the structure of an agent as displayed in [#s](#agent-structure).
 
 {#agent-structure}
 ![The structure of an agent](agent-structure.png)
@@ -57,18 +59,22 @@ The agent forms the core of the system and it will interact with the environment
 
 This cycle of state, action, feedback continues until the agent reaches a stop condition. The stop condition could be  that we achieved the goal or that we reached a terminal state, for example, we tried a hundred times and still weren't able to complete the task.
 
-In reinforcement learning we use a policy or a model to determine the next best action. This model is typically a neural network that predicts which of the possible actions is the best. The neural network takes in information from the environment to make the choice. 
+In reinforcement learning we use a policy or a model to determine the next best action. This model is typically a neural network that predicts which of the possible actions is the best. The neural network takes in information from the environment to make the choice.
 
 LLMs are neural networks too and they could be used to help the agent to complete tasks, except that they don't predict which one of the actions is best. Instead they generate text. To make an LLM work in an agent we need to shuffle the mental model of a reinforcement learning agent.
 
 - The state the agent receives could be the chat history containing an initial prompt setting the goal and then a list messages describing what happened before and the feedback the agent received.
 - The action an agent takes could be a tool call response from the LLM. We can let the agent execute the tool call and feed the output of the tool into the conversation history as new state information and as feedback for the agent.
 
-It turns out that reinforcement learning agents and LLM-based agents have some overlap. Depending on what task you're trying to complete with an agent you may have more success using an LLM because it is much better trained at completing certain tasks where you would otherwise have to train a completely new neural network.
+Using an LLM as the model for an agent saves you a lot of work. You don't need to train a neural network with millions of samples for just one task. The LLM is pretrained on all sorts of tasks making it quite useful as the core of an agent.
+
+Depending on the task you may need to introduce more complex tricks to gather the right information for the agent. For example in the paper [Large Language Models Play StarCraft II: Benchmarks and A Chain of Summarization Approach](https://arxiv.org/pdf/2312.11865) they queue up information over time before calling the LLM with a summary of what happened in the game. It's amazing to see how powerful a foundational technique like an LLM really is.
+
+While an LLM is pretrained on a lot of tasks, it depends on what task you're trying to complete with an agent how much success you'll have using an LLM. Complex tasks that can be expressed as text are a great candidate to solve with an LLM-based agent. Spatial tasks are probably going to give you challenges.
 
 ### The structure of an LLM-based agent
 
-In the previous section we learned that reinforcement learning and LLM-based agents are similar in how you can approach them from a scientific point of view. However, I found that the scientific approach doesn't help much in programming an agent. There's a better representation of an LLM-based agent from a programming perspective as shown in [#s](#agent-from-programming-perspective)
+In the previous section we learned that reinforcement learning and LLM-based agents are similar when you approach them from a scientific point of view. However, I found that the scientific approach doesn't help much in programming an agent. There's a better representation of an LLM-based agent from a programming perspective as shown in [#s](#agent-from-programming-perspective)
 
 {#agent-from-programming-perspective}
 ![An agent from a programming perspective](agent-from-programming-perspective.png)
@@ -77,12 +83,14 @@ In the context of Semantic Kernel and LLMs in general, an agent is a component i
 
 In [#s](...) we covered how Semantic Kernel implements a loop to make it possible to call multiple tools when you submit a prompt to the kernel. This loop is the core of how an agent works in Semantic Kernel. The workflow of an agent is shown in [#s](#agent-processing-loop).
 
+The memory component of the agent can be used as a key/value store to keep information for the longer term. You can use a typical database with a vector index for this. Semantic Kernel has support for many variations since you can use the same storage for implementing the RAG pattern.
+
 {#agent-processing-loop}
 ![The agent processing loop]
 
 The loop starts with a set of instructions and an initial prompt indicating the goal we want to achieve. With this initial set of instructions, the agent calls the LLM and receives a response. When the agent receives a tool call, it invokes the tool and stores the response in its internal memory. After completing a tool call, the agent moves to the beginning of the loop and calls the LLM again with the output of the tool and the chat history. If the response is a regular chat message, the loop stops.
 
-As you may remember from [#s](#enhancing-llms-with-tools) we can implement tools for the agent as C# functions or Semantic Kernel plugins. 
+As you may remember from [#s](#enhancing-llms-with-tools) we can implement tools for the agent as C# functions or Semantic Kernel plugins.
 
 By using tools you can give agents access to information through the use of a vector index. You're essentially including the RAG design pattern we discussed in [#s](#retrieval-augmented-generation).
 
@@ -108,11 +116,50 @@ When you provide direction to an agent, make sure to promote producing a chain o
 TODO: Prompt
 ```
 
-This prompt does two things: First, it gives the agent a step-by-step approach to the problem. Next, it tells it to read the instructions and follow them step by step. This is called [a chain-of-thought prompt](https://www.promptingguide.ai/techniques/cot). The LLM can't think step by step, but it can emulate this behavior by producing output tokens that look like they're a chain of thought. And because the LLM produces a lot more detailed information it is capable of using that information to choose the right tool to cool at the end of the sequence.
+This prompt does two things:
+
+- First, it gives the agent a step-by-step approach to the problem. If you can, you should definitely include a plan in your intruction to provide clarity about what the agent should do. If you can't use a fixed plan, it's a great idea to instruct the agent to start by setting up a plan before executing it. Being explicit about what you expect of the agent greatly improves the results.
+- Next, the prompt tells the agent to read the plan and follow them step by step. This is called [a chain-of-thought prompt](https://www.promptingguide.ai/techniques/cot). The LLM can't think step by step, but it can emulate this behavior by producing output tokens that look like they're a chain of thought. And because the LLM produces a lot more detailed information that steers the attention mechanism in the right direction.
+
+### Which model to use for building agents
+
+We covered different LLM providers in [#s](#understanding-llms), there are a lot to choose from. I don't think I can list all of them anymore by the time this book is a year old. And it doesn't get much easier to choose a model when it comes to agents.
+
+Agents work better with LLMs that were trained on chain-of-thought tasks and other agentic tasks. This sounds logical, but how do you know if your agent is going to work with a particular model?
+
+The best option is to use a reasoning model for your agent. For example, GPT-4.1 and the Orion series from OpenAI (o1, o2, o3, etc.) are trained specifically on agentic tasks. But you should also consider using the LLMs from Anthropic. The models from Anthropic perform really well in tools like Github Copilot Agent Mode.
+
+Note that reasoning models are more expensive so you may want to consider implementing the patterns from [#s](#intelligent-request-routing) if you want to save some money.
 
 ## When to use an agent
 
+A lot of people will tell you that you should use an agent. But an agent is only good at a subset of problems that you will encounter. There's a reason why I include so many other patterns in this book and only cover agents last. Agents are new, and we don't know what limitations we'll run in exactly. Also, agents are more expensive than a single prompt.
+
+To help you choose between using an agent, a workflow or a single prompt, I've created the following table.
+
+| Use Case                                               | Prompt | Workflow | Agent |
+| ------------------------------------------------------ | ------ | -------- | ----- |
+| One-shot tasks (e.g summarization)                     | v      | -        | -     |
+| Deterministic multi-step tasks                         | -      | v        | -     |
+| Open-ended problem solving                             | -      | -        | v     |
+| Tasks involving state/memory                           | -      | v        | v     |
+| Goal-directed behavior (planning, retries, correction) | -      | -        | v     |
+
+I recommend aiming to solve problems with the simplest possible approach. So if you can something that's deterministic you'll have a much easier time testing and debugging your application.
+
+## Agent use cases
+
+When talking about agents you may be wondering, what are good use cases for agents? Well, there's one place where agents shine and that's in writing code. You don't need to look far for agents in software engineering.
+
+Github Copilot has Agent Mode that's an implementation of an agent. It can access your code base and write files just to name a few tools it can use. Similar to Github Copilot I recommend looking at Cursor and Windsurf. Both offer excellent implementations of agents. All these agents work with the same principle we covered earlier in the chapter, so while complex, it is possible to write a software engineering agent yourself.
+
+Another great use case for agents is content creation. Writing a blog posts requires researching and refining the content in multiple passes. You can do this yourself, or you can write an agent to do this for you. I'll leave this one up to you as this is one of those scenarios that's a great exercise after you've finished this book.
+
+Another more IT related use case is an agent that can resolve issues with your cloud computing environment. Imagine that an alert is generated by an application after it shutdown due to a problem with storage or a database. An agent could pick up this alert, read the logs from your environment and then use the APIs in your cloud environment to fix the problem for you. Of course this is one of the more dangerous use cases of an agent and you should probably take caution when you want to implement this scenario.
+
 ## Building an agent with Semantic Kernel
+
+Now that we have covered what an agent is, when to use one, and some sample cases, it' time to take a look at how Semantic Kernel help you build agents.
 
 ## Building multi-agent systems with Semantic Kernel
 
