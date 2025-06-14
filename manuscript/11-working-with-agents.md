@@ -68,7 +68,7 @@ LLMs are neural networks too and they could be used to help the agent to complet
 
 Using an LLM as the model for an agent saves you a lot of work. You don't need to train a neural network with millions of samples for just one task. The LLM is pretrained on all sorts of tasks making it quite useful as the core of an agent.
 
-Depending on the task you may need to introduce more complex tricks to gather the right information for the agent. For example in the paper [Large Language Models Play StarCraft II: Benchmarks and A Chain of Summarization Approach](https://arxiv.org/pdf/2312.11865) they queue up information over time before calling the LLM with a summary of what happened in the game. It's amazing to see how powerful a foundational technique like an LLM really is.
+Depending on the task you may need to introduce more complex tricks to gather the right information for the agent. For example in the paper "[Large Language Models Play StarCraft II: Benchmarks and A Chain of Summarization Approach](https://arxiv.org/pdf/2312.11865)" they queue up information over time before calling the LLM with a summary of what happened in the game. It's amazing to see how powerful a foundational technique like an LLM really is.
 
 While an LLM is pretrained on a lot of tasks, it depends on what task you're trying to complete with an agent how much success you'll have using an LLM. Complex tasks that can be expressed as text are a great candidate to solve with an LLM-based agent. Spatial tasks are probably going to give you challenges.
 
@@ -81,9 +81,7 @@ In the previous section we learned that reinforcement learning and LLM-based age
 
 In the context of Semantic Kernel and LLMs in general, an agent is a component in an application that has access to a list of tools and interacts with an LLM. The agent receives an initial set of instructions that sets the goal and kicks off the agent process. The agent can use memory to keep track of previous actions to help it achieve the goal set in the instructions.
 
-In [#s](...) we covered how Semantic Kernel implements a loop to make it possible to call multiple tools when you submit a prompt to the kernel. This loop is the core of how an agent works in Semantic Kernel. The workflow of an agent is shown in [#s](#agent-processing-loop).
-
-The memory component of the agent can be used as a key/value store to keep information for the longer term. You can use a typical database with a vector index for this. Semantic Kernel has support for many variations since you can use the same storage for implementing the RAG pattern.
+In [#s](#getting-started-with-semantic-kernel) we covered how Semantic Kernel implements a loop to make it possible to call multiple tools when you submit a prompt to the kernel. This loop is the core of how an agent works in Semantic Kernel. The workflow of an agent is shown in [#s](#agent-processing-loop).
 
 {#agent-processing-loop}
 ![The agent processing loop]
@@ -95,6 +93,10 @@ As you may remember from [#s](#enhancing-llms-with-tools) we can implement tools
 By using tools you can give agents access to information through the use of a vector index. You're essentially including the RAG design pattern we discussed in [#s](#retrieval-augmented-generation).
 
 You can also use existing MCP (Model Context Protocol) servers to integrate your agent with websites like Github or tools like Google Drive. We haven't covered MCP in this book but you can learn more about this protocol [in the documentation](https://learn.microsoft.com/en-us/semantic-kernel/concepts/plugins/adding-mcp-plugins?pivots=programming-language-csharp).
+
+The memory component of the agent can be used as a key/value store to keep information for the longer term. You can use a typical database with a vector index for this. Semantic Kernel has support for many variations since you can use the same storage for implementing the RAG pattern.
+
+Before we start implementing an agent with Semantic Kernel it's important to understand the relationship between prompts and agents because prompts play an essential role in how agents work.
 
 ### The role of instructions in an LLM-based agent
 
