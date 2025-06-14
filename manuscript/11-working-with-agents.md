@@ -161,7 +161,11 @@ Another more IT related use case is an agent that can resolve issues with your c
 
 ## Building an agent with Semantic Kernel
 
-Now that we have covered what an agent is, when to use one, and some sample cases, it' time to take a look at how Semantic Kernel help you build agents.
+Now that we have covered what an agent is, when to use one, and some sample cases, it's time to take a look at how Semantic Kernel help you build agents.
+
+We'll build an agent that can write a feature file to help you turn a generic description into a set of Behavior-driven development (BDD) scenarios. I built this agent as an experiment to understand how to take the idea of a coding agent in the direction of requirements engineering.
+
+You can follow along with the sample with [the code][CHAPTER_SAMPLE_CODE] included for this chapter. I'll cover the key steps needed to create an agent here in the book.
 
 ## Building multi-agent systems with Semantic Kernel
 
@@ -174,3 +178,5 @@ Now that we have covered what an agent is, when to use one, and some sample case
 In this final chapter we looked at agents and what value they bring to LLM-based applications over other patterns that we covered in previous chapters. We learned that agents can be helpful when you want to solve problems that require flexible planning and in cases where we can only define a set of rules and a goal. We also looked at building an agent and combining it with other agents to solve more complex problems in your LLM-based applications. We discovered that testing agents is challenging and requires strategies that are different from regular software and basic prompts. Finally, we covered that it is important to constrain your agents so you don't run into high creditcard bills or broken systems.
 
 If you're interested in learning more about agents, I recommend reading the paper [AI Agents vs Agentic-AI: A Conceptual Taxonomy, Applications and Challenges](https://arxiv.org/abs/2505.10468). It provides a great explanation of the taxonomy around agents and gives you a glimpse of what the future may hold for agentic AI.
+
+[CHAPTER_SAMPLE_CODE]: https://github.com/wmeints/effective-llm-applications/tree/publish/samples/chapter-11/csharp/
