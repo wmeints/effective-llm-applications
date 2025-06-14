@@ -189,6 +189,8 @@ You can learn more about configuring chat completion and embedding models in [#s
 
 ### Getting structured output from the agent
 
+### Building stateful agents with a backing service
+
 {#building-multi-agent-systems}
 ## Building multi-agent systems with Semantic Kernel
 
