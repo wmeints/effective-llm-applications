@@ -7,7 +7,7 @@ namespace Chapter10.BasicProcess.Processes;
 public class GreetingProcess
 {
     private KernelProcess _process;
-    
+
     public GreetingProcess()
     {
         var processBuilder = new ProcessBuilder("GreetingProcess");
@@ -16,7 +16,9 @@ public class GreetingProcess
         var generateGreetingStep = processBuilder.AddStepFromType<GenerateGreetingStep>();
 
         processBuilder.OnInputEvent("StartProcess").SendEventTo(new(getNameStep));
-        getNameStep.OnFunctionResult().SendEventTo(new(generateGreetingStep));
+
+        getNameStep.OnFunctionResult()
+            .SendEventTo(new ProcessFunctionTargetBuilder(generateGreetingStep));
 
         _process = processBuilder.Build();
     }

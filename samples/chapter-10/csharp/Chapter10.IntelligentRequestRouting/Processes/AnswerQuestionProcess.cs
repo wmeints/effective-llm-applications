@@ -19,10 +19,10 @@ public class AnswerQuestionProcess
         builder.OnInputEvent("StartProcess").SendEventTo(new(routingStep));
 
         routingStep.OnEvent("HandleBasicPrompt")
-            .SendEventTo(new(basicQuestionStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(basicQuestionStep));
 
         routingStep.OnEvent("HandleComplexPrompt")
-            .SendEventTo(new(complexQuestionStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(complexQuestionStep));
 
         _process = builder.Build();
     }

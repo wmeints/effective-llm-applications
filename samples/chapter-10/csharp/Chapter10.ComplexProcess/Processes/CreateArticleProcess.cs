@@ -17,33 +17,35 @@ public class CreateArticleProcess
         var researchSectionStep = processBuilder.AddStepFromType<ResearchSectionStep>();
         var writeSectionStep = processBuilder.AddStepFromType<WriteSectionStep>();
         var finalizeArticleStep = processBuilder.AddStepFromType<FinalizeArticleStep>();
-        
+
         processBuilder
             .OnInputEvent("CreateArticle")
             .SendEventTo(new(researchTopicStep));
-        
+
         researchTopicStep
             .OnFunctionResult()
-            .SendEventTo(new(createOutlineStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(createOutlineStep));
 
         createOutlineStep
             .OnFunctionResult()
-            .SendEventTo(new(generateContentStep, functionName: "StartGenerateContent"));
+            .SendEventTo(new ProcessFunctionTargetBuilder(generateContentStep, functionName: "StartGenerateContent"));
 
         generateContentStep.OnEvent("ResearchSection")
-            .SendEventTo(new(researchSectionStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(researchSectionStep));
 
         generateContentStep.OnEvent("FinalizeArticle")
-            .SendEventTo(new(finalizeArticleStep));
-        
+            .SendEventTo(new ProcessFunctionTargetBuilder(finalizeArticleStep));
+
         researchSectionStep
             .OnFunctionResult()
-            .SendEventTo(new(writeSectionStep));
-        
+            .SendEventTo(new ProcessFunctionTargetBuilder(writeSectionStep));
+
         writeSectionStep
             .OnFunctionResult()
-            .SendEventTo(new(generateContentStep, functionName: "ContinueGenerateContent"));
-        
+            .SendEventTo(new ProcessFunctionTargetBuilder(
+                step: generateContentStep,
+                functionName: "ContinueGenerateContent"));
+
         _kernel = kernel;
         _process = processBuilder.Build();
     }
