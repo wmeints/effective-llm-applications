@@ -1,7 +1,7 @@
 ﻿public class PromptCompletionPair
 {
-    public string Prompt { get; set; }
-    public string Completion { get; set; }
+    public required string Prompt { get; set; }
+    public required string Completion { get; set; }
 
     public override string ToString()
     {

@@ -1,6 +1,6 @@
 ﻿public class TraceEventData
 {
-    public string Message { get; set; }
-    public TraceProperties Properties { get; set; }
+    public required string Message { get; set; }
+    public required TraceProperties Properties { get; set; }
     public DateTime TimeGenerated { get; set; }
 }
