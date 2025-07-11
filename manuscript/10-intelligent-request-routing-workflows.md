@@ -134,11 +134,13 @@ public class GreetingProcess
 
         processBuilder
             .OnInputEvent("StartProcess")
-            .SendEventTo(new(getNameStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(
+                getNameStep));
 
         getNameStep
             .OnFunctionResult()
-            .SendEventTo(new(generateGreetingStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(
+                generateGreetingStep));
 
         _process = processBuilder.Build();
     }
@@ -282,15 +284,18 @@ public class RandomDecisionMakingProcess
         
         processBuilder
             .OnInputEvent("StartProcess")
-            .SendEventTo(new(generateRandomNumberStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(
+                generateRandomNumberStep));
 
         generateRandomNumberStep
             .OnFunctionResult()
-            .SendEventTo(new(makeDecisionStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(
+                makeDecisionStep));
         
         makeDecisionStep
             .OnEvent("HighOutcome")
-            .SendEventTo(new(handleHighOutcomeStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(
+                handleHighOutcomeStep));
 
         makeDecisionStep
             .OnEvent("LowOutcome")
@@ -543,13 +548,13 @@ public class AnswerQuestionProcess
             .AddStepFromType<RoutePromptStep>();
 
         builder.OnInputEvent("StartProcess")
-            .SendEventTo(new(routingStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(routingStep));
 
         routingStep.OnEvent("HandleBasicPrompt")
-            .SendEventTo(new(basicQuestionStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(basicQuestionStep));
 
         routingStep.OnEvent("HandleComplexPrompt")
-            .SendEventTo(new(complexQuestionStep));
+            .SendEventTo(new ProcessFunctionTargetBuilder(complexQuestionStep));
 
         _process = builder.Build();
     }
