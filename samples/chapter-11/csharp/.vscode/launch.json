@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Chapter11.FeatureFileAgent (with reference)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/Chapter11.FeatureFileAgent/bin/Debug/net8.0/Chapter11.FeatureFileAgent.dll",
+            "args": [
+                "--output",
+                "features/generate-feature-file.feature",
+                "--input",
+                "TASK.md",
+                "--reference",
+                "."
+            ],
+            "cwd": "${workspaceFolder}/Chapter11.FeatureFileAgent",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "preLaunchTask": "build",
+            "env": {
+                "DOTNET_ENVIRONMENT": "Development"
+            }
+        }
+    ]
+}
