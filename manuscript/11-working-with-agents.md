@@ -175,7 +175,8 @@ Make sure to write scenarios using these guidelines:
 2. A scenario should have a clear and descriptive name.
 3. Keep scenarios focused on a single user behavior.
 4. Keep scenarios independent and deterministic.
-5. Use background steps wisely. Use them only for common steps that need to be executed for all scenarios in the feature file.
+5. Use background steps wisely. Use them only for common 
+   steps that need to be executed for all scenarios in the feature file.
 6. Limit the size of scenarios to keep them clear.
 7. Avoid technical jargon in the scenarios.
 ```
@@ -257,7 +258,8 @@ Although the online services offer useful tools to make it easier to build an ag
 For the purpose of this chapter, we'll create a ChatCompletionAgent. The code for creating a new ChatCompletionAgent looks like this: 
 
 ```csharp
-var instructions = EmbeddedResource.Read("Prompts.AgentInstructions.md");
+var instructions = EmbeddedResource.Read(
+    "Prompts.AgentInstructions.md");
 
 var executionOptions = new AzureOpenAIPromptExecutionSettings
 {
@@ -319,7 +321,8 @@ public async IAsyncEnumerable<string> InvokeAsync(string prompt)
 {
     _chatHistory.AddUserMessage(prompt);
 
-    var responseStream = _retryPipeline.ExecuteEnumerableAsync(context => _agent.InvokeStreamingAsync(_agentThread));
+    var responseStream = _retryPipeline.ExecuteEnumerableAsync(
+        context => _agent.InvokeStreamingAsync(_agentThread));
 
     await foreach (var chunk in responseStream)
     {
