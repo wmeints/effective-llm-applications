@@ -11,7 +11,7 @@ We'll cover the following topics:
 - When to use an agent
 - Building an agent with Semantic Kernel
 - Building multi-agent systems with Semantic Kernel
-- Testing agents and multi-agent systems
+- Testing agents
 - Security practices when working with agents
 
 ## What is and isn't an agent
