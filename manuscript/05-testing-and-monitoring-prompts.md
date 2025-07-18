@@ -569,6 +569,7 @@ Navigate to the OpenAI Resource in the Azure Portal, and select the *Resource Ma
 
 Now that we have monitoring let's return to collecting feedback information. If you've enabled the collection of prompts and responses in your application, you can export that data and use it to improve your tests.
 
+{#collecting-test-data}
 ### Collecting data to improve tests
 
 Telemetry data in Application Insights is stored in a structured format in a Log Analytics Workspace. You can query the data using the [Kusto Query Language (KQL)][KUSTO_INTRODUCTION]. But you can also export it to a storage account for later use.

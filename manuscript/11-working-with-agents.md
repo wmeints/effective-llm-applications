@@ -421,19 +421,22 @@ First, we define the prompt invocation settings with a response format to get th
 
 There are cases where a single agent will have a hard time completing a full scenario. If you have an agent that can write feature files it's not very good at reviewing them at the same time because the instructions will be watered down too much. It's better to use multiple agents if you need to solve a problem that requires two or more tasks to be completed.
 
-To write and review BDD feature files we can use a competitive agents pattern. One agent will write the feature file and a second agent reviews the feature file providing feedback so the first agent can improve it. There are other patterns that you can use. We'll cover these in [#s](#multi-agent-patterns).
+Working with multiple agents in Semantic Kernel is still in preview and right now, the API is rather unstable, so I'll cover it briefly in this book. I may revisit this section in the future to provide a more detailed approach to working with agents.
 
-For now we'll work on extending the scenario from [#s](building-an-agent) with a second agent that we'll use to review the generated BDD feature file.
+### Multi-agent patterns
 
-### Reviewing the feature file with a second agent
+Semantic Kernel offers multiple patterns to orchestrate agents:
 
-### Coordinating behavior between the writer and the reviewer agents
+- **Concurrent agents**: Broadcast a task to multiple agents at once and collect the results when the agents have finished their work. This is typically used to complete multiple independent tasks at once.
+- **Sequential**: Take a task, process it with one agent and then hand the result of to the next agent in the sequence. This can be repeated multiple times to refine the results with more than two agents if you wish.
+- **Group chat**: Have multiple agents work together in a group chat brainstorming on a task. This is useful for content creation. For example, when you have a research agent, writing agent, and reviewing agent working together on a blog post.
+- **Hand-off**: One agent orchestrates the conversation and hands off specialist tasks to other sub agents.
 
-## Testing agents and multi-agent systems
+As work progresses on the multi-agent patterns in Semantic Kernel, you'll find more and more patterns on [the documentation website](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/?pivots=programming-language-csharp).
 
-As if testing prompts isn't difficult enough, agents are harder to test and require even more specific testing strategies to deal with the fact that they're rather dynamic.
+## Testing agents
 
-We'll cover three layers of testing and monitoring to help you understand how you can get the best results when you need to test your agent:
+Testing LLM-based applications requires a specific approach as we've covered in [#s](#prompt-testing-and-monitoring). Agents require a similar approach that we'll cover here. We'll focus on the following areas.
 
 - Unit-testing agents
 - Testing agent behavior
@@ -441,45 +444,34 @@ We'll cover three layers of testing and monitoring to help you understand how yo
 
 Let's start with unit-test strategies that work well for testing agents.
 
-### Unit-testing agents
+When unit-testing agents it's important to establish what you can unit-test and what parts of the agent should be covered with other kinds of tests. Tools used by the agent can often be unit-tested quite well. The agent behavior itself is difficult the unit-test as the LLM doesn't provide stable outputs.
 
-- Agents themselves are hard to test. But there's not a lot of code to test.
-- Focus on testing tools rather than the agent itself.
+I recommend using prompt testing as covered in [#s](#model-based-testing) to validate agent behavior. I prefer the following approach to prompt testing an agent:
 
-### Testing agent behavior
+First, I run a specific task through the agent with a curated set of test data for the tools that the agent uses. This should result in the expected output or tool call.
 
-- Define a scenario that you want the agent to complete
-- Run the agent, and let it complete the scenario
-- Make sure you use predefined responses from tools to limit where the scenario leads
-- Include failure scenarios to make sure your agent stops or recovers correctly
+Then, I take the output and use prompt testing to validate that the output is what I expect it to be. This can be challenging if the output is a call to a tool. In that case it's important to validate the output sent to the tool. You can inject a specific filter into the agent to capture the tool call and verify it.
 
-### Dealing with multi-agent systems
+Of course you need to include failure scenarios in your testing. Here are some ideas for testing failure scenarios:
 
-- Make sure you test the code that controls agent choices
-- Test agents separately, testing them together requires a lot of work
-- Run smoke tests to validate the agents working together
+Ask yourself what happens if a specific tool is unavailable. Can the agent use other tools? I often run into surprising behavior when the expected tool isn't available or throws an error. Agents will try to use other tools to solve the problem often leading to some surprising problems.
+
+While testing an agent that was supposed to write tests and then run them to get feedback to improve those tests. The agent had shell access and a specific tool for running tests, the agent wouldn't use the testing tool because the tool failed. Instead it started constructing shell commands to run a test runner. Which it succesfully was able to do. You may think: that's okay, until the output of the tests wasn't useful for the agent as it wasn't able to improve the input for the tests.
+
+Another interesting failure scenario is this: What will happen if the agent runs out of context window space in the LLM? Sometimes I forget to include some way to summarize the conversation. I also had an interesting case where the summarization lead to failures because the agent didn't know what to do anymore. The key point to remember here, don't summarize your plan.
+
+As you can imagine, testing an agent with tools requires you to think of many complicated scenarios. It's quite hard to get those right the first time. Therefore, I recommend investing in telemetry.
 
 ### Improving agents with tracing
 
-- Make sure to set up monitoring as discussed in [#s](#prompt-testing-and-monitoring).
-- Use the monitoring to understand how people are using your agent and derive test scenarios from this information.
+In [#s](#collecting-test-data) we discussed how to collect LLM input and output for testing purposes. Since you can't think of every possible interaction in your agent it is a great idea to come up with a setup where you can collect a full conversation with tool interactions so you can analyze it later to build test scenarios.
 
-{#multi-agent-patterns}
-## Interaction patterns for multi-agent systems
+As tempting as it sounds, I don't collect this kind of data on production environments. It's too risky because of privacy and security concerns. However, if someone reports a problem, I contact them and ask them to redo the scenario on a specific test environment where we can collect data. One of two things can happen:
 
-In [#s](#building-multi-agent-systems) we used the competitive agents to review feature files after they were written by a requirements engineering agent. There are other patterns that are useful for other use cases.
+1. They reproduce the problem on the test environment and you have test data to work with.
+2. They don't reproduce the problem and learn how to solve their scenario in another way.
 
-When it comes to multi-agent systems it's important to understand that you'll have to deal with multiple autonomous agents communicating with eachother. This requires you to make choices about interaction and coordination styles.
-
-### interaction styles for multi-agent systems
-
-There are three coordination styles that are important for multi-agent systems:
-
-1. Competitive agents
-2. Cooperative agents
-3. Hierarchical agents
-
-Agents can give eachother feedback and in essence work against eachother with the ultimate goal of improving the produced end result. 
+If you sit down next to the person who experienced the problem while they reproduce it on your test environment, you can help them work around the problem or find out how they managed to get into trouble. It often is a great experience for both you and the user so I highly recommend doing this.
 
 ## Security practices when working with agents
 
