@@ -584,6 +584,7 @@ Filters allow you to modify the input and output of functions regardless of how 
 implemented the function. Let's take a look at how these work and when it's helpful to
 implement a filter.
 
+{#applying-filters-to-functions}
 ## Applying filters to functions
 
 Function filters in Semantic Kernel are pieces of logic that work as a middleware for

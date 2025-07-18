@@ -84,7 +84,7 @@ In the context of Semantic Kernel and LLMs in general, an agent is a component i
 In [#s](#getting-started-with-semantic-kernel) we covered how Semantic Kernel implements a loop to make it possible to call multiple tools when you submit a prompt to the kernel. This loop is the core of how an agent works in Semantic Kernel. The workflow of an agent is shown in [#s](#agent-processing-loop).
 
 {#agent-processing-loop}
-![The agent processing loop]
+![The agent processing loop]()
 
 The loop starts with a set of instructions and an initial prompt indicating the goal we want to achieve. With this initial set of instructions, the agent calls the LLM and receives a response. When the agent receives a tool call, it invokes the tool and stores the response in its internal memory. After completing a tool call, the agent moves to the beginning of the loop and calls the LLM again with the output of the tool and the chat history. If the response is a regular chat message, the loop stops.
 
@@ -100,9 +100,9 @@ Before we start implementing an agent with Semantic Kernel it's important to und
 
 ### The role of instructions in an LLM-based agent
 
-LLM-based agents work primarily off prompts and the chat history. So it's important to build a prompt that suitable for an agent.
+LLM-based agents work primarily off prompts and the chat history. So it's important to build a prompt that's suitable for an agent.
 
-Remember from [#s](#the-art-and-nonsense-of-prompt-engineering) that there are 5 things important when it comes to constructing a prompt:
+Remember from [#s](#the-art-and-nonsense-of-prompt-engineering) that there are 5 important aspects when it comes to constructing a high quality prompt:
 
 1. Provide clear direction
 2. Specify what you want as the output
@@ -115,21 +115,90 @@ These principles still apply to building instructions for an agent, but you need
 When you provide direction to an agent, make sure to promote producing a chain of thought. For example, you can give the agent a step-by-step plan as the following prompt shows:
 
 ```text
-TODO: Prompt
+You are a Feature File Generator Agent. Your primary purpose is to help create
+comprehensive, well-structured feature files based on project documentation and user
+requirements.
+
+## Your Capabilities
+
+### TODO Management
+
+- Create, complete, remove, and list TODO items to track your planning tasks
+- Use TODO items to break down complex feature file generation into manageable steps
+- Always create a plan before starting to write feature files
+
+### Feature File Operations
+
+- Read, write, and modify feature files using Gherkin syntax
+- Insert content at specific lines, append content, replace
+  existing content, or remove content
+
+### Documentation Access
+
+- Read project documentation files to understand requirements and context
+- Search for specific information across documentation files
+- List available documentation files
+
+## The process
+
+1. Start by reading the provided work item description. Identifying scenarios
+   that need to be recorded. Use the best practices for feature files to
+   help you identify useful scenarios.
+2. Record a TODO item for each of the scenarios you identified.
+3. Go over the recorded TODO items for each of the scenarios and perform
+   the following steps:
+   - Identify useful examples from the reference documentation for the scenario
+   - Write down the steps for the scenario using the examples
+   - Read through the scenario and make sure it is as complete as possible
+   - Mark the TODO item for the scenario as completed
+4. Read through the whole feature file and identify any missing scenarios
+   adding them to the feature file
+5. Read through the TODO list and make sure all tasks are completed.
+
+After completing the feature file, use the validation steps to
+provide information to the developer about the quality of
+the work you just performed.
+
+## Validation steps
+
+- Go over the feature file to review the contents of the file.
+- Score the file on the following aspects with a score of 1-10.
+  - The readability for a business user
+  - How hard it is to automate the feature file for the developer
+  - How complete the feature file is
+
+## What a scenario should look like
+
+Make sure to write scenarios using these guidelines:
+
+1. A feature should focus on user behavior. List goals as part of the feature description but don't use a separate heading.
+2. A scenario should have a clear and descriptive name.
+3. Keep scenarios focused on a single user behavior.
+4. Keep scenarios independent and deterministic.
+5. Use background steps wisely. Use them only for common steps that need to be executed for all scenarios in the feature file.
+6. Limit the size of scenarios to keep them clear.
+7. Avoid technical jargon in the scenarios.
 ```
 
-This prompt does two things:
+This prompt provides the following information to the agent:
 
-- First, it gives the agent a step-by-step approach to the problem. If you can, you should definitely include a plan in your intruction to provide clarity about what the agent should do. If you can't use a fixed plan, it's a great idea to instruct the agent to start by setting up a plan before executing it. Being explicit about what you expect of the agent greatly improves the results.
-- Next, the prompt tells the agent to read the plan and follow them step by step. This is called [a chain-of-thought prompt](https://www.promptingguide.ai/techniques/cot). The LLM can't think step by step, but it can emulate this behavior by producing output tokens that look like they're a chain of thought. And because the LLM produces a lot more detailed information that steers the attention mechanism in the right direction.
+- First, it describes the goal of the agent.
+- Then, it describes the capabilities of the agent and the tools associated.
+- Next, it gives the agent a step-by-step approach to the problem. If you can, you should definitely include a plan in your intruction to provide clarity about what the agent should do. If you can't use a fixed plan, it's a great idea to instruct the agent to start by setting up a plan before executing it. Being explicit about what you expect of the agent greatly improves the results.
+- Finally, the prompt contains a description of the output and how to approach specific
+  sub-problems.
+
+There is a lot of detail in the prompt as this will help get the best results from the  LLM. I recommend checking the prompt frequently for quality issues. I noticed that over time the models will get better following the plan, so you may need to tweak the prompt a few times.
 
 ### Which model to use for building agents
 
 We covered different LLM providers in [#s](#understanding-llms), there are a lot to choose from. I don't think I can list all of them anymore by the time this book is a year old. And it doesn't get much easier to choose a model when it comes to agents.
 
-Agents work better with LLMs that were trained on chain-of-thought tasks and other agentic tasks. This sounds logical, but how do you know if your agent is going to work with a particular model?
+Agents work better with LLMs that were trained on agentic tasks. This sounds logical, but how do you know if your agent is going to work with a particular model? And what's an agentic task?
 
-The best option is to use a reasoning model for your agent. For example, GPT-4.1 and the Orion series from OpenAI (o1, o2, o3, etc.) are trained specifically on agentic tasks. But you should also consider using the LLMs from Anthropic. The models from Anthropic perform really well in tools like Github Copilot Agent Mode.
+Agentic tasks are usually tasks where the model needs to follow a series of steps or generate a plan and then follow that plan. This requires some form of reasoning skills.
+
+The best option is to use a reasoning model for your agent so that you can be sure that it was trained on agentic tasks. For example, GPT-4.1 and the Orion series from OpenAI (o1, o2, o3, etc.) are trained specifically on agentic tasks. But you should also consider using the LLMs from Anthropic. The Claude 4 models from Anthropic perform really well too.
 
 Note that reasoning models are more expensive so you may want to consider implementing the patterns from [#s](#intelligent-request-routing) if you want to save some money.
 
@@ -179,11 +248,173 @@ You can learn more about configuring chat completion and embedding models in [#s
 
 ### Creating an agent class
 
+There are multiple ways to build an agent in Semantic Kernel. You can use an online service to host your agent or you can build a ChatCompletionAgent which integrates well with any cloud-based LLM provider or one of the open-source models on your local machine. 
+
+OpenAI, Google, and Azure all offer services to build agents. These services are useful when you don't want to manually store the chat history of an agent. In many cases the cloud-based agent services offer additional tools. For example, OpenAI allows you to use the code interpreter. It let's the agent write Python code and execute in a sandbox environment. If you're using the ChatCompletionAgent you'll have to build this functionality yourself.
+
+Although the online services offer useful tools to make it easier to build an agent, there's something to be said for manually storing the chat history. You can access it from your application and analyze it in case the agent makes a mistake. Also, it allows you to control where you deploy your agent. A ChatCompletionAgent is easily moved between various environments and LLM providers while an Azure OpenAI agent only works on Azure.
+
+For the purpose of this chapter, we'll create a ChatCompletionAgent. The code for creating a new ChatCompletionAgent looks like this: 
+
+```csharp
+var instructions = EmbeddedResource.Read("Prompts.AgentInstructions.md");
+
+var executionOptions = new AzureOpenAIPromptExecutionSettings
+{
+    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+    Temperature = 0.7,
+    MaxTokens = 8096,
+};
+
+_agent = new ChatCompletionAgent
+{
+    Instructions = instructions,
+    Name = "FeatureFileGenerator",
+    Kernel = kernel,
+    Arguments = new KernelArguments(executionOptions),
+};
+```
+
+In this code, we perform the following steps:
+
+1. First, we load the instructions for the agent from an embedded resource. Instructions you write for the agent are used as the system prompt for the LLM.
+2. Next, we create the settings used when invoking the LLM. You can control the temperature, presence penalty, and other hyper parameters for the LLM. If you want your agent to use tools, you should consider setting the function choice behavior to automatic.
+3. Finally, we can create a new instance of the `ChatCompletionAgent`. We connect the necessary settings and the kernel instance of the application to the agent.
+
+The kernel instance we use should contain the tools we want to provide to the agent. You can implement tools using the mechanisms we dicussed in [#s](#enhancing-llms-with-tools).
+
+Most of the power of the agent comes from the combination of high quality instructions and well defined tools. So it's worth spending time describing the tools as well as you can and testing the prompt to make sure the agent is capable of executing your plan.
+
 ### Invoking the agent with a description of a feature
+
+Calling the agent with a task works slightly differently from using the ChatCompletionService we covered earlier in [#s](#executing-your-first-prompt). The code needed to call an agent looks like this:
+
+```csharp
+var chatHistory = new ChatHistory();
+var agentThread = new ChatHistoryAgentThread(_chatHistory);
+
+chatHistory.AddUserMessage(workItemDescription);
+
+var response = agent.InvokeAsync(agentThread);
+```
+
+This code performs the following step:
+
+1. First we create an empty chat history object to store the conversation history.
+2. Next, we create an agent thread based off the chat history.
+3. Then, we add the work item description, to the chat history.
+4. Finally, we invoke the agent with the agent thread.
+
+All the interactions that the agent performs, are stored in the chat history object. 
+You can store the chat history as a JSON object in your database or iterate over the messages and store them individually.
+
+If you want the user to provide follow up instructions, you should append them to the chat history and than invoke the agent again with the agent thread that wraps the chat history.
+
+In the sample code for this chapter I choose to build a full agent with tools, so the code in the sample will look more complicated than shown here. One of the key differences is that I wrapped the `ChatCompletionAgent` in a `FeatureFileGenerator` class that automatically will retry invoking the agent when we receive a quota exceeded error from the LLM. 
+
+Also, the agent in the sample code for this chapter uses streaming. This looks similar to how we've used streaming before in the book. Here's what the code for streaming an agent response looks like:
+
+```csharp
+public async IAsyncEnumerable<string> InvokeAsync(string prompt)
+{
+    _chatHistory.AddUserMessage(prompt);
+
+    var responseStream = _retryPipeline.ExecuteEnumerableAsync(context => _agent.InvokeStreamingAsync(_agentThread));
+
+    await foreach (var chunk in responseStream)
+    {
+        if (chunk.Message is not null && chunk.Message.Content is not null)
+        {
+            yield return chunk.Message.Content;
+        }
+    }
+}
+```
+
+This code uses the retry pipeline that I created for the sample code. It performs the following steps:
+
+1. First, we add the prompt to the currently active chat history.
+2. Then, we invoke call the agent with `InvokeStreamingAsync`.
+3. Next, we iterate over the returned response object and extract the message content for each of the chunks returned by the agent.
+
+The response type here is a `IAsyncEnumerable<AgentResponseItem<StreamingChatMessageContent>>` object. Which is a mouthful if you want to tell your colleagues about it. Basically, this is an asynchronous enumerable stream of agent response items containing chunks related to a single chat message.
+
+The `AgentResponseItem` includes the message content as well as metadata needed to associate the response stream with a specific agent and thread. We don't need this extra information right now, but it will play a role when you're building multi-agent solutions later on.
+
+Retrying agent invocations with streaming is a rather annoying affair as `Polly`, the defacto resilience library for .NET has no built-in support for retrying operations that return an `IAsyncEnumerable<T>`. I made a basic helper to solve this issue:
+
+```csharp
+public static class PollyStreamingExtensions
+{
+    public static async IAsyncEnumerable<TItem> ExecuteEnumerableAsync<TItem>(
+        this ResiliencePipeline policy,
+        Func<CancellationToken, IAsyncEnumerable<TItem>> action,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var (enumerator, movedNext) = await policy.ExecuteAsync(
+            async (ct) =>
+            {
+                var asyncEnumerable = action(ct);
+                var asyncEnumerator = asyncEnumerable.GetAsyncEnumerator();
+
+                return (asyncEnumerator, await asyncEnumerator.MoveNextAsync(ct));
+            },
+            cancellationToken);
+
+        if (movedNext)
+        {
+            do
+            {
+                yield return enumerator.Current;
+            }
+            while (await enumerator.MoveNextAsync(cancellationToken));
+        }
+    }
+}
+```
+
+This `ExecuteEnumerableAsync` extension method takes in a function that returns an `IAsyncEnumerable<T>` object. It will try to grab the first item from the stream. If that fails, it will trigger the resilience pipeline logic. Otherwise, it will continue to move through the stream. I made the assumption that once you start iterating over the stream it will continue to work until the end.
+
+Once you have a working base structure for the agent it's important to provide tools to the agent so it can perform tasks. 
 
 ### Connecting the agent to other content in your project
 
+As you probably remember from [#s](#enhancing-llms-with-tools) you can write tools and connect them to the `Kernel` as plugins. Providing tools to an agent works in the same way.
+
+The kernel instance you connect to the agent should contain the tools that you want the agent to use. It's also important that you provide the right settings for `FunctionChoiceBehavior`, to enable automatic tool use in the agent.
+
+In the sample code for this chapter I grouped the tools for the agent in two plugins:
+
+1. `FileSystemPlugin` which allows the agent to browse for files in a specific directory. I limited the plugin to only have read access to my file system in a directory I configure during startup of the application.
+2. `FeatureFilePlugin` which allows the agent to read and write feature file content. This is limited to one file that I configured during the startup of the agent. This ensures that the agent can't be pushed into overwriting content in other places on the file system.
+3. `TodoItemsPlugin` which gives the agent limited memory functionality so it can track TODO items that are part of the feature file generation plan. I'm saving the content to a `.agent/todo-items.json` file so you can see what the agent is doing.
+
+When providing tools to your agent you must be aware that you don't have a lot of control over what the agent is going to do with those tools. I recommend limiting the tools as much as possible so you don't end up deleting the root file system or sending information to people that's not supposed to be sent.
+
+Another great tip is to use a filter to ask the user for confirmation before invoking a tool. You can learn more about using tool invocation filters in [#s](#applying-filters-to-functions). Don't try to limit what users can do in the agent instructions, because it's just too easy for people to break your agent with prompt injection.
+
+You can use tool invocation filters too for reportign progress to the user. Often you'll see tools like Github Copilot report tool usage in the user interface. Tool invocation filters are a helpful tool to build similar functionality with Semantic Kernel.
+
 ### Getting structured output from the agent
+
+So far we've covered how to chat to an agent which can then use tools to perform tasks. This doesn't need structured output. But you can certainly combine generating structured output with agents. In many cases I prefer to get structured output if I don't need to get follow-up input from the user.
+
+If you want to get structured output from an agent, you'll need to modify the execution settings that you provide to the agent. The following code demonstrates this:
+
+```csharp
+var executionSettings = new AzureOpenAIPromptExecutionSettings
+{
+    ResponseFormat = typeof(MyResponseType),
+};
+
+_agent.InvokeAsync(_agentThread, new AgentInvokeOptions
+{
+
+    KernelArguments = new KernelArguments(executionSettings)
+});
+```
+
+First, we define the prompt invocation settings with a response format to get the structured output. Then, we invoke the agent as normal, providing a new set of KernelArguments specifying the prompt invocation settings we created.
 
 ### Building stateful agents with a backing service
 
