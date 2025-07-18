@@ -84,7 +84,7 @@ In the context of Semantic Kernel and LLMs in general, an agent is a component i
 In [#s](#getting-started-with-semantic-kernel), we covered how Semantic Kernel implements a loop to make it possible to call multiple tools when you submit a prompt to the kernel. This loop is the core of how an agent works in Semantic Kernel. An agent's workflow is shown in [#s](#agent-processing-loop).
 
 {#agent-processing-loop}
-![The agent processing loop]()
+![The agent processing loop](function-calling-loop.png)
 
 The loop starts with instructions and an initial prompt indicating the goal we want to achieve. With this initial set of instructions, the agent calls the LLM and receives a response. When the agent gets a tool call, it invokes the tool and stores the response in its internal memory. After completing a tool call, the agent moves to the beginning of the loop and calls the LLM again with the tool's output and the chat history. If the response is a regular chat message, the loop stops.
 
