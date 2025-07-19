@@ -131,7 +131,7 @@ The main `Program.cs` file will contain the main orchestration logic for the wor
 
 ### Finding research online with the search tool
 
-In the first step of the workflow, we'll use the `Microsoft.SemanticKernel.Plugins.Web` package that you can use to implement web search as a tool in your LLM-based application. You add the package to your project by executing the command `dotnet add package Microsoft.SemanticKernel.Plugins.Web`.
+In the first step of the workflow, we'll use the Microsoft.SemanticKernel.Plugins.Web package that you can use to implement web search as a tool in your LLM-based application. You add the package to your project by executing the command `dotnet add package Microsoft.SemanticKernel.Plugins.Web`.
 
 The research step looks like this:
 
