@@ -90,7 +90,7 @@ You'll find the samples in the `samples` folder in the repository.
 
 Each sample comes with a README.md file that explains how to run the sample and the
 requirements for the sample. I've made sure you can run the sample with either Azure
-OpenAI or the regular OpenAI service when you follow the instrucitons in the included
+OpenAI or the regular OpenAI service when you follow the instructions in the included
 README.md file.
 
 As an added bonus, I've made sure to include samples for Java and Python too. So if you
