@@ -343,7 +343,7 @@ This code uses the retry pipeline that I created for the sample code. It perform
 2. Then, we call the agent with `InvokeStreamingAsync`.
 3. Next, we iterate over the returned response object and extract the message content for each chunk the agent returned.
 
-The response type here is an `IAsyncEnumerable<AgentResponseItem<StreamingChatMessageContent>>` object, which is a mouthful if you want to tell your colleagues about it. This enumerable is an asynchronous stream of agent response chunks related to a single chat message.
+The response type is an asynchronous stream of agent response chunks related to a single chat message.
 
 The `AgentResponseItem` includes the message content and metadata to associate the response stream with a specific agent and thread. We don't need this extra information right now, but it will be helpful when building multi-agent solutions later on.
 

@@ -49,7 +49,7 @@ If you want a clear answer, providing the LLM with more focused information that
 
 Ideally, you want to preprocess the washing machine manual to end up with chunks of information that clearly describe how to perform a specific task. That way, the LLM can almost copy-paste the information into the response. Remember that the LLM can only match patterns and generate tokens based on the pattern.
 
-Preprocessing content optimally takes a lot of effort. If you want perfection, you will need an army of people who enter the information by hand. That's not feasible for most projects, so you'll have to settle for a less ideal solution. But that's not a massive problem because, in many cases, you can get away with a less optimal solution. Thanks to the tranformative power of the LLM.
+Preprocessing content optimally takes a lot of effort. If you want perfection, you will need an army of people who enter the information by hand. That's not feasible for most projects, so you'll have to settle for a less ideal solution. But that's not a massive problem because, in many cases, you can get away with a less optimal solution. Thanks to the transformative power of the LLM.
 
 To preprocess content for retrieval, you can start by splitting the text in the input documents into chunks of reasonable size. For example, you can create chunks of around 1000 tokens each. You can then store those chunks in a suitable database for retrieval.
 
@@ -664,7 +664,7 @@ In the next section, we'll look at a basic pipeline to evaluate the RAG pipeline
 
 ### Overview of the validation process
 
-When testing an RAG pipeline, I like measuring performance with one or two metrics that matter the most to me. For example, I think it's important that the LLM's final answer usess as much content from the source documents as possible. We can measure this using the faithfulness metric.
+When testing an RAG pipeline, I like measuring performance with one or two metrics that matter the most to me. For example, I think it's important that the LLM's final answer uses as much content from the source documents as possible. We can measure this using the faithfulness metric.
 
 The people who made [Ragas][RAGAS_LIBRARY] invented the faithfulness metric. It's a model-based metric that measures whether an answer could have come from the information we retrieved from the vector database. It's a very interesting approach to validating a RAG system and, luckily, not too hard to implement.
 
