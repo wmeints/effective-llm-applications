@@ -1,5 +1,7 @@
 # Building effective LLM-based applications with Semantic Kernel
 
+![Cover Art](./cover/cover-art.png)
+
 Welcome to my new book about building effective LLM-based applications with Semantic
 Kernel. This book is available on Leanpub! This repository is where I build the book.
 
@@ -11,7 +13,7 @@ Kernel](https://leanpub.com/effective-llm-applications-with-semantic-kernel)
 
 ## Progress
 
-I'm writing this book as you read this, and I'm at **90% completion**.
+I'm writing this book as you read this, and I'm at **100% completion**.
 
 | Chapter                                       | Status      | Samples                                                                    |
 | --------------------------------------------- | ----------- | -------------------------------------------------------------------------- |
@@ -25,7 +27,7 @@ I'm writing this book as you read this, and I'm at **90% completion**.
 | 8. Working with structured output             | Complete    | [C#](./samples/chapter-08/csharp/)                                         |
 | 9. Prompt chaining workflows                  | Complete    | [C#](./samples/chapter-09/csharp/)                                         |
 | 10. Intelligent request routing workflows     | Complete    | [C#](./samples/chapter-10/csharp/)                                         |
-| 11. Using Agents and Multi-agent systems      | Not started |                                                                            |
+| 11. Using Agents and Multi-agent systems      | Complete    | [C#](./samples/chapter-11/csharp/)                                         |
 
 ## Working with the examples
 
