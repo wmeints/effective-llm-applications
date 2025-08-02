@@ -1,4 +1,4 @@
-semantic-kernel==1.22.0
+semantic-kernel==1.35.0
 pydantic==2.10.6
 pydantic-settings==2.8.1
 python-dotenv==1.0.1
