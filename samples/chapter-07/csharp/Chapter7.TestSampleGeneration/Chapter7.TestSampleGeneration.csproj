@@ -10,13 +10,13 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="CsvHelper" Version="33.1.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.7" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.7" />
-        <PackageReference Include="Microsoft.SemanticKernel" Version="1.61.0" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.61.0-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.61.0" />
-        <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.61.0" />
-        <PackageReference Include="Polly" Version="8.6.2" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.8" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.8" />
+        <PackageReference Include="Microsoft.SemanticKernel" Version="1.63.0" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.63.0-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.63.0" />
+        <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.63.0" />
+        <PackageReference Include="Polly" Version="8.6.3" />
         <PackageReference Include="System.Linq.Async" Version="6.0.3" />
     </ItemGroup>
     <ItemGroup>
