@@ -15,9 +15,9 @@ public static class PollyStreamingExtensions
             async (ct) =>
             {
                 var asyncEnumerable = action(ct);
-                var asyncEnumerator = asyncEnumerable.GetAsyncEnumerator();
+                var asyncEnumerator = asyncEnumerable.GetAsyncEnumerator(ct);
 
-                return (asyncEnumerator, await asyncEnumerator.MoveNextAsync(ct));
+                return (asyncEnumerator, await asyncEnumerator.MoveNextAsync());
             },
             cancellationToken);
 
@@ -27,7 +27,7 @@ public static class PollyStreamingExtensions
             {
                 yield return enumerator.Current;
             }
-            while (await enumerator.MoveNextAsync(cancellationToken));
+            while (await enumerator.MoveNextAsync());
         }
     }
 }
