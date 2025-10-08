@@ -1,4 +1,4 @@
-# Sample code for chapter 4
+# Sample code for chapter 7
 
 This directory contains the sample code for chapter 7 of the book "Building effective LLM-based applications with Semantic Kernel".
 
