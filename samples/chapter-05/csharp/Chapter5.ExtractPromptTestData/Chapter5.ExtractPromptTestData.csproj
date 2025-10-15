@@ -9,8 +9,8 @@
   </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.8" />
+      <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.10" />
     </ItemGroup>
 
 </Project>
