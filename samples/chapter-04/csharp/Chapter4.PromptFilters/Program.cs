@@ -35,6 +35,6 @@ var result = await kernel.InvokePromptAsync(promptTemplate,
         ["ingredients"] = new List<string> { "pepperoni", "mozarella", "spinach" }
     },
     templateFormat: "handlebars",
-    promptTemplateFactory: new HandlebarsPromptTemplateFactory());
+    promptTemplateFactory: new HandlebarsPromptTemplateFactory() { AllowDangerouslySetContent = true });
 
 Console.WriteLine(result);
