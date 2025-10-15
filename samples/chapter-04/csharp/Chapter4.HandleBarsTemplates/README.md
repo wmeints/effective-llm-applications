@@ -11,7 +11,7 @@ This sample demonstrates how to use Handlebars templates with Semantic Kernel.
 ## Configuring the sample
 
 For this sample I switched to using an API key instead of a managed identity I discussed in the book
-to make things simpler for people. You'll need to  add a `settings.json` file with the following content:
+to simplify things for people. You'll need to  add a `settings.json` file with the following content:
 
 ```json
 {
