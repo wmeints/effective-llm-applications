@@ -133,6 +133,9 @@ kernel.Plugins.AddFromFunctions("ghost_writer", [
     kernel.CreateFunctionFromPromptYaml(
         EmbeddedResource.Read("generate-outline.yml"), 
         new HandlebarsPromptTemplateFactory()
+        {
+            AllowDangerouslySetContent = true
+        }
     )
 ]);
 ```

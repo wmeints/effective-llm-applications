@@ -66,6 +66,9 @@ public class RecipeGenerationTests
         _prompt = _kernel.CreateFunctionFromPromptYaml(
             EmbeddedResource.Read("prompt.yaml"), 
             new HandlebarsPromptTemplateFactory()
+            {
+                AllowDangerouslySetContent = true
+            }
         );
     }
 
