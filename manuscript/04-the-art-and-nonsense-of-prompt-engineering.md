@@ -440,6 +440,9 @@ var result = await kernel.InvokePromptAsync(promptTemplate,
     },
     templateFormat: "handlebars",
     promptTemplateFactory: new HandlebarsPromptTemplateFactory()
+    {
+        AllowDangerouslySetContent = true,
+    }
 );
 
 Console.WriteLine(result);
@@ -453,6 +456,10 @@ template specifying that we're rendering a Handlebars template. We must also spe
 3. Finally, we print the result of the prompt template to the terminal.
 
 Handlebars templates aren't supported out of the box, so you must provide the correct template factory instance using the `promptTemplateFactory` argument.
+
+When passing complex objects to the prompt template in handlebars you'll need to set
+`AllowDangerouslySetContent = true` on the prompt template factory. I recommend
+disabling this option when you only pass in simple values.
 
 The full source for this sample is in the [GitHub repository][HB_TEMPLATE_SAMPLE], which includes instructions on how to run it yourself.
 
