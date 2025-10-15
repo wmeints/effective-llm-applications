@@ -566,10 +566,18 @@ var promptTemplate = File.ReadAllText(
 
 var prompt = kernel.CreateFunctionFromPromptYaml(
     promptTemplate, 
-    new HandlebarsPromptTemplateFactory());
+    new HandlebarsPromptTemplateFactory() 
+    {
+        AllowDangerouslySetContent = true,
+    });
 ```
 
 In this code fragment, we load the prompt YAML file from the disk and then use the `CreateFunctionFromPromptYaml` method on the kernel to create a kernel function from the YAML file. As the Handlebars format we've used for the prompt template isn't readily available, we have to explicitly tell Semantic Kernel that we want to use it for the prompt template.
+
+In our sample we use a list of ingredients which is considered a complex property
+by the prompt template engine. We have to use `AllowDangerouslySetContent = true` to allow the prompt template engine to render the ingredients correctly. I recommend
+disabling this option when you only have simple values you want to pass into the
+prompt template.
 
 The `prompt` variable now contains a kernel function you can use in your application.
 
@@ -785,15 +793,13 @@ public class PIIFilter: IPromptRenderFilter
     {
         // This function is called when the prompt is rendered. This is where
         // we can filter the contents of the prompt before it's submitted.
-        
-        var renderedPrompt = context.RenderedPrompt;
+
+        await next(context);
         
         //TODO: Filter the prompt contents
         
         // Replace the original prompt with the filtered prompt.
-        context.RenderedPrompt = renderedPrompt; 
-
-        await next(context);
+        context.RenderedPrompt = "Filtered content"; 
     }
 }
 ```
