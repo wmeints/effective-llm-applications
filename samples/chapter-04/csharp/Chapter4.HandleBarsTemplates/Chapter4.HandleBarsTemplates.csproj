@@ -5,13 +5,13 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <UserSecretsId>708b31b9-f24c-47dc-8181-56126d7769af</UserSecretsId>
+        <UserSecretsId>11d29e93-1205-4630-9d67-c4b481819238</UserSecretsId>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Environmentvariables" Version="9.0.8" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.8" />
-        <PackageReference Include="Microsoft.SemanticKernel" Version="1.63.0" />
-        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.63.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Environmentvariables" Version="9.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.10" />
+        <PackageReference Include="Microsoft.SemanticKernel" Version="1.66.0" />
+        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.66.0" />
     </ItemGroup>
 </Project>
