@@ -471,7 +471,7 @@ public class QuestionAnsweringBot(
             new TextUnitStringMapper(),
             new TextUnitTextSearchResultMapper());
 
-        kernel.Plugins.AddFromObject(
+        kernel.Plugins.Add(
             textSearch.CreateWithSearch("SearchPlugin"));
 
         var chatHistory = new ChatHistory();
