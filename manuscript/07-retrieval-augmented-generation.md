@@ -185,6 +185,13 @@ This code configures Semantic Kernel with a new vector store. It performs the fo
 4. After, we configure the content indexer and question-answering tool.
 5. Finally, we build the web application and map a basic endpoint.
 
+Make sure you have Qdrant running on your machine. I recommend using Podman or Docker
+to run the Qdrant database. The following command starts the Qdrant database using Docker:
+
+```bash
+docker run -d -p 6333:6333 -p 6334:6334 qdrant/qdrant:latest
+```
+
 At this point, you can verify the application by starting it by running the following command in a terminal from the project directory:
 
 ```bash
