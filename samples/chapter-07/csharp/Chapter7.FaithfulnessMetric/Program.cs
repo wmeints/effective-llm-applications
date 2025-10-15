@@ -44,7 +44,10 @@ logger.LogInformation("Loaded {Count} test samples", records!.Count);
 
 var promptTemplate = kernel.CreateFunctionFromPromptYaml(
     EmbeddedResource.Read("Prompts.faithfulness-metric.yaml"),
-    promptTemplateFactory: new HandlebarsPromptTemplateFactory());
+    promptTemplateFactory: new HandlebarsPromptTemplateFactory()
+    {
+        AllowDangerouslySetContent = true
+    });
 
 var promptExecutionSettings = new AzureOpenAIPromptExecutionSettings
 {
@@ -88,6 +91,3 @@ var percentage = (double)faithfulCount / totalCount * 100;
 
 logger.LogInformation("Faithful: {FaithfulCount} of {TotalCount} ({Percentage}%)",
     faithfulCount, totalCount, percentage);
-
-
-

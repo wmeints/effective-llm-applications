@@ -352,7 +352,10 @@ await foreach (var fragment in searchResponse)
 var promptTemplateContent = File.ReadAllText("Prompts/answer-question.yaml");
 
 var promptTemplate = kernel.CreateFunctionFromPromptYaml(
-    promptTemplateContent, new HandlebarsPromptTemplateFactory());
+    promptTemplateContent, new HandlebarsPromptTemplateFactory()
+    {
+        AllowDangerouslySetContent = true
+    });
 
 var response = await promptTemplate.InvokeAsync(kernel, new KernelArguments
 {
@@ -710,7 +713,10 @@ The code to execute the prompt looks like this:
 ```csharp
 var prompt = kernel.CreateFunctionFromPromptYaml(
     EmbeddedResource.Read("Prompts.LongAnswerQuestion.yaml"), 
-    new HandlebarsPromptTemplateFactory());
+    new HandlebarsPromptTemplateFactory()
+    {
+        AllowDangerouslySetContent = true
+    });
 
 var promptExecutionSettings = 
     new OpenAIPromptExecutionSettings
@@ -828,7 +834,10 @@ var records = await JsonSerializer.DeserializeAsync<List<TestSampleRecord>(
 
 var promptTemplate = kernel.CreateFunctionFromPromptYaml(
     EmbeddedResource.Read("Prompts.faithfulness-metric.yaml"),
-    promptTemplateFactory: new HandlebarsPromptTemplateFactory());
+    promptTemplateFactory: new HandlebarsPromptTemplateFactory()
+    {
+        AllowDangerouslySetContent = true
+    });
 
 var promptExecutionSettings = new AzureOpenAIPromptExecutionSettings
 {

@@ -6,17 +6,17 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <NoWarn>SKEXP0050;SKEXP0010;SKEXP0001</NoWarn>
-        <UserSecretsId>847b55e0-06de-4c63-b997-8585fd91de25</UserSecretsId>
+        <UserSecretsId>11d29e93-1205-4630-9d67-c4b481819238</UserSecretsId>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="CsvHelper" Version="33.1.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.8" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.8" />
-        <PackageReference Include="Microsoft.SemanticKernel" Version="1.63.0" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.63.0-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.63.0" />
-        <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.63.0" />
-        <PackageReference Include="Polly" Version="8.6.3" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.10" />
+        <PackageReference Include="Microsoft.SemanticKernel" Version="1.66.0" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.66.0-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.66.0" />
+        <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.66.0" />
+        <PackageReference Include="Polly" Version="8.6.4" />
         <PackageReference Include="System.Linq.Async" Version="6.0.3" />
     </ItemGroup>
     <ItemGroup>

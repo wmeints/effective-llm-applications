@@ -14,6 +14,9 @@ public class ShortAnswerQuestionGenerator(Kernel kernel, ILogger logger) : Quest
     {
         return kernel.CreateFunctionFromPromptYaml(
             EmbeddedResource.Read("Prompts.ShortAnswerQuestion.yaml"),
-            new HandlebarsPromptTemplateFactory());
+            new HandlebarsPromptTemplateFactory()
+            {
+                AllowDangerouslySetContent = true
+            });
     }
 }

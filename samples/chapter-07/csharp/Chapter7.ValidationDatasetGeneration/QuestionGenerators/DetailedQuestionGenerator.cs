@@ -11,6 +11,9 @@ public class DetailedQuestionGenerator(Kernel kernel, ILogger logger) : Question
     {
         return kernel.CreateFunctionFromPromptYaml(
             EmbeddedResource.Read("Prompts.LongAnswerQuestion.yaml"),
-            new HandlebarsPromptTemplateFactory());
+            new HandlebarsPromptTemplateFactory()
+            {
+                AllowDangerouslySetContent = true
+            });
     }
 }

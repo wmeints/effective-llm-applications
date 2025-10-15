@@ -15,7 +15,10 @@ public class QuestionAnsweringTool(
         var promptTemplateContent = File.ReadAllText("Prompts/answer-question.yaml");
 
         var promptTemplate = kernel.CreateFunctionFromPromptYaml(
-            promptTemplateContent, new HandlebarsPromptTemplateFactory());
+            promptTemplateContent, new HandlebarsPromptTemplateFactory()
+            {
+                AllowDangerouslySetContent = true
+            });
 
         var collection = vectorStore.GetCollection<ulong, TextUnit>("content");
 

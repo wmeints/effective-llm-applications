@@ -11,6 +11,9 @@ public class BooleanAnswerQuestionGenerator(Kernel kernel, ILogger logger) : Que
     {
         return kernel.CreateFunctionFromPromptYaml(
             EmbeddedResource.Read("Prompts.BooleanAnswerQuestion.yaml"),
-            new HandlebarsPromptTemplateFactory());
+            new HandlebarsPromptTemplateFactory()
+            {
+                AllowDangerouslySetContent = true
+            });
     }
 }
