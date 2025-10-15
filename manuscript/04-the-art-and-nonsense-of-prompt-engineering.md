@@ -481,7 +481,10 @@ var executionSettings = new AzureOpenAIPromptExecutionSettings
 
 var prompt = kernel.CreateFunctionFromPrompt(
     promptTemplate, templateFormat: "handlebars",
-    promptTemplateFactory: new HandlebarsPromptTemplateFactory(),
+    promptTemplateFactory: new HandlebarsPromptTemplateFactory()
+    {
+        AllowDangerouslySetContent = true,
+    },
     executionSettings: executionSettings);
 
 var result = await kernel.InvokeAsync(prompt, new KernelArguments
@@ -504,6 +507,11 @@ Let's go through this code to understand the differences from earlier code sampl
 input for the function contains the prompt template, the prompt template factory we want to use, and the execution settings.
 4. Finally, we can invoke the new function using `InvokeAsync` on the `kernel` object
 and pass the arguments to the function.
+
+The prompt template factory we use requires a setting `AllowDangerouslySetContent`
+to enable us to pass complex objects to the prompt template. We need this to be able
+to render a list of ingredients. If you don't use lists or other complex structures it's
+better to leave this setting turned off.
 
 In the sample, we store the function in a `prompt` variable. In production code, you can store the prompt as a private variable of a class that wraps around the Semantic Kernel code.
 
