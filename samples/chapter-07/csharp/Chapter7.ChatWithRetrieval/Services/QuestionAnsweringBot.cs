@@ -25,7 +25,7 @@ public class QuestionAnsweringBot(
             new CitationsTextUnitStringMapper(),
             new TextUnitTextSearchResultMapper());
 
-        kernel.Plugins.AddFromObject(textSearch.CreateWithSearch("SearchPlugin"));
+        kernel.Plugins.Add(textSearch.CreateWithSearch("SearchPlugin"));
         kernel.FunctionInvocationFilters.Add(citationsFilter);
 
         var chatHistory = new ChatHistory();
